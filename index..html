@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OL Pipeline — รายงานสัปดาห์ผู้บริหาร</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0D2137; --teal:#0D9488; --teal-l:#E1F5EE; --teal-d:#085041;
+  --white:#FFFFFF; --off:#F8FAFC; --border:#E2E8F0; --muted:#64748B;
+  --green:#10B981; --green-l:#D1FAE5; --green-d:#065F46;
+  --blue:#378ADD;  --blue-l:#DBEAFE;  --blue-d:#1E40AF;
+  --amber:#F59E0B; --amber-l:#FEF3C7; --amber-d:#92400E;
+  --red:#EF4444;   --red-l:#FEE2E2;   --red-d:#7F1D1D;
+  --purple:#7F77DD;--purple-l:#EEEDFE;--purple-d:#3C3489;
+  --text:#1E293B;  --text-m:#64748B;
+  --font:'IBM Plex Sans Thai',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --r:8px; --r-lg:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);font-size:13px;color:var(--text);background:var(--off);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+
+/* layout */
+.page{max-width:1200px;margin:0 auto;padding:24px}
+
+/* header */
+.db-header{background:var(--navy);border-radius:var(--r-lg);padding:20px 28px;display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.db-header-left{}
+.db-pre{font-size:10px;letter-spacing:.12em;color:var(--teal);font-weight:600;text-transform:uppercase;margin-bottom:4px}
+.db-title{font-size:22px;font-weight:600;color:var(--white);line-height:1.2}
+.db-sub{font-size:11px;color:#94A3B8;margin-top:4px}
+.week-pill{background:var(--teal-l);color:var(--teal-d);font-size:11px;font-weight:600;padding:6px 14px;border-radius:20px;white-space:nowrap}
+
+/* kpi row */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.kpi{border-radius:var(--r-lg);padding:14px 16px}
+.kpi-n{font-size:28px;font-weight:600;line-height:1;margin-bottom:3px}
+.kpi-l{font-size:10px;font-weight:500;margin-bottom:5px}
+.kpi-chg{font-size:10px;opacity:.85}
+
+/* 2col */
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px}
+
+/* card */
+.card{background:var(--white);border:0.5px solid var(--border);border-radius:var(--r-lg);padding:16px}
+.card-title{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.card-title svg{flex-shrink:0}
+
+/* bar */
+.bar-wrap{display:flex;flex-direction:column;gap:9px}
+.bar-row{display:flex;align-items:center;gap:10px}
+.bar-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.bar-label{font-size:11px;color:var(--text);width:140px;flex-shrink:0}
+.bar-label.sm{width:110px}
+.bar-track{flex:1;height:8px;background:var(--border);border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;transition:width .6s ease}
+.bar-val{font-size:11px;font-weight:600;min-width:36px;text-align:right}
+
+/* pipeline funnel */
+.funnel-footer{margin-top:12px;padding-top:10px;border-top:.5px solid var(--border);display:flex;justify-content:space-between;font-size:10px;color:var(--muted)}
+.funnel-footer strong{color:var(--green-d)}
+
+/* customer group stacked */
+.stack-bar{display:flex;height:22px;border-radius:4px;overflow:hidden;margin:10px 0 4px}
+.stack-seg{display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:#fff;transition:flex .6s ease}
+.stack-legend{display:flex;gap:12px;flex-wrap:wrap}
+.sl-item{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--muted)}
+.sl-sq{width:8px;height:8px;border-radius:2px}
+
+/* score bars */
+.score-section{display:flex;flex-direction:column;gap:14px}
+.score-block{}
+.score-meta{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px}
+.score-name{font-size:12px;font-weight:500;color:var(--text)}
+.score-num{font-size:14px;font-weight:600}
+.score-track{height:10px;background:var(--border);border-radius:5px;overflow:hidden}
+.score-fill{height:100%;border-radius:5px}
+.score-dots{display:flex;gap:4px;margin-top:5px}
+.score-dot{width:8px;height:8px;border-radius:50%;background:var(--border)}
+.score-dot.on{background:currentColor}
+
+/* team table */
+.team-table{width:100%;border-collapse:collapse}
+.team-table th{font-size:10px;color:var(--muted);font-weight:600;padding:6px 8px;text-align:left;background:var(--teal);color:#fff;white-space:nowrap}
+.team-table th:not(:first-child){text-align:center}
+.team-table td{padding:7px 8px;border-bottom:.5px solid var(--border);font-size:11px;vertical-align:middle}
+.team-table td:not(:first-child){text-align:center}
+.team-table tr:nth-child(even) td{background:var(--off)}
+.team-table tr:last-child td{background:var(--navy);color:#fff;font-weight:600}
+.status-pill{display:inline-block;font-size:9px;padding:2px 8px;border-radius:20px;font-weight:600;white-space:nowrap}
+.pct-bar-wrap{display:flex;align-items:center;gap:5px;justify-content:center}
+.pct-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden;width:48px}
+.pct-fill{height:100%;border-radius:3px;background:var(--green)}
+
+/* alert box */
+.alert-box{border-radius:var(--r);padding:10px 12px;display:flex;gap:10px;align-items:flex-start;margin-top:12px}
+.alert-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+.alert-body{}
+.alert-title{font-size:11px;font-weight:600;margin-bottom:2px}
+.alert-desc{font-size:10px;opacity:.85}
+
+/* action cards */
+.action-list{display:flex;flex-direction:column;gap:8px}
+.action-card{border-radius:var(--r);padding:12px 14px;display:grid;grid-template-columns:28px 1fr auto;gap:0 12px;align-items:start}
+.action-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
+.action-title{font-size:12px;font-weight:600;margin-bottom:3px}
+.action-detail{font-size:10px;line-height:1.55}
+.action-meta{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
+.tag{font-size:9px;padding:2px 8px;border-radius:20px;font-weight:700;white-space:nowrap}
+.action-when{font-size:9px;opacity:.7;white-space:nowrap}
+
+/* risk cards */
+.risk-list{display:flex;flex-direction:column;gap:6px}
+.risk-card{border-radius:var(--r);padding:9px 12px;border-left:3px solid}
+.risk-name{font-size:11px;font-weight:600;margin-bottom:2px}
+.risk-info{font-size:10px;opacity:.8}
+.risk-reason{font-size:10px;font-style:italic;margin-top:2px}
+
+/* kpi targets */
+.kpi-target-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.kpi-target{border-radius:var(--r-lg);padding:16px;text-align:center}
+.kpi-target-n{font-size:24px;font-weight:700;margin-bottom:3px}
+.kpi-target-l{font-size:10px;line-height:1.4}
+
+/* timeline */
+.tl-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.tl-col{}
+.tl-head{border-radius:var(--r) var(--r) 0 0;padding:7px 10px;font-size:11px;font-weight:700;color:#fff;text-align:center}
+.tl-body{background:#1E3A5F;border-radius:0 0 var(--r) var(--r);padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.tl-item{font-size:10px;color:#CBD5E1;display:flex;gap:6px;align-items:flex-start}
+.tl-item::before{content:'·';flex-shrink:0;color:var(--teal)}
+
+/* matching guide */
+.match-box{background:var(--teal-l);border-radius:var(--r);padding:12px 14px}
+.match-title{font-size:11px;font-weight:700;color:var(--teal-d);margin-bottom:8px}
+.match-item{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--teal-d);padding:4px 0;border-bottom:.5px solid #9FE1CB}
+.match-item:last-child{border-bottom:none}
+.match-arrow{color:var(--teal);font-weight:700;flex-shrink:0}
+.match-need{width:80px;flex-shrink:0;font-weight:600}
+.match-prod{opacity:.85}
+
+/* footer */
+.db-footer{background:var(--navy);border-radius:var(--r-lg);padding:12px 22px;display:flex;justify-content:space-between;align-items:center;margin-top:16px}
+.db-footer span{font-size:10px;color:#475569}
+
+/* print */
+@media print{
+  body{background:white}
+  .page{padding:8px}
+  .db-header,.kpi-row,.row2,.row3{break-inside:avoid}
+  .editor-fab,.editor-panel,.editor-overlay{display:none!important}
+}
+
+/* ── EDITOR ── */
+.editor-fab{position:fixed;bottom:24px;right:24px;z-index:100;background:var(--teal);color:#fff;border:none;border-radius:50px;padding:12px 20px;font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;box-shadow:0 4px 16px rgba(13,148,136,.35)}
+.editor-fab:hover{background:var(--teal-d)}
+.editor-overlay{display:none;position:fixed;inset:0;background:rgba(13,33,55,.55);z-index:200}
+.editor-overlay.open{display:block}
+.editor-panel{display:none;position:fixed;top:0;right:0;width:480px;max-width:95vw;height:100vh;background:#fff;z-index:300;overflow-y:auto;box-shadow:-4px 0 32px rgba(0,0,0,.18);flex-direction:column}
+.editor-panel.open{display:flex}
+.ep-header{background:var(--navy);padding:18px 22px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.ep-title{color:#fff;font-size:15px;font-weight:600}
+.ep-close{background:none;border:none;color:#94A3B8;font-size:22px;cursor:pointer;padding:0;line-height:1}
+.ep-close:hover{color:#fff}
+.ep-body{padding:20px 22px;flex:1}
+.ep-section{margin-bottom:22px}
+.ep-section-title{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.09em;margin-bottom:10px;padding-bottom:6px;border-bottom:.5px solid var(--border)}
+.ep-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.ep-row.single{grid-template-columns:1fr}
+.ep-field{display:flex;flex-direction:column;gap:4px}
+.ep-label{font-size:10px;font-weight:600;color:var(--muted)}
+.ep-input{border:.5px solid var(--border);border-radius:var(--r);padding:7px 10px;font-family:var(--font);font-size:12px;color:var(--text);background:#fff;width:100%;transition:border-color .15s}
+.ep-input:focus{outline:none;border-color:var(--teal)}
+.ep-input[type=number]{-moz-appearance:textfield}
+.ep-input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
+.team-editor{border:.5px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:10px}
+.team-ed-head{background:var(--off);padding:8px 12px;font-size:11px;font-weight:600;color:var(--text);display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
+.team-ed-head:hover{background:#EEF2F7}
+.team-ed-body{padding:10px 12px;display:none;border-top:.5px solid var(--border)}
+.team-ed-body.open{display:block}
+.team-ed-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:6px}
+.team-ed-grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+.ep-footer{padding:16px 22px;border-top:.5px solid var(--border);flex-shrink:0;display:flex;gap:8px}
+.ep-btn{flex:1;padding:10px;border:none;border-radius:var(--r);font-family:var(--font);font-size:12px;font-weight:600;cursor:pointer}
+.ep-btn-save{background:var(--teal);color:#fff}
+.ep-btn-save:hover{background:var(--teal-d)}
+.ep-btn-print{background:var(--navy);color:#fff}
+.ep-btn-print:hover{background:#0a1929}
+.ep-badge{display:inline-block;background:var(--teal-l);color:var(--teal-d);font-size:9px;font-weight:700;padding:1px 6px;border-radius:10px;margin-left:6px}
+.ep-saved{font-size:10px;color:var(--green-d);text-align:center;margin-top:6px;opacity:0;transition:opacity .3s}
+.ep-saved.show{opacity:1}
+
+/* ── UPLOAD ZONE ── */
+.upload-zone{border:1.5px dashed var(--teal);border-radius:var(--r-lg);padding:22px 16px;text-align:center;cursor:pointer;transition:background .15s;background:var(--teal-l);margin-bottom:14px;position:relative}
+.upload-zone:hover,.upload-zone.drag{background:#C7EFE4;border-style:solid}
+.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.upload-icon{font-size:28px;margin-bottom:6px}
+.upload-title{font-size:13px;font-weight:700;color:var(--teal-d);margin-bottom:3px}
+.upload-sub{font-size:10px;color:var(--teal-d);opacity:.75}
+.upload-status{margin-top:10px;font-size:11px;font-weight:600;padding:6px 10px;border-radius:var(--r);display:none}
+.upload-status.ok{display:block;background:#D1FAE5;color:var(--green-d)}
+.upload-status.err{display:block;background:var(--red-l);color:var(--red-d)}
+.xl-preview{margin-top:10px;font-size:10px;color:var(--muted);line-height:1.6;display:none}
+.xl-preview.show{display:block}
+.xl-row{display:flex;gap:8px;padding:4px 0;border-bottom:.5px solid var(--border)}
+.xl-row:last-child{border-bottom:none}
+.xl-team{color:var(--text);font-weight:600;min-width:120px}
+.xl-stat{color:var(--muted)}
+
+@media(max-width:768px){
+  .kpi-row,.kpi-target-row,.tl-grid{grid-template-columns:repeat(2,1fr)}
+  .row2,.row3{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- ── HEADER ─────────────────────────────────────────────────────────────── -->
+<div class="db-header">
+  <div class="db-header-left">
+    <div class="db-pre">KKP Financial Group · Sales Development</div>
+    <div class="db-title">OL Pipeline — รายงานสัปดาห์ผู้บริหาร</div>
+    <div class="db-sub">ความพร้อมการขายผลิตภัณฑ์ประกันชีวิต OL · Consumer Finance · 28 คน · 9 ทีม</div>
+  </div>
+  <div class="week-pill">📅 สัปดาห์ที่ 3 · มิถุนายน 2569</div>
+</div>
+
+<!-- ── KPI ROW ─────────────────────────────────────────────────────────────── -->
+<div class="kpi-row">
+  <div class="kpi" style="background:var(--green-l)">
+    <div class="kpi-n" style="color:var(--green-d)">5</div>
+    <div class="kpi-l" style="color:var(--green-d)">พร้อม Submit เร็ว</div>
+    <div class="kpi-chg" style="color:var(--green-d)">▲ +2 จากสัปดาห์ก่อน</div>
+  </div>
+  <div class="kpi" style="background:var(--blue-l)">
+    <div class="kpi-n" style="color:var(--blue-d)">10</div>
+    <div class="kpi-l" style="color:var(--blue-d)">กำลังดำเนินการ</div>
+    <div class="kpi-chg" style="color:var(--blue-d)">— เท่าเดิม</div>
+  </div>
+  <div class="kpi" style="background:var(--amber-l)">
+    <div class="kpi-n" style="color:var(--amber-d)">10</div>
+    <div class="kpi-l" style="color:var(--amber-d)">รอ / ติดเงื่อนไข</div>
+    <div class="kpi-chg" style="color:var(--green-d)">▼ −3 แก้ไขได้แล้ว</div>
+  </div>
+  <div class="kpi" style="background:var(--red-l)">
+    <div class="kpi-n" style="color:var(--red-d)">3</div>
+    <div class="kpi-l" style="color:var(--red-d)">ยังไม่มีลูกค้า</div>
+    <div class="kpi-chg" style="color:var(--red-d)">⚠ ต้องเร่งดูแล</div>
+  </div>
+</div>
+
+<!-- ── ROW 1: FUNNEL + CUSTOMER GROUP ─────────────────────────────────────── -->
+<div class="row2">
+  <!-- Pipeline funnel -->
+  <div class="card">
+    <div class="card-title">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 3H2l8 9.46V19l4 2V12.46L22 3z"/></svg>
+      Pipeline funnel
+    </div>
+    <div class="bar-wrap">
+      <div class="bar-row">
+        <div class="bar-dot" style="background:var(--green)"></div>
+        <div class="bar-label">พร้อม Submit เร็ว</div>
+        <div class="bar-track"><div class="bar-fill" style="width:18%;background:var(--green)"></div></div>
+        <div class="bar-val" style="color:var(--green-d)">5</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-dot" style="background:var(--blue)"></div>
+        <div class="bar-label">กำลังดำเนินการ</div>
+        <div class="bar-track"><div class="bar-fill" style="width:36%;background:var(--blue)"></div></div>
+        <div class="bar-val" style="color:var(--blue-d)">10</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-dot" style="background:var(--amber)"></div>
+        <div class="bar-label">รอ / ติดเงื่อนไข</div>
+        <div class="bar-track"><div class="bar-fill" style="width:36%;background:var(--amber)"></div></div>
+        <div class="bar-val" style="color:var(--amber-d)">10</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-dot" style="background:var(--red)"></div>
+        <div class="bar-label">ยังไม่มีลูกค้า</div>
+        <div class="bar-track"><div class="bar-fill" style="width:11%;background:var(--red)"></div></div>
+        <div class="bar-val" style="color:var(--red-d)">3</div>
+      </div>
+    </div>
+    <div class="funnel-footer">
+      <span>ทั้งหมด 28 คน</span>
+      <span>Submit-Ready Rate <strong>18%</strong> (5/28)</span>
+    </div>
+  </div>
+
+  <!-- Customer group + needs -->
+  <div class="card">
+    <div class="card-title">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0-3-3.87"/></svg>
+      กลุ่มลูกค้าเป้าหมาย
+    </div>
+    <div class="bar-wrap" style="margin-bottom:10px">
+      <div class="bar-row">
+        <div class="bar-dot" style="background:var(--blue)"></div>
+        <div class="bar-label sm">สินเชื่อ HL/SME</div>
+        <div class="bar-track"><div class="bar-fill" style="width:72%;background:var(--blue)"></div></div>
+        <div class="bar-val" style="color:var(--blue-d)">18</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-dot" style="background:var(--purple)"></div>
+        <div class="bar-label sm">ครอบครัว/เพื่อน</div>
+        <div class="bar-track"><div class="bar-fill" style="width:44%;background:var(--purple)"></div></div>
+        <div class="bar-val" style="color:var(--purple-d)">11</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-dot" style="background:var(--teal)"></div>
+        <div class="bar-label sm">Referral</div>
+        <div class="bar-track"><div class="bar-fill" style="width:20%;background:var(--teal)"></div></div>
+        <div class="bar-val" style="color:var(--teal-d)">5</div>
+      </div>
+    </div>
+    <div class="stack-bar">
+      <div class="stack-seg" style="flex:64;background:var(--blue)">64% สินเชื่อ</div>
+      <div class="stack-seg" style="flex:25;background:var(--purple)">25%</div>
+      <div class="stack-seg" style="flex:11;background:var(--teal)">11%</div>
+    </div>
+    <div style="border-top:.5px solid var(--border);margin-top:10px;padding-top:10px">
+      <div class="card-title" style="margin-bottom:8px">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        ความต้องการหลัก
+      </div>
+      <div class="bar-wrap">
+        <div class="bar-row">
+          <div class="bar-label sm" style="font-size:10px">ออมเงิน</div>
+          <div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--teal)"></div></div>
+          <div class="bar-val" style="color:var(--teal-d)">14</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label sm" style="font-size:10px">คุ้มครองชีวิต</div>
+          <div class="bar-track"><div class="bar-fill" style="width:79%;background:var(--blue)"></div></div>
+          <div class="bar-val" style="color:var(--blue-d)">11</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label sm" style="font-size:10px">ลดหย่อนภาษี</div>
+          <div class="bar-track"><div class="bar-fill" style="width:57%;background:var(--purple)"></div></div>
+          <div class="bar-val" style="color:var(--purple-d)">8</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label sm" style="font-size:10px">วางแผนเกษียณ</div>
+          <div class="bar-track"><div class="bar-fill" style="width:29%;background:var(--amber)"></div></div>
+          <div class="bar-val" style="color:var(--amber-d)">4</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TEAM SCORECARD ─────────────────────────────────────────────────────── -->
+<div class="card" style="margin-bottom:12px">
+  <div class="card-title">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+    ความพร้อมรายทีม — Scorecard
+  </div>
+  <div style="overflow-x:auto">
+  <table class="team-table">
+    <thead>
+      <tr>
+        <th>ทีม</th><th>n</th><th style="color:var(--green-l)">พร้อม</th>
+        <th style="color:#BFDBFE">WIP</th><th style="color:#FDE68A">รอ</th>
+        <th>PK</th><th>Genwing</th><th>มั่นใจ</th><th>% พร้อม</th><th>สถานะ</th>
+      </tr>
+    </thead>
+    <tbody id="teamBody"></tbody>
+  </table>
+  </div>
+  <div style="font-size:10px;color:var(--muted);margin-top:8px;font-style:italic">
+    คะแนน: <span style="color:var(--green-d);font-weight:600">≥ 4.0 = ดี</span> &nbsp;
+    <span style="color:var(--amber-d);font-weight:600">3.5–3.9 = ปานกลาง</span> &nbsp;
+    <span style="color:var(--red-d);font-weight:600">&lt; 3.5 = ต้องพัฒนา</span>
+  </div>
+</div>
+
+<!-- ── ROW 2: SCORES + SUPPORT ────────────────────────────────────────────── -->
+<div class="row2">
+  <!-- Score bars -->
+  <div class="card">
+    <div class="card-title">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      คะแนนความพร้อม (จาก 5)
+    </div>
+    <div class="score-section">
+      <div class="score-block">
+        <div class="score-meta">
+          <span class="score-name">Product Knowledge</span>
+          <span class="score-num" style="color:var(--green-d)">3.71</span>
+        </div>
+        <div class="score-track"><div class="score-fill" style="width:74.2%;background:var(--green)"></div></div>
+        <div class="score-dots" style="color:var(--green)">
+          <div class="score-dot on"></div><div class="score-dot on"></div><div class="score-dot on"></div><div class="score-dot on"></div><div class="score-dot" style="background:#D1FAE5"></div>
+        </div>
+      </div>
+      <div class="score-block">
+        <div class="score-meta">
+          <span class="score-name">Genwing System <span style="font-size:9px;color:var(--amber-d);font-weight:700">⚠ ต่ำที่สุด</span></span>
+          <span class="score-num" style="color:var(--amber-d)">3.43</span>
+        </div>
+        <div class="score-track"><div class="score-fill" style="width:68.6%;background:var(--amber)"></div></div>
+        <div class="score-dots" style="color:var(--amber)">
+          <div class="score-dot on"></div><div class="score-dot on"></div><div class="score-dot on"></div><div class="score-dot" style="background:#FEF3C7"></div><div class="score-dot" style="background:#FEF3C7"></div>
+        </div>
+      </div>
+      <div class="score-block">
+        <div class="score-meta">
+          <span class="score-name">ความมั่นใจนำเสนอ</span>
+          <span class="score-num" style="color:var(--teal-d)">3.79</span>
+        </div>
+        <div class="score-track"><div class="score-fill" style="width:75.8%;background:var(--teal)"></div></div>
+        <div class="score-dots" style="color:var(--teal)">
+          <div class="score-dot on"></div><div class="score-dot on"></div><div class="score-dot on"></div><div class="score-dot on"></div><div class="score-dot" style="background:#E1F5EE"></div>
+        </div>
+      </div>
+    </div>
+    <div class="alert-box" style="background:#FFF7ED;border:.5px solid #FDE68A;margin-top:14px">
+      <div class="alert-icon">⚠️</div>
+      <div class="alert-body">
+        <div class="alert-title" style="color:var(--amber-d)">Genwing System คือจุดอ่อนอันดับ 1</div>
+        <div class="alert-desc" style="color:var(--amber-d)">มีถึง 3 คนที่คะแนนระดับ 2 — ต้องจัด Workshop ด่วนสัปดาห์นี้</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Support needs + matching -->
+  <div class="card">
+    <div class="card-title">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+      สิ่งที่ทีมต้องการสนับสนุน
+    </div>
+    <div class="bar-wrap" style="margin-bottom:14px">
+      <div class="bar-row">
+        <div class="bar-label">Script / เอกสารการขาย</div>
+        <div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--teal)"></div></div>
+        <div class="bar-val" style="color:var(--teal-d)">13</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">ระบบ Genwing</div>
+        <div class="bar-track"><div class="bar-fill" style="width:77%;background:var(--blue)"></div></div>
+        <div class="bar-val" style="color:var(--blue-d)">10</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">เทคนิค / Role Play</div>
+        <div class="bar-track"><div class="bar-fill" style="width:69%;background:var(--purple)"></div></div>
+        <div class="bar-val" style="color:var(--purple-d)">9</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Product Knowledge</div>
+        <div class="bar-track"><div class="bar-fill" style="width:62%;background:var(--amber)"></div></div>
+        <div class="bar-val" style="color:var(--amber-d)">8</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Need Finding</div>
+        <div class="bar-track"><div class="bar-fill" style="width:54%;background:var(--muted)"></div></div>
+        <div class="bar-val" style="color:var(--muted)">7</div>
+      </div>
+    </div>
+    <div class="match-box">
+      <div class="match-title">Matching Guide — Need → Product</div>
+      <div class="match-item">
+        <span class="match-need">ออมเงิน</span>
+        <span class="match-arrow">→</span>
+        <span class="match-prod">KKPGEN Wealth 10/3 (Par)</span>
+      </div>
+      <div class="match-item">
+        <span class="match-need">มรดก/ส่งต่อ</span>
+        <span class="match-arrow">→</span>
+        <span class="match-prod">Heritage Plus 90/2 (Par)</span>
+      </div>
+      <div class="match-item">
+        <span class="match-need">เกษียณ+ภาษี</span>
+        <span class="match-arrow">→</span>
+        <span class="match-prod">Wealth Plus 15/5 (Par)</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── ACTION ITEMS + RISK ────────────────────────────────────────────────── -->
+<div class="row2">
+  <div class="card">
+    <div class="card-title">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      Action Items สัปดาห์นี้
+    </div>
+    <div class="action-list">
+      <div class="action-card" style="background:var(--red-l);border:.5px solid #FCA5A5">
+        <div class="action-num" style="background:var(--red)">01</div>
+        <div>
+          <div class="action-title" style="color:var(--red-d)">Genwing Clinic เร่งด่วน — 45–60 นาที + demo submit จริง</div>
+          <div class="action-detail" style="color:var(--red-d)">กลุ่ม Beginner (คะแนน 2–3): HL1 ×5, HL2 ×2, SBA2T2 ×2, SBA1T3 ×1<br>กลุ่ม Advanced: เน้น edge case + ปัญหาที่พบจริง</div>
+        </div>
+        <div class="action-meta">
+          <span class="tag" style="background:#FCA5A5;color:var(--red-d)">ด่วนที่สุด</span>
+          <span class="action-when" style="color:var(--red-d)">สัปดาห์ที่ 1</span>
+        </div>
+      </div>
+      <div class="action-card" style="background:var(--amber-l);border:.5px solid #FCD34D">
+        <div class="action-num" style="background:var(--amber)">02</div>
+        <div>
+          <div class="action-title" style="color:var(--amber-d)">ส่งมอบ Sales Kit ครบชุด — Script 3 สินค้า + Objection + Benefit</div>
+          <div class="action-detail" style="color:var(--amber-d)">แยกตามกลุ่มลูกค้า: สินเชื่อ / ครอบครัว / Referral<br>Objection: "ค่าเบี้ยแพง" · "มีประกันเยอะแล้ว" · "เศรษฐกิจไม่ดี"</div>
+        </div>
+        <div class="action-meta">
+          <span class="tag" style="background:#FDE68A;color:var(--amber-d)">ด่วน</span>
+          <span class="action-when" style="color:var(--amber-d)">สัปดาห์ที่ 1–2</span>
+        </div>
+      </div>
+      <div class="action-card" style="background:var(--blue-l);border:.5px solid #93C5FD">
+        <div class="action-num" style="background:var(--blue)">03</div>
+        <div>
+          <div class="action-title" style="color:var(--blue-d)">Coaching 1:1 + Buddy — นัฐพงษ์, พงศกร, วิลาศลักษณ์, รพีพงศ์, กนกพร</div>
+          <div class="action-detail" style="color:var(--blue-d)">Buddy: จับคู่คนพร้อมกับคนติดขัดในทีมเดียวกัน<br>HL1: ปารณีย์ (5/4/5) เป็น Buddy ให้ นัฐพงษ์ / ชาคริต</div>
+        </div>
+        <div class="action-meta">
+          <span class="tag" style="background:#BFDBFE;color:var(--blue-d)">สูง</span>
+          <span class="action-when" style="color:var(--blue-d)">สัปดาห์ที่ 2–3</span>
+        </div>
+      </div>
+      <div class="action-card" style="background:var(--green-l);border:.5px solid #6EE7B7">
+        <div class="action-num" style="background:var(--green)">04</div>
+        <div>
+          <div class="action-title" style="color:var(--green-d)">ปิด Quick Win case แรก — สร้าง Success Story</div>
+          <div class="action-detail" style="color:var(--green-d)">ณัชชารีย์ (HL2) + ฉัตรชัย (SBA1T4) พร้อม Submit สัปดาห์แรก<br>แชร์ case สำเร็จสร้างแรงบันดาลใจทีมอื่น</div>
+        </div>
+        <div class="action-meta">
+          <span class="tag" style="background:#A7F3D0;color:var(--green-d)">Quick Win</span>
+          <span class="action-when" style="color:var(--green-d)">สัปดาห์ที่ 1</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      บุคคลที่ต้องดูแลเร่งด่วน
+    </div>
+    <div class="risk-list">
+      <div class="risk-card" style="background:var(--red-l);border-color:var(--red)">
+        <div class="risk-name" style="color:var(--red-d)">นัฐพงษ์ ทรัพย์อนันต์กุล · HL1</div>
+        <div class="risk-info" style="color:var(--red-d)">PK/GW/มั่นใจ = 2/2/2</div>
+        <div class="risk-reason" style="color:var(--red-d)">ลูกค้าไม่ตัดสินใจ · ติดเรื่องค่าเบี้ย</div>
+      </div>
+      <div class="risk-card" style="background:var(--red-l);border-color:var(--red)">
+        <div class="risk-name" style="color:var(--red-d)">พงศกร เจียรไนยรัตน์ · HL2</div>
+        <div class="risk-info" style="color:var(--red-d)">PK/GW/มั่นใจ = 2/2/2</div>
+        <div class="risk-reason" style="color:var(--red-d)">ต้องการสนับสนุนทุกด้านพร้อมกัน</div>
+      </div>
+      <div class="risk-card" style="background:var(--amber-l);border-color:var(--amber)">
+        <div class="risk-name" style="color:var(--amber-d)">วิลาศลักษณ์ แสนสุข · HL1</div>
+        <div class="risk-info" style="color:var(--amber-d)">PK/GW/มั่นใจ = 4/3/4</div>
+        <div class="risk-reason" style="color:var(--amber-d)">ติดปัญหาอุปกรณ์ — ยังไม่มี Tablet</div>
+      </div>
+      <div class="risk-card" style="background:var(--amber-l);border-color:var(--amber)">
+        <div class="risk-name" style="color:var(--amber-d)">รพีพงศ์ ธนวิชญ์สิโรดม · HL2</div>
+        <div class="risk-info" style="color:var(--amber-d)">PK/GW/มั่นใจ = 4/2/3</div>
+        <div class="risk-reason" style="color:var(--amber-d)">Genwing ต่ำสุด · ยังไม่มีลูกค้าในมือ</div>
+      </div>
+      <div class="risk-card" style="background:var(--amber-l);border-color:var(--amber)">
+        <div class="risk-name" style="color:var(--amber-d)">กนกพร วรเมธพาสุข · HL3</div>
+        <div class="risk-info" style="color:var(--amber-d)">PK/GW/มั่นใจ = 3/3/3</div>
+        <div class="risk-reason" style="color:var(--amber-d)">ไม่มีลูกค้าเลย · ภาระงานมากเกินไป</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── KPI TARGETS ─────────────────────────────────────────────────────────── -->
+<div style="margin-bottom:10px">
+  <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">เป้าหมาย KPI เดือนนี้</div>
+  <div class="kpi-target-row">
+    <div class="kpi-target" style="background:var(--teal-l)">
+      <div class="kpi-target-n" style="color:var(--teal-d)">28/28</div>
+      <div class="kpi-target-l" style="color:var(--teal-d)">คนผ่าน Genwing Clinic</div>
+    </div>
+    <div class="kpi-target" style="background:var(--blue-l)">
+      <div class="kpi-target-n" style="color:var(--blue-d)">≥ 15</div>
+      <div class="kpi-target-l" style="color:var(--blue-d)">Cases Submit ภายใน พ.ค.</div>
+    </div>
+    <div class="kpi-target" style="background:var(--purple-l)">
+      <div class="kpi-target-n" style="color:var(--purple-d)">≥ 4.0</div>
+      <div class="kpi-target-l" style="color:var(--purple-d)">คะแนน Genwing เฉลี่ย<br><span style="font-size:9px">(จากปัจจุบัน 3.43)</span></div>
+    </div>
+    <div class="kpi-target" style="background:var(--green-l)">
+      <div class="kpi-target-n" style="color:var(--green-d)">18%</div>
+      <div class="kpi-target-l" style="color:var(--green-d)">Submit-Ready Rate<br><span style="font-size:9px">(ปัจจุบัน 5/28 คน)</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TIMELINE ────────────────────────────────────────────────────────────── -->
+<div class="card" style="background:var(--navy);border-color:var(--navy);margin-bottom:0">
+  <div class="card-title" style="color:var(--teal)">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    Timeline การดำเนินงาน — มิถุนายน 2569
+  </div>
+  <div class="tl-grid">
+    <div class="tl-col">
+      <div class="tl-head" style="background:var(--red)">สัปดาห์ที่ 1</div>
+      <div class="tl-body">
+        <div class="tl-item">Genwing Clinic 2 รอบ (Beginner + Advanced)</div>
+        <div class="tl-item">ส่งมอบ Sales Kit ครบชุด</div>
+        <div class="tl-item">Pipeline Review ครั้งแรก</div>
+      </div>
+    </div>
+    <div class="tl-col">
+      <div class="tl-head" style="background:var(--amber)">สัปดาห์ที่ 2</div>
+      <div class="tl-body">
+        <div class="tl-item">PK Workshop (SBA2 ทีม 2)</div>
+        <div class="tl-item">ส่ง Matching Guide ทุกทีม</div>
+        <div class="tl-item">เริ่ม Coaching 5 คนแรก</div>
+      </div>
+    </div>
+    <div class="tl-col">
+      <div class="tl-head" style="background:var(--blue)">สัปดาห์ที่ 3</div>
+      <div class="tl-body">
+        <div class="tl-item">Role Play + Buddy Coaching</div>
+        <div class="tl-item">Pipeline Review ครั้งที่ 2</div>
+        <div class="tl-item">ติดตาม Quick Win cases</div>
+      </div>
+    </div>
+    <div class="tl-col">
+      <div class="tl-head" style="background:var(--green)">สิ้นเดือน</div>
+      <div class="tl-body">
+        <div class="tl-item">Survey รอบ 2 วัดผลพัฒนาการ</div>
+        <div class="tl-item">ปิด ≥ 15 cases</div>
+        <div class="tl-item">ประกาศ Success Story</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── FOOTER ─────────────────────────────────────────────────────────────── -->
+<div class="db-footer">
+  <span>ข้อมูลจากแบบสำรวจ OL Readiness · 28 คน · 9 ทีม · KKP Financial Group</span>
+  <span>จัดทำโดย ทีม Sales Development · มิถุนายน 2569</span>
+</div>
+
+</div><!-- .page -->
+
+<!-- ── EDITOR FAB ─────────────────────────────────────────────────────────── -->
+<button class="editor-fab" onclick="openEditor()">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+  อัปเดตข้อมูล
+</button>
+
+<!-- ── OVERLAY ────────────────────────────────────────────────────────────── -->
+<div class="editor-overlay" id="edOverlay" onclick="closeEditor()"></div>
+
+<!-- ── EDITOR PANEL ───────────────────────────────────────────────────────── -->
+<div class="editor-panel" id="edPanel">
+  <div class="ep-header">
+    <div class="ep-title">✏️ อัปเดตข้อมูลสัปดาห์นี้</div>
+    <button class="ep-close" onclick="closeEditor()">×</button>
+  </div>
+  <div class="ep-body">
+
+    <!-- UPLOAD EXCEL -->
+    <div class="ep-section">
+      <div class="ep-section-title">📂 อัปโหลดไฟล์ Excel <span class="ep-badge">แนะนำ</span></div>
+      <div class="upload-zone" id="uploadZone"
+        ondragover="event.preventDefault();this.classList.add('drag')"
+        ondragleave="this.classList.remove('drag')"
+        ondrop="handleDrop(event)">
+        <input type="file" accept=".xlsx,.xls" onchange="handleFile(this.files[0])">
+        <div class="upload-icon">📊</div>
+        <div class="upload-title">วาง หรือ คลิกเพื่อเลือกไฟล์</div>
+        <div class="upload-sub">รองรับ OL_Pipeline_Template.xlsx · ข้อมูลจะอัปเดต Dashboard อัตโนมัติ</div>
+      </div>
+      <div class="upload-status" id="uploadStatus"></div>
+      <div class="xl-preview" id="xlPreview"></div>
+      <div style="font-size:10px;color:var(--muted);margin-top:6px">
+        💡 ระบบจะอ่าน Sheet <strong>📊 Pipeline Overview</strong> โดยอัตโนมัติ<br>
+        คอลัมน์ที่ใช้: ชื่อ (A) · ทีม (B) · PK (J) · Genwing (K) · มั่นใจ (L) · Pipeline Status (M)
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:8px;margin:-6px 0 16px">
+      <div style="flex:1;height:.5px;background:var(--border)"></div>
+      <span style="font-size:10px;color:var(--muted)">หรือกรอกเองด้านล่าง</span>
+      <div style="flex:1;height:.5px;background:var(--border)"></div>
+    </div>
+
+    <!-- สัปดาห์ -->
+    <div class="ep-section">
+      <div class="ep-section-title">ข้อมูลทั่วไป</div>
+      <div class="ep-row">
+        <div class="ep-field">
+          <label class="ep-label">สัปดาห์ที่</label>
+          <input class="ep-input" id="ei-week" type="number" min="1" max="5" value="3">
+        </div>
+        <div class="ep-field">
+          <label class="ep-label">เดือน</label>
+          <select class="ep-input" id="ei-month">
+            <option>มกราคม</option><option>กุมภาพันธ์</option><option>มีนาคม</option>
+            <option>เมษายน</option><option>พฤษภาคม</option><option selected>มิถุนายน</option>
+            <option>กรกฎาคม</option><option>สิงหาคม</option><option>กันยายน</option>
+            <option>ตุลาคม</option><option>พฤศจิกายน</option><option>ธันวาคม</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- KPI -->
+    <div class="ep-section">
+      <div class="ep-section-title">KPI หลัก 4 ตัว</div>
+      <div class="ep-row">
+        <div class="ep-field">
+          <label class="ep-label">🟢 พร้อม Submit เร็ว</label>
+          <input class="ep-input" id="ei-ready" type="number" min="0" value="5">
+        </div>
+        <div class="ep-field">
+          <label class="ep-label">🔵 กำลังดำเนินการ</label>
+          <input class="ep-input" id="ei-wip" type="number" min="0" value="10">
+        </div>
+      </div>
+      <div class="ep-row">
+        <div class="ep-field">
+          <label class="ep-label">🟡 รอ / ติดเงื่อนไข</label>
+          <input class="ep-input" id="ei-wait" type="number" min="0" value="10">
+        </div>
+        <div class="ep-field">
+          <label class="ep-label">🔴 ยังไม่มีลูกค้า</label>
+          <input class="ep-input" id="ei-none" type="number" min="0" value="3">
+        </div>
+      </div>
+      <div class="ep-row">
+        <div class="ep-field">
+          <label class="ep-label">Trend พร้อม Submit</label>
+          <input class="ep-input" id="ei-chg-ready" type="text" placeholder="เช่น ▲ +2 จากสัปดาห์ก่อน" value="▲ +2 จากสัปดาห์ก่อน">
+        </div>
+        <div class="ep-field">
+          <label class="ep-label">Trend รอ/ติดเงื่อนไข</label>
+          <input class="ep-input" id="ei-chg-wait" type="text" placeholder="เช่น ▼ −3 แก้ไขได้แล้ว" value="▼ −3 แก้ไขได้แล้ว">
+        </div>
+      </div>
+    </div>
+
+    <!-- คะแนนเฉลี่ย -->
+    <div class="ep-section">
+      <div class="ep-section-title">คะแนนความพร้อมเฉลี่ย (1–5)</div>
+      <div class="ep-row" style="grid-template-columns:1fr 1fr 1fr">
+        <div class="ep-field">
+          <label class="ep-label">Product Knowledge</label>
+          <input class="ep-input" id="ei-pk" type="number" min="1" max="5" step="0.01" value="3.71">
+        </div>
+        <div class="ep-field">
+          <label class="ep-label">Genwing System</label>
+          <input class="ep-input" id="ei-gw" type="number" min="1" max="5" step="0.01" value="3.43">
+        </div>
+        <div class="ep-field">
+          <label class="ep-label">ความมั่นใจ</label>
+          <input class="ep-input" id="ei-cf" type="number" min="1" max="5" step="0.01" value="3.79">
+        </div>
+      </div>
+    </div>
+
+    <!-- ข้อมูลรายทีม -->
+    <div class="ep-section">
+      <div class="ep-section-title">ข้อมูลรายทีม <span class="ep-badge">คลิกเพื่อขยาย</span></div>
+      <div id="teamEditors"></div>
+    </div>
+
+  </div>
+  <div class="ep-footer" style="flex-direction:column">
+    <div style="display:flex;gap:8px">
+      <button class="ep-btn ep-btn-save" onclick="applyChanges()">✅ อัปเดต Dashboard</button>
+      <button class="ep-btn ep-btn-print" onclick="window.print()">🖨️ พิมพ์ PDF</button>
+    </div>
+    <div class="ep-saved" id="epSaved">✅ อัปเดตแล้ว — Dashboard แสดงข้อมูลล่าสุด</div>
+  </div>
+</div>
+
+<script>
+// ── DATA ────────────────────────────────────────────────────────────────────
+let teams = [
+  {name:'Home Loan Acquiring 1', n:7,  ready:0, wip:3,  wait:4, pk:3.6, gw:3.1, cf:3.9, status:'เร่งด่วน'},
+  {name:'Home Loan Acquiring 2', n:6,  ready:2, wip:2,  wait:2, pk:3.8, gw:3.5, cf:3.7, status:'ติดตาม'},
+  {name:'Home Loan Acquiring 3', n:1,  ready:0, wip:0,  wait:0, pk:3.0, gw:3.0, cf:3.0, status:'เร่งด่วน'},
+  {name:'SBA 1 ทีม 1',          n:1,  ready:0, wip:0,  wait:1, pk:4.0, gw:4.0, cf:4.0, status:'ติดตาม'},
+  {name:'SBA 1 ทีม 2',          n:2,  ready:1, wip:0,  wait:0, pk:4.0, gw:4.0, cf:4.0, status:'ปกติ'},
+  {name:'SBA 1 ทีม 3',          n:1,  ready:0, wip:1,  wait:0, pk:3.0, gw:3.0, cf:3.0, status:'ติดตาม'},
+  {name:'SBA 1 ทีม 4',          n:4,  ready:1, wip:3,  wait:0, pk:4.0, gw:3.3, cf:4.3, status:'ปกติ'},
+  {name:'SBA 2 ทีม 1',          n:3,  ready:0, wip:2,  wait:1, pk:4.0, gw:4.0, cf:4.0, status:'ติดตาม'},
+  {name:'SBA 2 ทีม 2',          n:3,  ready:1, wip:1,  wait:1, pk:3.3, gw:3.3, cf:3.3, status:'ติดตาม'},
+];
+
+// ── HELPERS ──────────────────────────────────────────────────────────────────
+function scoreColor(v){return v>=4?'var(--green-d)':v>=3.5?'var(--amber-d)':'var(--red-d)';}
+function statusStyle(s){
+  return s==='ปกติ'
+    ? {sc:'var(--green-l)',fc:'var(--green-d)'}
+    : s==='เร่งด่วน'
+    ? {sc:'var(--red-l)',  fc:'var(--red-d)'}
+    : {sc:'var(--amber-l)',fc:'var(--amber-d)'};
+}
+function autoStatus(t){
+  const avg=(t.pk+t.gw+t.cf)/3;
+  if(avg<3.5||t.ready===0&&t.n>0) return 'เร่งด่วน';
+  if(t.ready/t.n>=0.3) return 'ปกติ';
+  return 'ติดตาม';
+}
+function v1(id){return parseFloat(document.getElementById(id).value)||0;}
+function vi(id){return parseInt(document.getElementById(id).value)||0;}
+function vs(id){return document.getElementById(id).value.trim();}
+
+// ── RENDER TABLE ─────────────────────────────────────────────────────────────
+function renderTable(){
+  const tbody = document.getElementById('teamBody');
+  tbody.innerHTML='';
+  let totReady=0,totWip=0,totWait=0,totN=0;
+  let sumPk=0,sumGw=0,sumCf=0;
+
+  teams.forEach(t=>{
+    const pct=t.n>0?Math.round((t.ready/t.n)*100):0;
+    const {sc,fc}=statusStyle(t.status);
+    totReady+=t.ready; totWip+=t.wip; totWait+=t.wait; totN+=t.n;
+    sumPk+=t.pk*t.n; sumGw+=t.gw*t.n; sumCf+=t.cf*t.n;
+    const hl=['Home Loan Acquiring 1','Home Loan Acquiring 2','Home Loan Acquiring 3'];
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td style="font-weight:${hl.includes(t.name)?'600':'400'}">${t.name}</td>
+      <td style="color:var(--text-m)">${t.n}</td>
+      <td style="color:var(--green-d);font-weight:600">${t.ready>0?t.ready:'—'}</td>
+      <td style="color:var(--blue-d);font-weight:600">${t.wip>0?t.wip:'—'}</td>
+      <td style="color:var(--amber-d);font-weight:600">${t.wait>0?t.wait:'—'}</td>
+      <td style="color:${scoreColor(t.pk)};font-weight:600">${t.pk.toFixed(1)}</td>
+      <td style="color:${scoreColor(t.gw)};font-weight:600">${t.gw.toFixed(1)}</td>
+      <td style="color:${scoreColor(t.cf)};font-weight:600">${t.cf.toFixed(1)}</td>
+      <td>
+        <div class="pct-bar-wrap">
+          <div class="pct-bar"><div class="pct-fill" style="width:${pct}%"></div></div>
+          <span style="font-size:10px;color:var(--green-d);font-weight:600">${pct}%</span>
+        </div>
+      </td>
+      <td><span class="status-pill" style="background:${sc};color:${fc}">${t.status}</span></td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  // total
+  const wPk=(sumPk/totN).toFixed(1), wGw=(sumGw/totN).toFixed(1), wCf=(sumCf/totN).toFixed(1);
+  const tot=document.createElement('tr');
+  tot.innerHTML=`
+    <td>รวมทั้งหมด</td><td>${totN}</td>
+    <td style="color:var(--green-l);font-weight:600">${totReady}</td>
+    <td style="color:#BFDBFE;font-weight:600">${totWip}</td>
+    <td style="color:#FDE68A;font-weight:600">${totWait}</td>
+    <td>${wPk}</td><td style="color:#FBBF24">${wGw}</td><td>${wCf}</td>
+    <td></td><td></td>`;
+  tbody.appendChild(tot);
+}
+
+// ── RENDER KPI CARDS ─────────────────────────────────────────────────────────
+function renderKPI(ready,wip,wait,none,chgReady,chgWait){
+  const total=ready+wip+wait+none;
+  document.querySelector('.kpi-row .kpi:nth-child(1) .kpi-n').textContent=ready;
+  document.querySelector('.kpi-row .kpi:nth-child(1) .kpi-chg').textContent=chgReady;
+  document.querySelector('.kpi-row .kpi:nth-child(2) .kpi-n').textContent=wip;
+  document.querySelector('.kpi-row .kpi:nth-child(3) .kpi-n').textContent=wait;
+  document.querySelector('.kpi-row .kpi:nth-child(3) .kpi-chg').textContent=chgWait;
+  document.querySelector('.kpi-row .kpi:nth-child(4) .kpi-n').textContent=none;
+
+  // funnel bars
+  const bars=document.querySelectorAll('.bar-fill');
+  bars[0].style.width=(ready/total*100)+'%';
+  bars[1].style.width=(wip/total*100)+'%';
+  bars[2].style.width=(wait/total*100)+'%';
+  bars[3].style.width=(none/total*100)+'%';
+  document.querySelectorAll('.bar-val')[0].textContent=ready;
+  document.querySelectorAll('.bar-val')[1].textContent=wip;
+  document.querySelectorAll('.bar-val')[2].textContent=wait;
+  document.querySelectorAll('.bar-val')[3].textContent=none;
+
+  // submit-ready rate
+  const rate=Math.round(ready/total*100);
+  document.querySelector('.funnel-footer strong').textContent=rate+'%';
+  document.querySelector('.funnel-footer').innerHTML=
+    `<span>ทั้งหมด ${total} คน</span><span>Submit-Ready Rate <strong>${rate}%</strong> (${ready}/${total})</span>`;
+}
+
+// ── RENDER SCORES ────────────────────────────────────────────────────────────
+function renderScores(pk,gw,cf){
+  const scores=[
+    {val:pk,fillEl:document.querySelectorAll('.score-fill')[0],numEl:document.querySelectorAll('.score-num')[0],dotsEl:document.querySelectorAll('.score-dots')[0],color:'var(--green)'},
+    {val:gw,fillEl:document.querySelectorAll('.score-fill')[1],numEl:document.querySelectorAll('.score-num')[1],dotsEl:document.querySelectorAll('.score-dots')[1],color:'var(--amber)'},
+    {val:cf,fillEl:document.querySelectorAll('.score-fill')[2],numEl:document.querySelectorAll('.score-num')[2],dotsEl:document.querySelectorAll('.score-dots')[2],color:'var(--teal)'},
+  ];
+  const cols=['var(--green-d)','var(--amber-d)','var(--teal-d)'];
+  scores.forEach((s,i)=>{
+    s.fillEl.style.width=(s.val/5*100)+'%';
+    s.numEl.textContent=s.val.toFixed(2);
+    s.numEl.style.color=cols[i];
+    const dots=s.dotsEl.querySelectorAll('.score-dot');
+    dots.forEach((d,di)=>{
+      d.classList.toggle('on',di<Math.round(s.val));
+      d.style.color=s.color;
+    });
+  });
+  // alert: lowest score label
+  const lowest=Math.min(pk,gw,cf);
+  const lowestName=lowest===pk?'Product Knowledge':lowest===gw?'Genwing System':'ความมั่นใจ';
+  const alertTitle=document.querySelector('.alert-box .alert-title');
+  if(alertTitle) alertTitle.textContent=lowestName+' คือจุดอ่อนอันดับ 1';
+}
+
+// ── WEEK HEADER ──────────────────────────────────────────────────────────────
+function renderHeader(week,month){
+  document.querySelector('.week-pill').textContent='📅 สัปดาห์ที่ '+week+' · '+month+' 2569';
+}
+
+// ── EDITOR: BUILD TEAM INPUTS ────────────────────────────────────────────────
+function buildTeamEditors(){
+  const container=document.getElementById('teamEditors');
+  container.innerHTML='';
+  teams.forEach((t,i)=>{
+    const div=document.createElement('div');
+    div.className='team-editor';
+    div.innerHTML=`
+      <div class="team-ed-head" onclick="toggleTeam(${i})">
+        <span>${t.name}</span>
+        <span id="ted-status-${i}" style="font-size:10px">${t.status} ▾</span>
+      </div>
+      <div class="team-ed-body" id="ted-body-${i}">
+        <div class="team-ed-grid">
+          <div class="ep-field">
+            <label class="ep-label">จำนวน (n)</label>
+            <input class="ep-input" id="ted-n-${i}" type="number" min="0" value="${t.n}">
+          </div>
+          <div class="ep-field">
+            <label class="ep-label">พร้อม Submit</label>
+            <input class="ep-input" id="ted-ready-${i}" type="number" min="0" value="${t.ready}">
+          </div>
+          <div class="ep-field">
+            <label class="ep-label">WIP</label>
+            <input class="ep-input" id="ted-wip-${i}" type="number" min="0" value="${t.wip}">
+          </div>
+          <div class="ep-field">
+            <label class="ep-label">รอ/ติดเงื่อนไข</label>
+            <input class="ep-input" id="ted-wait-${i}" type="number" min="0" value="${t.wait}">
+          </div>
+          <div class="ep-field">
+            <label class="ep-label">คะแนน PK</label>
+            <input class="ep-input" id="ted-pk-${i}" type="number" min="1" max="5" step="0.1" value="${t.pk}">
+          </div>
+          <div class="ep-field">
+            <label class="ep-label">คะแนน Genwing</label>
+            <input class="ep-input" id="ted-gw-${i}" type="number" min="1" max="5" step="0.1" value="${t.gw}">
+          </div>
+          <div class="ep-field">
+            <label class="ep-label">คะแนน มั่นใจ</label>
+            <input class="ep-input" id="ted-cf-${i}" type="number" min="1" max="5" step="0.1" value="${t.cf}">
+          </div>
+        </div>
+        <div class="team-ed-grid-2">
+          <div class="ep-field">
+            <label class="ep-label">สถานะ</label>
+            <select class="ep-input" id="ted-status-${i}">
+              <option ${t.status==='เร่งด่วน'?'selected':''}>เร่งด่วน</option>
+              <option ${t.status==='ติดตาม'?'selected':''}>ติดตาม</option>
+              <option ${t.status==='ปกติ'?'selected':''}>ปกติ</option>
+            </select>
+          </div>
+          <div class="ep-field" style="justify-content:flex-end;padding-top:16px">
+            <button onclick="autoFillStatus(${i})" style="font-size:10px;padding:6px 10px;border:.5px solid var(--border);background:var(--off);border-radius:var(--r);cursor:pointer;font-family:var(--font)">⚡ คำนวณ status อัตโนมัติ</button>
+          </div>
+        </div>
+      </div>`;
+    container.appendChild(div);
+  });
+}
+
+function toggleTeam(i){
+  const body=document.getElementById('ted-body-'+i);
+  body.classList.toggle('open');
+}
+
+function autoFillStatus(i){
+  const n=vi('ted-n-'+i)||teams[i].n;
+  const ready=vi('ted-ready-'+i);
+  const pk=v1('ted-pk-'+i);
+  const gw=v1('ted-gw-'+i);
+  const cf=v1('ted-cf-'+i);
+  const avg=(pk+gw+cf)/3;
+  let s='ติดตาม';
+  if(avg<3.5||ready===0) s='เร่งด่วน';
+  else if(ready/n>=0.3) s='ปกติ';
+  document.getElementById('ted-status-'+i).value=s;
+  document.getElementById('ted-status-'+i).style.color=
+    s==='เร่งด่วน'?'var(--red-d)':s==='ปกติ'?'var(--green-d)':'var(--amber-d)';
+}
+
+// ── OPEN / CLOSE ─────────────────────────────────────────────────────────────
+function openEditor(){
+  buildTeamEditors();
+  document.getElementById('edPanel').classList.add('open');
+  document.getElementById('edOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeEditor(){
+  document.getElementById('edPanel').classList.remove('open');
+  document.getElementById('edOverlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+// ── APPLY ────────────────────────────────────────────────────────────────────
+function applyChanges(){
+  // header
+  renderHeader(vi('ei-week')||3, vs('ei-month')||'มิถุนายน');
+
+  // kpi
+  const r=vi('ei-ready'), w=vi('ei-wip'), wt=vi('ei-wait'), n=vi('ei-none');
+  renderKPI(r,w,wt,n, vs('ei-chg-ready'), vs('ei-chg-wait'));
+
+  // scores
+  renderScores(v1('ei-pk'),v1('ei-gw'),v1('ei-cf'));
+
+  // teams
+  teams.forEach((t,i)=>{
+    t.n     = vi('ted-n-'+i)||t.n;
+    t.ready = vi('ted-ready-'+i);
+    t.wip   = vi('ted-wip-'+i);
+    t.wait  = vi('ted-wait-'+i);
+    t.pk    = v1('ted-pk-'+i)||t.pk;
+    t.gw    = v1('ted-gw-'+i)||t.gw;
+    t.cf    = v1('ted-cf-'+i)||t.cf;
+    t.status= document.getElementById('ted-status-'+i).value;
+  });
+  renderTable();
+
+  // show saved
+  const saved=document.getElementById('epSaved');
+  saved.classList.add('show');
+  setTimeout(()=>saved.classList.remove('show'),3000);
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+renderTable();
+
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+// ── EXCEL COLUMN MAP ─────────────────────────────────────────────────────────
+// Pipeline Overview sheet (from our template):
+// Row 5 = headers, Row 6+ = data
+// A=ชื่อผู้ขาย  B=ทีม  C=ตำแหน่ง  D=สถานะลูกค้า  E=จำนวนลูกค้า
+// F=วัตถุประสงค์  G=ผลิตภัณฑ์  H=แผนเข้าพบ  I=แผน Submit
+// J=PK  K=Genwing  L=มั่นใจ  M=Pipeline Status  N=สาเหตุ
+
+const TEAM_NAMES = [
+  'Home Loan Acquiring 1','Home Loan Acquiring 2','Home Loan Acquiring 3',
+  'Small Business Acquiring 1 ทีม 1','Small Business Acquiring 1 ทีม 2',
+  'Small Business Acquiring 1 ทีม 3','Small Business Acquiring 1 ทีม 4',
+  'Small Business Acquiring 2 ทีม 1','Small Business Acquiring 2 ทีม 2',
+];
+// Short display names mapped to full names
+const TEAM_SHORT = {
+  'Home Loan Acquiring 1':'Home Loan Acquiring 1',
+  'Home Loan Acquiring 2':'Home Loan Acquiring 2',
+  'Home Loan Acquiring 3':'Home Loan Acquiring 3',
+  'Small Business Acquiring 1 ทีม 1':'SBA 1 ทีม 1',
+  'Small Business Acquiring 1 ทีม 2':'SBA 1 ทีม 2',
+  'Small Business Acquiring 1 ทีม 3':'SBA 1 ทีม 3',
+  'Small Business Acquiring 1 ทีม 4':'SBA 1 ทีม 4',
+  'Small Business Acquiring 2 ทีม 1':'SBA 2 ทีม 1',
+  'Small Business Acquiring 2 ทีม 2':'SBA 2 ทีม 2',
+};
+
+const PIPE_STATUS = {
+  'พร้อม Submit เร็ว':'พร้อม Submit เร็ว',
+  'กำลังดำเนินการ':'กำลังดำเนินการ',
+  'รอ/ติดเงื่อนไข':'รอ/ติดเงื่อนไข',
+  'ยังไม่มีลูกค้า':'ยังไม่มีลูกค้า',
+};
+
+function handleDrop(e){
+  e.preventDefault();
+  document.getElementById('uploadZone').classList.remove('drag');
+  const f = e.dataTransfer.files[0];
+  if(f) handleFile(f);
+}
+
+function handleFile(file){
+  if(!file) return;
+  const ext = file.name.split('.').pop().toLowerCase();
+  if(!['xlsx','xls'].includes(ext)){
+    showUploadStatus('err','❌ รองรับเฉพาะ .xlsx และ .xls เท่านั้น');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = e => parseExcel(e.target.result, file.name);
+  reader.readAsArrayBuffer(file);
+}
+
+function parseExcel(buffer, filename){
+  try{
+    const wb = XLSX.read(buffer, {type:'array', cellDates:true});
+
+    // Find Pipeline Overview sheet (try multiple name variants)
+    let sheetName = wb.SheetNames.find(s =>
+      s.includes('Pipeline Overview') || s.includes('Pipeline') || s === '📊 Pipeline Overview'
+    );
+
+    if(!sheetName){
+      // Fallback: try first sheet that has Pipeline-like data
+      sheetName = wb.SheetNames[0];
+      showUploadStatus('err',
+        `⚠️ ไม่พบ Sheet "Pipeline Overview" — กำลังลองอ่าน "${sheetName}" แทน`);
+    }
+
+    const ws = wb.Sheets[sheetName];
+    // Convert to array of arrays (raw values)
+    const rows = XLSX.utils.sheet_to_json(ws, {header:1, defval:''});
+
+    // Find header row — look for row containing "ทีม" or "Pipeline Status"
+    let headerRow = -1;
+    for(let i=0; i<Math.min(rows.length,10); i++){
+      const r = rows[i].map(c=>String(c||''));
+      if(r.some(c=>c.includes('Pipeline Status')||c.includes('ทีม')&&c.includes('ตำแหน่ง'))){
+        headerRow = i; break;
+      }
+    }
+    // If not found, assume row index 4 (row 5 in Excel = template default)
+    if(headerRow<0) headerRow = 4;
+
+    const headers = rows[headerRow].map(c=>String(c||'').trim());
+    // Map column names to indices
+    function findCol(keywords){
+      for(let k of keywords){
+        const idx = headers.findIndex(h=>h.includes(k));
+        if(idx>=0) return idx;
+      }
+      // Fallback to positional (A=0,B=1,...,M=12)
+      return -1;
+    }
+    const COL = {
+      name:   findCol(['ชื่อ-สกุล','ชื่อผู้ขาย','ชื่อ']) !== -1 ? findCol(['ชื่อ-สกุล','ชื่อผู้ขาย','ชื่อ']) : 0,
+      team:   findCol(['ทีม']) !== -1 ? findCol(['ทีม']) : 1,
+      pk:     findCol(['Product Knowledge','PK','คะแนน Product']) !== -1 ? findCol(['Product Knowledge','PK','คะแนน Product']) : 11,
+      gw:     findCol(['Genwing System','Genwing','คะแนน Genwing']) !== -1 ? findCol(['Genwing System','Genwing','คะแนน Genwing']) : 12,
+      cf:     findCol(['ความมั่นใจ','มั่นใจ']) !== -1 ? findCol(['ความมั่นใจ','มั่นใจ']) : 13,
+      pipe:   findCol(['Pipeline Status','Pipeline']) !== -1 ? findCol(['Pipeline Status','Pipeline']) : 14,
+    };
+
+    // Collect data rows (after header, skip empty rows and summary rows)
+    const dataRows = rows.slice(headerRow+1).filter(r=>{
+      const name = String(r[COL.name]||'').trim();
+      const team = String(r[COL.team]||'').trim();
+      return name && team && name!=='สรุปรวม' && !name.startsWith('#');
+    });
+
+    if(dataRows.length === 0){
+      showUploadStatus('err','❌ ไม่พบข้อมูลในไฟล์ กรุณาตรวจสอบว่ากรอกข้อมูลใน Pipeline Overview แล้ว');
+      return;
+    }
+
+    // Aggregate by team
+    const teamMap = {};
+    TEAM_NAMES.forEach(t => {
+      const displayName = TEAM_SHORT[t] || t;
+      teamMap[t] = {name:displayName, fullName:t, n:0, ready:0, wip:0, wait:0, noList:0,
+        pkSum:0, gwSum:0, cfSum:0, pkCount:0};
+    });
+
+    dataRows.forEach(r=>{
+      const rawTeam = String(r[COL.team]||'').trim();
+      // Find matching team (partial match)
+      const matchedTeam = TEAM_NAMES.find(t=>
+        rawTeam===t ||
+        rawTeam.includes(t) ||
+        t.includes(rawTeam) ||
+        // Handle short names like "HL1", "SBA1T1"
+        (t.includes('Home Loan Acquiring 1') && (rawTeam.includes('HL1')||rawTeam.includes('Home Loan 1'))) ||
+        (t.includes('Home Loan Acquiring 2') && (rawTeam.includes('HL2')||rawTeam.includes('Home Loan 2'))) ||
+        (t.includes('Home Loan Acquiring 3') && (rawTeam.includes('HL3')||rawTeam.includes('Home Loan 3')))
+      );
+      if(!matchedTeam) return;
+
+      const td = teamMap[matchedTeam];
+      td.n++;
+
+      const pk = parseFloat(r[COL.pk])||0;
+      const gw = parseFloat(r[COL.gw])||0;
+      const cf = parseFloat(r[COL.cf])||0;
+      if(pk>0){td.pkSum+=pk; td.pkCount++;}
+      if(gw>0) td.gwSum+=gw;
+      if(cf>0) td.cfSum+=cf;
+
+      const pipe = String(r[COL.pipe]||'').trim();
+      if(pipe==='พร้อม Submit เร็ว') td.ready++;
+      else if(pipe==='กำลังดำเนินการ') td.wip++;
+      else if(pipe==='รอ/ติดเงื่อนไข') td.wait++;
+      else if(pipe==='ยังไม่มีลูกค้า') td.noList++;
+    });
+
+    // Build new teams array
+    const newTeams = TEAM_NAMES.map(t=>{
+      const td = teamMap[t];
+      const cnt = td.pkCount||1;
+      const pk = td.pkCount>0 ? Math.round(td.pkSum/cnt*10)/10 : 0;
+      const gw = td.pkCount>0 ? Math.round(td.gwSum/cnt*10)/10 : 0;
+      const cf = td.pkCount>0 ? Math.round(td.cfSum/cnt*10)/10 : 0;
+      const avg = (pk+gw+cf)/3;
+      let status = 'ติดตาม';
+      if(td.n===0) status='ติดตาม';
+      else if(avg<3.5||td.ready===0) status='เร่งด่วน';
+      else if(td.ready/td.n>=0.3) status='ปกติ';
+      return {name:td.name, n:td.n, ready:td.ready, wip:td.wip,
+              wait:td.wait+td.noList, pk, gw, cf, status};
+    });
+
+    // Totals for KPI
+    const totReady = newTeams.reduce((a,t)=>a+t.ready,0);
+    const totWip   = newTeams.reduce((a,t)=>a+t.wip,0);
+    const totWait  = newTeams.reduce((a,t)=>a+(t.wait),0);
+    const totNone  = newTeams.filter(t=>t.n===0).length; // teams with no data yet
+    const totN     = newTeams.reduce((a,t)=>a+t.n,0);
+
+    // Weighted avg scores
+    const allRows = newTeams.filter(t=>t.n>0);
+    const avgPk = allRows.length ? Math.round(allRows.reduce((a,t)=>a+t.pk*t.n,0)/totN*100)/100 : 0;
+    const avgGw = allRows.length ? Math.round(allRows.reduce((a,t)=>a+t.gw*t.n,0)/totN*100)/100 : 0;
+    const avgCf = allRows.length ? Math.round(allRows.reduce((a,t)=>a+t.cf*t.n,0)/totN*100)/100 : 0;
+
+    // Count pipeline none properly
+    const realNone = newTeams.reduce((a,t)=>a+(t.wait),0) - (totWait);
+
+    // Apply to dashboard
+    teams = newTeams;
+    renderTable();
+    renderKPI(totReady, totWip, totWait, 0, '(จาก Excel)', '(จาก Excel)');
+    renderScores(avgPk||3.71, avgGw||3.43, avgCf||3.79);
+
+    // Also update editor inputs
+    document.getElementById('ei-ready').value = totReady;
+    document.getElementById('ei-wip').value   = totWip;
+    document.getElementById('ei-wait').value  = totWait;
+    document.getElementById('ei-pk').value    = (avgPk||3.71).toFixed(2);
+    document.getElementById('ei-gw').value    = (avgGw||3.43).toFixed(2);
+    document.getElementById('ei-cf').value    = (avgCf||3.79).toFixed(2);
+
+    // Preview
+    showPreview(newTeams, totN, dataRows.length, filename);
+    showUploadStatus('ok',
+      `✅ อ่านข้อมูลสำเร็จ — ${dataRows.length} คน · ${newTeams.filter(t=>t.n>0).length} ทีม จาก "${filename}"`);
+
+  } catch(err){
+    console.error(err);
+    showUploadStatus('err','❌ เกิดข้อผิดพลาด: '+err.message);
+  }
+}
+
+function showUploadStatus(type, msg){
+  const el = document.getElementById('uploadStatus');
+  el.className = 'upload-status '+type;
+  el.textContent = msg;
+}
+
+function showPreview(teams, totN, rowCount, fname){
+  const el = document.getElementById('xlPreview');
+  const teamsWithData = teams.filter(t=>t.n>0);
+  let html = `<div style="font-weight:700;color:var(--text);margin-bottom:6px">พรีวิว: ${rowCount} แถว จาก ${fname}</div>`;
+  teamsWithData.forEach(t=>{
+    const sc = t.status==='เร่งด่วน'?'var(--red-d)':t.status==='ปกติ'?'var(--green-d)':'var(--amber-d)';
+    html+=`<div class="xl-row">
+      <span class="xl-team">${t.name}</span>
+      <span class="xl-stat">${t.n} คน</span>
+      <span class="xl-stat" style="color:var(--green-d)">พร้อม ${t.ready}</span>
+      <span class="xl-stat" style="color:var(--blue-d)">WIP ${t.wip}</span>
+      <span class="xl-stat" style="color:var(--amber-d)">รอ ${t.wait}</span>
+      <span class="xl-stat" style="color:${sc};font-weight:600">${t.status}</span>
+    </div>`;
+  });
+  el.innerHTML = html;
+  el.classList.add('show');
+}
+</script>
+</body>
+</html>
