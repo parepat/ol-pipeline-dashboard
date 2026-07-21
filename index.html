@@ -67,11 +67,11 @@ body{font-family:var(--f);font-size:12px;color:var(--text);background:var(--off)
 .ss{display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:500;color:#fff;white-space:nowrap;overflow:hidden}
 
 /* table */
-.tbl{width:100%;border-collapse:collapse;table-layout:fixed;font-size:10px}
-.tbl th{background:var(--teal);color:#fff;font-weight:500;padding:5px 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tbl th:first-child{text-align:left;width:28%}
+.tbl{width:100%;border-collapse:collapse;font-size:10px}
+.tbl th{background:var(--teal);color:#fff;font-weight:500;padding:5px 6px;white-space:nowrap}
+.tbl th:first-child{text-align:left}
 .tbl th:not(:first-child){text-align:center}
-.tbl td{padding:5px 5px;border-bottom:.5px solid var(--border);vertical-align:middle;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tbl td{padding:5px 6px;border-bottom:.5px solid var(--border);vertical-align:middle;white-space:nowrap}
 .tbl td:first-child{text-align:left}
 .tbl td:not(:first-child){text-align:center}
 .tbl tr:nth-child(even) td{background:var(--off)}
@@ -113,9 +113,9 @@ body{font-family:var(--f);font-size:12px;color:var(--text);background:var(--off)
 .uf-tog:hover{color:#fff}
 .uf-bd{padding:11px 13px}
 .uf-bd.hide{display:none}
-.uz{border:1.5px dashed var(--teal);border-radius:var(--r);padding:13px 10px;text-align:center;cursor:pointer;background:var(--teal-l);position:relative;transition:background .15s}
+.uz{border:1.5px dashed var(--teal);border-radius:var(--r);padding:13px 10px;text-align:center;cursor:pointer;background:var(--teal-l);position:relative;transition:background .15s;overflow:hidden}
 .uz:hover,.uz.drag{background:#C7EFE4;border-style:solid}
-.uz input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.uz input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;z-index:10;font-size:0}
 .uz-ic{font-size:20px;margin-bottom:3px;color:var(--teal-d)}
 .uz-t{font-size:11px;font-weight:500;color:var(--teal-d);margin-bottom:2px}
 .uz-s{font-size:9px;color:var(--teal-d);opacity:.75}
@@ -349,8 +349,11 @@ function toggleUF(){
   var h=b.classList.toggle('hide');t.textContent=h?'▸':'▾';
 }
 function onDrop(e){
-  e.preventDefault();document.getElementById('uz').classList.remove('drag');
+  e.preventDefault();
+  console.log("[Dashboard] onDrop fired, files:", e.dataTransfer.files.length);
+  document.getElementById('uz').classList.remove('drag');
   if(e.dataTransfer.files[0]) onFile(e.dataTransfer.files[0]);
+  else console.warn("[Dashboard] No files in drop event");
 }
 function onFile(f){
   if(!f) return;
@@ -373,6 +376,7 @@ function onFile(f){
   doRead(f);
 }
 function doRead(f){
+  console.log("[Dashboard] doRead:", f.name, Math.round(f.size/1024)+"KB");
   var ext=f.name.split('.').pop().toLowerCase();
   if(!['xlsx','xls'].includes(ext)){showStatus('err','❌ รองรับเฉพาะ .xlsx/.xls');return;}
   showStatus('ok','⏳ กำลังอ่านไฟล์ '+f.name+' ...');
@@ -405,6 +409,7 @@ function matchTeam(raw){
 }
 
 function parseXL(buf,fname){
+  console.log("[Dashboard] parseXL start:", fname);
   try{
     var wb=XLSX.read(buf,{type:'array'});
     var sn=wb.SheetNames.find(function(s){return s.includes('Pipeline');});
@@ -463,16 +468,41 @@ function parseXL(buf,fname){
     var atSheet=wb.SheetNames.find(function(s){return s.includes('Action')||s.includes('action');});
     if(atSheet){
       var atRows=XLSX.utils.sheet_to_json(wb.Sheets[atSheet],{header:1,defval:''});
-      var atHdr=atRows.findIndex(function(r){return r.some(function(c){return str(c).includes('Action')||str(c)==='#';});});
-      var atData=(atHdr>=0?atRows.slice(atHdr+1):atRows.slice(5)).filter(function(r){return str(r[1])&&str(r[4]);});
+      // หา header row — ต้องมีทั้ง '#' หรือ 'ชื่อ' และ 'Action'
+      var atHdr=atRows.findIndex(function(r){
+        var joined=r.map(function(c){return str(c);}).join('|');
+        return (joined.includes('#')||joined.includes('ชื่อ-สกุล'))&&joined.includes('Action');
+      });
+      if(atHdr<0) atHdr=4; // fallback row 5 (index 4)
+      var atData=atRows.slice(atHdr+1).filter(function(r){
+        var name=str(r[1]);var action=str(r[4]);
+        // กรอง: ต้องมีชื่อ + action และไม่ใช่ header หรือแถวว่าง
+        return name&&action&&name!=='ชื่อ-สกุล (ลูกค้า)'&&!name.startsWith('#');
+      });
       actions=atData.slice(0,8).map(function(r){
         return{no:r[0],name:str(r[1]),team:str(r[2]),pipe:str(r[3]),action:str(r[4]),type:str(r[5]),owner:str(r[6]),due:str(r[7]),status:str(r[8])};
       });
     }
 
+    // เก็บ risk people จากรายคน (data rows) — คะแนน ≤ 2 อย่างน้อย 1 ด้าน
+    var riskPeople=data.filter(function(r){
+      var pk=num(r[11]),gw=num(r[12]),cf=num(r[13]);
+      return (pk>0&&pk<=2)||(gw>0&&gw<=2)||(cf>0&&cf<=2);
+    }).map(function(r){
+      var tk=matchTeam(r[1]);
+      return{
+        name:str(r[0]),
+        team:SHORT[tk]||str(r[1]),
+        pk:num(r[11]),gw:num(r[12]),cf:num(r[13]),
+        pipe:str(r[14]),
+        reason:str(r[15])
+      };
+    });
+
     clearAll();
     renderAll(teams,totN,totR,totW,totWt,totNn,wPK,wGW,wCF,rate,prodC,objC,fname);
     renderActions(actions);
+    renderRisk(riskPeople);
     showStatus('ok','✅ โหลดสำเร็จ — '+data.length+' คน · '+actv.length+' ทีม จาก '+fname);
     showPreview(teams);
   }catch(e){showStatus('err','❌ '+e.message);}
@@ -607,23 +637,28 @@ function renderAll(teams,totN,totR,totW,totWt,totNn,wPK,wGW,wCF,rate,prodC,objC,
       '<td>'+wCF.toFixed(2)+'</td><td>'+totAvg.toFixed(2)+'</td><td></td></tr>');
     tbody.innerHTML=trows.join('');
   }
-  // Risk
-  var rb=g('riskBody');
-  if(rb){
-    var rp2=teams.filter(function(t){return t.pk>0&&(t.pk<=2||t.gw<=2||t.cf<=2);});
-    if(!rp2.length){
-      rb.innerHTML='<div style="font-size:10px;color:var(--green-d);text-align:center;padding:12px">✅ ไม่มีบุคคลที่มีคะแนน ≤ 2</div>';
-    } else {
-      rb.innerHTML=rp2.slice(0,5).map(function(t){
-        var isR=t.pk<=2||t.gw<=2||t.cf<=2;
-        return '<div class="rk" style="background:'+(isR?'var(--red-l)':'var(--amber-l)')+';border-color:'+(isR?'var(--red)':'var(--amber)')+'">'+
-          '<div class="rn" style="color:'+(isR?'var(--red-d)':'var(--amber-d)')+'">'+t.name+'</div>'+
-          '<div class="ri" style="color:'+(isR?'var(--red-d)':'var(--amber-d)')+'">PK/GW/CF = '+t.pk.toFixed(1)+'/'+t.gw.toFixed(1)+'/'+t.cf.toFixed(1)+'</div></div>';
-      }).join('');
-    }
-  }
   var ftr=document.querySelector('.ftr span');
   if(ftr) ftr.textContent='ข้อมูลจาก '+fname+' · '+totN+' คน · KKP Financial Group';
+}
+
+function renderRisk(riskPeople){
+  var rb=document.getElementById('riskBody');
+  if(!rb) return;
+  if(!riskPeople||!riskPeople.length){
+    rb.innerHTML='<div style="font-size:10px;color:var(--green-d);text-align:center;padding:12px">✅ ไม่มีบุคคลที่มีคะแนน ≤ 2 ในขณะนี้</div>';
+    return;
+  }
+  rb.innerHTML=riskPeople.slice(0,6).map(function(p){
+    var isR=(p.pk>0&&p.pk<=2)||(p.gw>0&&p.gw<=2)||(p.cf>0&&p.cf<=2);
+    var bg=isR?'var(--red-l)':'var(--amber-l)';
+    var bc=isR?'var(--red)':'var(--amber)';
+    var fc=isR?'var(--red-d)':'var(--amber-d)';
+    return '<div class="rk" style="background:'+bg+';border-color:'+bc+'">'+
+      '<div class="rn" style="color:'+fc+'">'+p.name+' · '+p.team+'</div>'+
+      '<div class="ri" style="color:'+fc+'">PK/GW/CF = '+p.pk+'/'+p.gw+'/'+p.cf+
+        (p.reason?' · '+p.reason:'')+'</div>'+
+      '</div>';
+  }).join('');
 }
 
 function renderActions(actions){
@@ -656,6 +691,7 @@ function renderActions(actions){
     '</div>';
   }).join('');
 }
+function showStatus(type,msg){
   var el=document.getElementById('us');
   el.className='us '+type;el.textContent=msg;
 }
@@ -675,7 +711,27 @@ function showPreview(teams){
   el.classList.add('show');
 }
 // ล้างข้อมูล hardcode ออกทันทีที่โหลดหน้า — รอ Excel จริงแทน
-window.addEventListener('DOMContentLoaded', function(){ clearAll(); });
+window.addEventListener('DOMContentLoaded', function(){
+  clearAll();
+  // ผูก event ผ่าน JS แทน inline onchange/ondrop — ทำงานได้แน่นอนกว่า
+  var inp = document.querySelector('.uz input[type=file]');
+  if(inp){
+    inp.addEventListener('change', function(e){
+      console.log('[Dashboard] input change, files:', e.target.files.length);
+      if(e.target.files[0]) onFile(e.target.files[0]);
+    });
+  }
+  var uz = document.getElementById('uz');
+  if(uz){
+    uz.addEventListener('dragover', function(e){ e.preventDefault(); uz.classList.add('drag'); });
+    uz.addEventListener('dragleave', function(){ uz.classList.remove('drag'); });
+    uz.addEventListener('drop', function(e){
+      e.preventDefault(); uz.classList.remove('drag');
+      console.log('[Dashboard] drop, files:', e.dataTransfer.files.length);
+      if(e.dataTransfer.files[0]) onFile(e.dataTransfer.files[0]);
+    });
+  }
+});
 </script>
 </body>
 </html>
