@@ -144,11 +144,11 @@ body{font-family:var(--f);font-size:12px;color:var(--text);background:var(--off)
   <div>
     <div class="hdr-pre">Sales Development</div>
     <div class="hdr-ttl">Insurance Pipeline — Report</div>
-    <div class="hdr-sub">Consumer Finance</div>
+    <div class="hdr-sub">กรุณาอัปโหลดไฟล์ Excel เพื่อแสดงข้อมูล</div>
   </div>
   <div class="rate-pill">
-    <span class="rate-n">28%</span>
-    Submit-Ready Rate<br>7 จาก 25 คน
+    <span class="rate-n">—</span>
+    รอข้อมูล Excel
   </div>
 </div>
 
@@ -282,8 +282,8 @@ body{font-family:var(--f);font-size:12px;color:var(--text);background:var(--off)
 
 <!-- FOOTER -->
 <div class="ftr">
-  <span>OL Pipeline Template V2 · 25 คน · 9 ทีม · KKP Financial Group · Sales Development</span>
-  <span>จัดทำโดย ทีม Sales Development · อัปเดต 18/07/2569</span>
+  <span>KKP Financial Group · Sales Development</span>
+  <span id="footerRight">จัดทำโดย ทีม Sales Development</span>
 </div>
 
 </div>
@@ -310,14 +310,40 @@ body{font-family:var(--f);font-size:12px;color:var(--text);background:var(--off)
     <div class="upv" id="upv"></div>
     <div class="uf-hint">
       💡 อ่าน Sheet 📊 Pipeline Overview อัตโนมัติ<br>
-      คอลัมน์: ทีม (B) · PK (L) · GW (M) · CF (N) · Status (O)
+      คอลัมน์: ทีม (B) · PK (L) · GW (M) · CF (N) · Status (O)<br>
+      <span id="xlsxStatus" style="color:var(--amber-d)">⏳ กำลังโหลด SheetJS...</span>
     </div>
     <button class="uf-print" onclick="window.print()">🖨️ พิมพ์ / บันทึก PDF</button>
   </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
+// โหลด SheetJS แบบ multi-CDN fallback — ไม่บล็อก onFile()
+var XLSX; // declare ไว้ก่อน
+(function loadXLSX(){
+  var cdns = [
+    'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js',
+    'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js',
+    'https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js'
+  ];
+  var idx = 0;
+  function tryNext(){
+    if(idx >= cdns.length){
+      var el=document.getElementById('xlsxStatus');
+      if(el){ el.style.color='var(--red-d)'; el.textContent='❌ โหลด SheetJS ไม่ได้ — ตรวจสอบอินเทอร์เน็ต'; }
+      return;
+    }
+    var s = document.createElement('script');
+    s.src = cdns[idx++];
+    s.onload = function(){
+      var el=document.getElementById('xlsxStatus');
+      if(el){ el.style.color='var(--green-d)'; el.textContent='✅ SheetJS พร้อม — อัปโหลดได้เลย'; }
+    };
+    s.onerror = function(){ tryNext(); };
+    document.head.appendChild(s);
+  }
+  tryNext();
+})();
 function toggleUF(){
   var b=document.getElementById('uf-bd'),t=document.getElementById('uf-tog');
   var h=b.classList.toggle('hide');t.textContent=h?'▸':'▾';
@@ -328,8 +354,28 @@ function onDrop(e){
 }
 function onFile(f){
   if(!f) return;
+  // ถ้า XLSX ยังโหลดไม่เสร็จ — retry ทุก 500ms สูงสุด 10 ครั้ง
+  if(typeof XLSX === 'undefined'){
+    showStatus('ok','⏳ รอ SheetJS โหลด...');
+    var tries=0;
+    var wait=setInterval(function(){
+      tries++;
+      if(typeof XLSX !== 'undefined'){
+        clearInterval(wait);
+        doRead(f);
+      } else if(tries>=10){
+        clearInterval(wait);
+        showStatus('err','❌ SheetJS โหลดไม่ได้ — ตรวจสอบอินเทอร์เน็ต');
+      }
+    },500);
+    return;
+  }
+  doRead(f);
+}
+function doRead(f){
   var ext=f.name.split('.').pop().toLowerCase();
   if(!['xlsx','xls'].includes(ext)){showStatus('err','❌ รองรับเฉพาะ .xlsx/.xls');return;}
+  showStatus('ok','⏳ กำลังอ่านไฟล์ '+f.name+' ...');
   var r=new FileReader();r.onload=function(e){parseXL(e.target.result,f.name);};r.readAsArrayBuffer(f);
 }
 
