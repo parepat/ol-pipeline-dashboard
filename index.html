@@ -142,9 +142,9 @@ body{font-family:var(--f);font-size:12px;color:var(--text);background:var(--off)
 <!-- HEADER -->
 <div class="hdr">
   <div>
-    <div class="hdr-pre">KKP Financial Group · Sales Development</div>
+    <div class="hdr-pre">Sales Development</div>
     <div class="hdr-ttl">OL&PH Pipeline — Insurance Report</div>
-    <div class="hdr-sub">Consumer Finance · 25 คน · 9 ทีม · 5 ผลิตภัณฑ์ · อัปเดต 18/07/2569</div>
+    <div class="hdr-sub">Consumer Finance</div>
   </div>
   <div class="rate-pill">
     <span class="rate-n">28%</span>
@@ -311,33 +311,9 @@ body{font-family:var(--f);font-size:12px;color:var(--text);background:var(--off)
     </div>
   </div>
 
-  <div class="c">
-    <div class="ct">Action Items — 10 รายการ · ✅ 2 · 🔄 3 · ⬜ 5</div>
-    <div class="ak" style="background:var(--green-l)">
-      <div class="dot" style="background:var(--green)"></div>
-      <div style="flex:1"><div class="an" style="color:var(--green-d)">Parinee / Natchari — Submit สำเร็จ</div><div class="am" style="color:var(--green-d)">Quick Win · HL1 + HL2 · เสร็จแล้ว</div></div>
-      <span class="ab" style="background:#A7F3D0;color:var(--green-d)">✅ เสร็จ</span>
-    </div>
-    <div class="ak" style="background:var(--blue-l)">
-      <div class="dot" style="background:var(--blue)"></div>
-      <div style="flex:1"><div class="an" style="color:var(--blue-d)">Wilaiwan — ประสานงานขอ Tablet IT</div><div class="am" style="color:var(--blue-d)">หัวหน้าทีม · ก.ค. 22</div></div>
-      <span class="ab" style="background:#BFDBFE;color:var(--blue-d)">🔄 ทำอยู่</span>
-    </div>
-    <div class="ak" style="background:var(--blue-l)">
-      <div class="dot" style="background:var(--blue)"></div>
-      <div style="flex:1"><div class="an" style="color:var(--blue-d)">Teerawat — Script Preferred Health</div><div class="am" style="color:var(--blue-d)">Sales Dev · ก.ค. 22</div></div>
-      <span class="ab" style="background:#BFDBFE;color:var(--blue-d)">🔄 ทำอยู่</span>
-    </div>
-    <div class="ak" style="background:var(--amber-l)">
-      <div class="dot" style="background:var(--amber)"></div>
-      <div style="flex:1"><div class="an" style="color:var(--amber-d)">Natthapong / Phongsak — Genwing Clinic</div><div class="am" style="color:var(--amber-d)">Sales Dev · ก.ค. 25 · Beginner group</div></div>
-      <span class="ab" style="background:#FDE68A;color:var(--amber-d)">⬜ รอเริ่ม</span>
-    </div>
-    <div class="ak" style="background:var(--amber-l)">
-      <div class="dot" style="background:var(--amber)"></div>
-      <div style="flex:1"><div class="an" style="color:var(--amber-d)">Kanokporn — Coaching 1:1 หาลูกค้า</div><div class="am" style="color:var(--amber-d)">Sales Dev · ก.ค. 23</div></div>
-      <span class="ab" style="background:#FDE68A;color:var(--amber-d)">⬜ รอเริ่ม</span>
-    </div>
+  <div class="c" id="actionCard">
+    <div class="ct" id="actionHead">Action Items</div>
+    <div id="actionBody" style="text-align:center;color:var(--muted);padding:16px;font-size:11px">📂 อัปโหลดไฟล์ Excel เพื่อแสดง Action Items</div>
   </div>
 
 </div>
@@ -474,8 +450,21 @@ function parseXL(buf,fname){
     var wCF=actv.length?Math.round(actv.reduce(function(a,t){return a+t.cf*t.n;},0)/totN*100)/100:0;
     var rate=Math.round(totR/totN*100);
 
+    // อ่าน Action Tracker sheet
+    var actions=[];
+    var atSheet=wb.SheetNames.find(function(s){return s.includes('Action')||s.includes('action');});
+    if(atSheet){
+      var atRows=XLSX.utils.sheet_to_json(wb.Sheets[atSheet],{header:1,defval:''});
+      var atHdr=atRows.findIndex(function(r){return r.some(function(c){return str(c).includes('Action')||str(c)==='#';});});
+      var atData=(atHdr>=0?atRows.slice(atHdr+1):atRows.slice(5)).filter(function(r){return str(r[1])&&str(r[4]);});
+      actions=atData.slice(0,8).map(function(r){
+        return{no:r[0],name:str(r[1]),team:str(r[2]),pipe:str(r[3]),action:str(r[4]),type:str(r[5]),owner:str(r[6]),due:str(r[7]),status:str(r[8])};
+      });
+    }
+
     clearAll();
     renderAll(teams,totN,totR,totW,totWt,totNn,wPK,wGW,wCF,rate,prodC,objC,fname);
+    renderActions(actions);
     showStatus('ok','✅ โหลดสำเร็จ — '+data.length+' คน · '+actv.length+' ทีม จาก '+fname);
     showPreview(teams);
   }catch(e){showStatus('err','❌ '+e.message);}
@@ -538,14 +527,11 @@ function clearAll(){
     rp2.insertAdjacentHTML('beforeend','<div style="text-align:center;color:var(--muted);padding:16px;font-size:11px">📂 ยังไม่มีข้อมูล</div>');
   }
 
-  // Action section
-  var actParent=document.querySelector('.ak');
-  if(actParent&&actParent.parentElement){
-    var actHead=actParent.parentElement.querySelector('.ct');
-    actParent.parentElement.querySelectorAll('.ak').forEach(function(el){el.remove();});
-    if(actHead) actHead.textContent='Action Items';
-    actParent.parentElement.insertAdjacentHTML('beforeend','<div style="text-align:center;color:var(--muted);padding:16px;font-size:11px">📂 ยังไม่มีข้อมูล</div>');
-  }
+  // Action section — ใช้ id
+  var actHead=document.getElementById('actionHead');
+  var actBody=document.getElementById('actionBody');
+  if(actHead) actHead.textContent='Action Items';
+  if(actBody) actBody.innerHTML='<div style="text-align:center;color:var(--muted);padding:16px;font-size:11px">📂 อัปโหลดไฟล์ Excel เพื่อแสดง Action Items</div>';
 
   // Footer
   var ftr=document.querySelector('.ftr span');
@@ -656,11 +642,46 @@ function renderAll(teams,totN,totR,totW,totWt,totNn,wPK,wGW,wCF,rate,prodC,objC,
     riskParent.querySelectorAll('.rk').forEach(function(el){el.remove();});
   }
 
+  // Action Items — อัปเดตผ่าน id (ข้อมูลจาก Action Tracker sheet ถ้ามี)
+  var actHead=document.getElementById('actionHead');
+  var actBody=document.getElementById('actionBody');
+  if(actHead) actHead.textContent='Action Items — อ่านจาก Sheet ✅ Action Tracker';
+  if(actBody) actBody.innerHTML='<div style="text-align:center;color:var(--muted);padding:10px;font-size:10px">📋 อ่านจาก Sheet "✅ Action Tracker" ในไฟล์ Excel<br>ถ้าไม่พบ Sheet นี้ ระบบจะแสดงว่าง</div>';
+
   var footer=document.querySelector('.ftr span');
   if(footer) footer.textContent='ข้อมูลจาก '+fname+' · '+totN+' คน · KKP Financial Group';
 }
 
-function showStatus(type,msg){
+function renderActions(actions){
+  var head=document.getElementById('actionHead');
+  var body=document.getElementById('actionBody');
+  if(!body) return;
+  if(!actions||!actions.length){
+    if(head) head.textContent='Action Items';
+    body.innerHTML='<div style="text-align:center;color:var(--muted);padding:16px;font-size:10px">📋 ไม่พบข้อมูลใน Sheet "✅ Action Tracker"</div>';
+    return;
+  }
+  var done=actions.filter(function(a){return a.status.includes('✅');}).length;
+  var wip=actions.filter(function(a){return a.status.includes('🔄');}).length;
+  var todo=actions.filter(function(a){return a.status.includes('⬜');}).length;
+  if(head) head.textContent='Action Items — '+actions.length+' รายการ · ✅ '+done+' · 🔄 '+wip+' · ⬜ '+todo;
+  function akColor(a){
+    if(a.status.includes('✅')) return{bg:'var(--green-l)',tc:'var(--green-d)',dc:'#A7F3D0',dot:'var(--green)',badge:'✅ เสร็จ'};
+    if(a.status.includes('🔄')) return{bg:'var(--blue-l)', tc:'var(--blue-d)', dc:'#BFDBFE',dot:'var(--blue)', badge:'🔄 ทำอยู่'};
+    return{bg:'var(--amber-l)',tc:'var(--amber-d)',dc:'#FDE68A',dot:'var(--amber)',badge:'⬜ รอเริ่ม'};
+  }
+  body.innerHTML=actions.map(function(a){
+    var c=akColor(a);
+    return '<div class="ak" style="background:'+c.bg+'">'+
+      '<div class="dot" style="background:'+c.dot+'"></div>'+
+      '<div style="flex:1">'+
+        '<div class="an" style="color:'+c.tc+'">'+a.name+(a.team?' · '+a.team:'')+'</div>'+
+        '<div class="am" style="color:'+c.tc+'">'+a.action+(a.owner?' · '+a.owner:'')+(a.due?' · '+a.due:'')+'</div>'+
+      '</div>'+
+      '<span class="ab" style="background:'+c.dc+';color:'+c.tc+'">'+c.badge+'</span>'+
+    '</div>';
+  }).join('');
+}
   var el=document.getElementById('us');
   el.className='us '+type;el.textContent=msg;
 }
