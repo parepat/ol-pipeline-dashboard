@@ -155,24 +155,24 @@ body{font-family:var(--f);font-size:12px;color:var(--text);background:var(--off)
 <!-- KPI ROW -->
 <div class="krow">
   <div class="kc" style="background:var(--green-l)">
-    <div class="kn" style="color:var(--green-d)">7</div>
+    <div class="kn" id="kn0" style="color:var(--green-d)">—</div>
     <div class="kl" style="color:var(--green-d)">พร้อม Submit</div>
-    <div class="ks" style="color:var(--green-d)">28% · Quick Win 2 case</div>
+    <div class="ks" id="ks0" style="color:var(--green-d)"></div>
   </div>
   <div class="kc" style="background:var(--blue-l)">
-    <div class="kn" style="color:var(--blue-d)">10</div>
+    <div class="kn" id="kn1" style="color:var(--blue-d)">—</div>
     <div class="kl" style="color:var(--blue-d)">กำลังดำเนินการ</div>
-    <div class="ks" style="color:var(--blue-d)">40% · เร่ง close เดือนนี้</div>
+    <div class="ks" id="ks1" style="color:var(--blue-d)"></div>
   </div>
   <div class="kc" style="background:var(--amber-l)">
-    <div class="kn" style="color:var(--amber-d)">6</div>
+    <div class="kn" id="kn2" style="color:var(--amber-d)">—</div>
     <div class="kl" style="color:var(--amber-d)">รอ / ติดเงื่อนไข</div>
-    <div class="ks" style="color:var(--amber-d)">24% · ต้องแก้ Objection</div>
+    <div class="ks" id="ks2" style="color:var(--amber-d)"></div>
   </div>
   <div class="kc" style="background:var(--red-l)">
-    <div class="kn" style="color:var(--red-d)">2</div>
+    <div class="kn" id="kn3" style="color:var(--red-d)">—</div>
     <div class="kl" style="color:var(--red-d)">ยังไม่มีลูกค้า</div>
-    <div class="ks" style="color:var(--red-d)">8% · ต้อง Coaching เร่งด่วน</div>
+    <div class="ks" id="ks3" style="color:var(--red-d)"></div>
   </div>
 </div>
 
@@ -182,60 +182,46 @@ body{font-family:var(--f);font-size:12px;color:var(--text);background:var(--off)
   <!-- Product -->
   <div class="c">
     <div class="ct">ผลิตภัณฑ์ที่เสนอ</div>
-    <div class="br"><div class="bl">Wealth 10/3 (Par)</div><div class="bt"><div class="bf" style="width:100%;background:var(--teal)"></div></div><div class="bv" style="color:var(--teal-d)">10</div></div>
-    <div class="br"><div class="bl">Flow 678 (Par)</div><div class="bt"><div class="bf" style="width:60%;background:var(--blue)"></div></div><div class="bv" style="color:var(--blue-d)">6</div></div>
-    <div class="br"><div class="bl">Preferred Health</div><div class="bt"><div class="bf" style="width:40%;background:var(--purple)"></div></div><div class="bv" style="color:var(--purple-d)">4</div></div>
-    <div class="br"><div class="bl">Heritage 90/2 (Par)</div><div class="bt"><div class="bf" style="width:20%;background:var(--amber)"></div></div><div class="bv" style="color:var(--amber-d)">2</div></div>
-    <div class="br"><div class="bl">Wealth Plus 15/5</div><div class="bt"><div class="bf" style="width:10%;background:var(--gray)"></div></div><div class="bv" style="color:var(--gray-d)">1</div></div>
+    <div id="prodBars">
+      <div style="text-align:center;color:var(--muted);padding:12px;font-size:10px">📂 รอข้อมูล Excel</div>
+    </div>
     <div class="div"></div>
     <div style="font-size:9px;color:var(--muted);margin-bottom:4px">วัตถุประสงค์ลูกค้า</div>
-    <div class="stk">
-      <div class="ss" style="flex:12;background:var(--teal)">ออมเงิน 12</div>
-      <div class="ss" style="flex:4;background:var(--purple)">สุขภาพ</div>
-      <div class="ss" style="flex:4;background:var(--blue)">เกษียณ</div>
-      <div class="ss" style="flex:2;background:var(--amber)">ภาษี</div>
-      <div class="ss" style="flex:3;background:var(--gray)">อื่นๆ</div>
-    </div>
-    <div class="leg">
-      <div class="li"><div class="lsq" style="background:var(--teal)"></div>ออมเงิน 12</div>
-      <div class="li"><div class="lsq" style="background:var(--purple)"></div>สุขภาพ 4</div>
-      <div class="li"><div class="lsq" style="background:var(--blue)"></div>เกษียณ 4</div>
-      <div class="li"><div class="lsq" style="background:var(--amber)"></div>ภาษี 2</div>
-      <div class="li"><div class="lsq" style="background:var(--gray)"></div>อื่นๆ 3</div>
-    </div>
+    <div class="stk" id="stkBar"></div>
+    <div class="leg" id="legBar"></div>
   </div>
 
   <!-- Scores -->
   <div class="c">
     <div class="ct">คะแนนความพร้อมเฉลี่ย (จาก 5)</div>
     <div class="sb">
-      <div class="sm"><span class="sn">Product Knowledge</span><span class="sv" style="color:var(--green-d)">3.84</span></div>
-      <div class="st"><div class="sf" style="width:76.8%;background:var(--green)"></div></div>
+      <div class="sm"><span class="sn">Product Knowledge</span><span class="sv" id="sv0" style="color:var(--green-d)">—</span></div>
+      <div class="st"><div class="sf" id="sf0" style="width:0%;background:var(--green)"></div></div>
     </div>
     <div class="sb">
       <div class="sm">
-        <span class="sn">Genwing System <span style="font-size:9px;color:var(--amber-d);font-weight:500">⚠ ต่ำสุด</span></span>
-        <span class="sv" style="color:var(--amber-d)">3.44</span>
+        <span class="sn" id="gwLabel">Genwing System</span>
+        <span class="sv" id="sv1" style="color:var(--amber-d)">—</span>
       </div>
-      <div class="st"><div class="sf" style="width:68.8%;background:var(--amber)"></div></div>
+      <div class="st"><div class="sf" id="sf1" style="width:0%;background:var(--amber)"></div></div>
     </div>
     <div class="sb">
-      <div class="sm"><span class="sn">ความมั่นใจนำเสนอ</span><span class="sv" style="color:var(--teal-d)">3.84</span></div>
-      <div class="st"><div class="sf" style="width:76.8%;background:var(--teal)"></div></div>
+      <div class="sm"><span class="sn">ความมั่นใจนำเสนอ</span><span class="sv" id="sv2" style="color:var(--teal-d)">—</span></div>
+      <div class="st"><div class="sf" id="sf2" style="width:0%;background:var(--teal)"></div></div>
     </div>
     <div class="alert">
-      <div class="alert-t">Genwing = จุดอ่อนอันดับ 1</div>
-      <div class="alert-s">3 คนคะแนน ≤ 2 — จัด Workshop ด่วนสัปดาห์นี้</div>
+      <div class="alert-t" id="alertT">—</div>
+      <div class="alert-s" id="alertS"></div>
     </div>
   </div>
 
   <!-- Support needs -->
   <div class="c">
     <div class="ct">สนับสนุนที่ทีมต้องการ</div>
-    <div class="br"><div class="bl xs">Script/เอกสารขาย</div><div class="bt"><div class="bf" style="width:100%;background:var(--teal)"></div></div><div class="bv" style="color:var(--teal-d)">1</div></div>
-    <div class="br"><div class="bl xs">ระบบ Genwing</div><div class="bt"><div class="bf" style="width:77%;background:var(--blue)"></div></div><div class="bv" style="color:var(--blue-d)">2</div></div>
-    <div class="br"><div class="bl xs">Role Play / เทคนิค</div><div class="bt"><div class="bf" style="width:62%;background:var(--purple)"></div></div><div class="bv" style="color:var(--purple-d)">3</div></div>
-    <div class="br"><div class="bl xs">Need Finding</div><div class="bt"><div class="bf" style="width:46%;background:var(--amber)"></div></div><div class="bv" style="color:var(--amber-d)">4</div></div>
+    <div class="br"><div class="bl xs">Script/เอกสารขาย</div><div class="bt"><div class="bf" id="sup0" style="width:0%;background:var(--teal)"></div></div></div>
+    <div class="br"><div class="bl xs">ระบบ Genwing</div><div class="bt"><div class="bf" id="sup1" style="width:0%;background:var(--blue)"></div></div></div>
+    <div class="br"><div class="bl xs">Role Play / เทคนิค</div><div class="bt"><div class="bf" id="sup2" style="width:0%;background:var(--purple)"></div></div></div>
+    <div class="br"><div class="bl xs">Need Finding</div><div class="bt"><div class="bf" id="sup3" style="width:0%;background:var(--amber)"></div></div></div>
     <div class="div"></div>
     <div class="ct" style="margin-top:2px">Matching Guide</div>
     <div style="font-size:10px;color:var(--teal-d);line-height:1.7">
@@ -268,16 +254,7 @@ body{font-family:var(--f);font-size:12px;color:var(--text);background:var(--off)
         </tr>
       </thead>
       <tbody>
-        <tr><td style="font-weight:500">Home Loan Acq. 1</td><td>5</td><td style="color:var(--green-d);font-weight:500">2</td><td style="color:var(--blue-d);font-weight:500">1</td><td style="color:var(--amber-d);font-weight:500">2</td><td>—</td><td style="color:#D97706;font-weight:500">3.8</td><td style="color:var(--red-d);font-weight:500">2.8</td><td style="color:#D97706;font-weight:500">3.8</td><td style="color:#D97706;font-weight:500">3.47</td><td><span class="pill" style="background:var(--red-l);color:var(--red-d)">เร่งด่วน</span></td></tr>
-        <tr><td style="font-weight:500">Home Loan Acq. 2</td><td>4</td><td style="color:var(--green-d);font-weight:500">1</td><td style="color:var(--blue-d);font-weight:500">2</td><td style="color:var(--amber-d);font-weight:500">1</td><td>—</td><td style="color:var(--green-d);font-weight:500">4.3</td><td style="color:#D97706;font-weight:500">3.3</td><td style="color:#D97706;font-weight:500">3.5</td><td style="color:#D97706;font-weight:500">3.69</td><td><span class="pill" style="background:var(--amber-l);color:var(--amber-d)">ติดตาม</span></td></tr>
-        <tr><td style="font-weight:500">Home Loan Acq. 3</td><td>2</td><td>—</td><td>—</td><td style="color:var(--amber-d);font-weight:500">1</td><td style="color:var(--red-d);font-weight:500">1</td><td style="color:var(--red-d);font-weight:500">2.5</td><td style="color:var(--red-d);font-weight:500">2.5</td><td style="color:var(--red-d);font-weight:500">2.5</td><td style="color:var(--red-d);font-weight:500">2.50</td><td><span class="pill" style="background:var(--red-l);color:var(--red-d)">เร่งด่วน</span></td></tr>
-        <tr><td>SBA 1 ทีม 1</td><td>2</td><td style="color:var(--green-d);font-weight:500">1</td><td>—</td><td style="color:var(--amber-d);font-weight:500">1</td><td>—</td><td style="color:var(--green-d);font-weight:500">4.0</td><td style="color:var(--green-d);font-weight:500">4.0</td><td style="color:var(--green-d);font-weight:500">4.0</td><td style="color:var(--green-d);font-weight:500">4.00</td><td><span class="pill" style="background:var(--amber-l);color:var(--amber-d)">ติดตาม</span></td></tr>
-        <tr><td>SBA 1 ทีม 2</td><td>3</td><td style="color:var(--green-d);font-weight:500">1</td><td style="color:var(--blue-d);font-weight:500">1</td><td>—</td><td style="color:var(--red-d);font-weight:500">1</td><td style="color:var(--green-d);font-weight:500">4.0</td><td style="color:#D97706;font-weight:500">3.7</td><td style="color:var(--green-d);font-weight:500">4.0</td><td style="color:var(--green-d);font-weight:500">3.89</td><td><span class="pill" style="background:var(--amber-l);color:var(--amber-d)">ติดตาม</span></td></tr>
-        <tr><td>SBA 1 ทีม 3</td><td>2</td><td>—</td><td style="color:var(--blue-d);font-weight:500">2</td><td>—</td><td>—</td><td style="color:#D97706;font-weight:500">3.5</td><td style="color:#D97706;font-weight:500">3.0</td><td style="color:#D97706;font-weight:500">3.5</td><td style="color:#D97706;font-weight:500">3.33</td><td><span class="pill" style="background:var(--amber-l);color:var(--amber-d)">ติดตาม</span></td></tr>
-        <tr><td>SBA 1 ทีม 4</td><td>4</td><td style="color:var(--green-d);font-weight:500">1</td><td style="color:var(--blue-d);font-weight:500">3</td><td>—</td><td>—</td><td style="color:var(--green-d);font-weight:500">4.0</td><td style="color:#D97706;font-weight:500">3.3</td><td style="color:var(--green-d);font-weight:500">4.3</td><td style="color:#D97706;font-weight:500">3.83</td><td><span class="pill" style="background:var(--green-l);color:var(--green-d)">ปกติ</span></td></tr>
-        <tr><td>SBA 2 ทีม 1</td><td>2</td><td>—</td><td style="color:var(--blue-d);font-weight:500">1</td><td style="color:var(--amber-d);font-weight:500">1</td><td>—</td><td style="color:var(--green-d);font-weight:500">4.0</td><td style="color:var(--green-d);font-weight:500">4.0</td><td style="color:var(--green-d);font-weight:500">4.0</td><td style="color:var(--green-d);font-weight:500">4.00</td><td><span class="pill" style="background:var(--amber-l);color:var(--amber-d)">ติดตาม</span></td></tr>
-        <tr><td>SBA 2 ทีม 2</td><td>1</td><td style="color:var(--green-d);font-weight:500">1</td><td>—</td><td>—</td><td>—</td><td style="color:var(--green-d);font-weight:500">4.0</td><td style="color:var(--green-d);font-weight:500">4.0</td><td style="color:var(--green-d);font-weight:500">4.0</td><td style="color:var(--green-d);font-weight:500">4.00</td><td><span class="pill" style="background:var(--green-l);color:var(--green-d)">ปกติ</span></td></tr>
-        <tr><td>รวมทั้งหมด</td><td>25</td><td style="color:#A7F3D0">7</td><td style="color:#BFDBFE">10</td><td style="color:#FDE68A">6</td><td style="color:#FCA5A5">2</td><td>3.84</td><td style="color:#FBBF24">3.44</td><td>3.84</td><td>3.71</td><td></td></tr>
+        <tr><td colspan="11" style="text-align:center;color:var(--muted);padding:18px;font-size:11px">📂 อัปโหลดไฟล์ Excel เพื่อแสดงข้อมูลรายทีม</td></tr>
       </tbody>
     </table>
   </div>
@@ -464,55 +441,45 @@ function stStyle(s){
 
 // ── ล้างข้อมูล hardcode ทั้งหมดออกก่อน render ใหม่ ──────────────────────
 function clearAll(){
-  // KPI numbers
-  document.querySelectorAll('.kn').forEach(function(el){el.textContent='—';});
-  document.querySelectorAll('.ks').forEach(function(el){el.textContent='';});
+  // KPI
+  ['kn0','kn1','kn2','kn3'].forEach(function(id){var el=document.getElementById(id);if(el)el.textContent='—';});
+  ['ks0','ks1','ks2','ks3'].forEach(function(id){var el=document.getElementById(id);if(el)el.textContent='';});
 
   // Rate pill
   var rp=document.querySelector('.rate-pill');
-  if(rp) rp.innerHTML='<span class="rate-n">—</span>กำลังโหลด...';
+  if(rp) rp.innerHTML='<span class="rate-n">—</span>รอข้อมูล Excel';
 
-  // Header sub
+  // Header
   var sub=document.querySelector('.hdr-sub');
   if(sub) sub.textContent='กรุณาอัปโหลดไฟล์ Excel เพื่อแสดงข้อมูล';
 
-  // Score bars
-  document.querySelectorAll('.sf').forEach(function(el){el.style.width='0%';});
-  document.querySelectorAll('.sv').forEach(function(el){el.textContent='—';});
-  var at=document.querySelector('.alert-t');var as=document.querySelector('.alert-s');
-  if(at) at.textContent='—';if(as) as.textContent='';
+  // Products
+  var pb=document.getElementById('prodBars');
+  if(pb) pb.innerHTML='<div style="text-align:center;color:var(--muted);padding:12px;font-size:10px">📂 รอข้อมูล Excel</div>';
+  var stk=document.getElementById('stkBar');if(stk) stk.innerHTML='';
+  var leg=document.getElementById('legBar');if(leg) leg.innerHTML='';
 
-  // Product bars — reset labels and widths
-  var prodBars=document.querySelectorAll('.c:first-of-type .br');
-  prodBars.forEach(function(br){
-    var bf=br.querySelector('.bf');var bv=br.querySelector('.bv');
-    if(bf) bf.style.width='0%';if(bv) bv.textContent='—';
-  });
-  var stk=document.querySelector('.stk');
-  if(stk) stk.innerHTML='';
-  var leg=document.querySelector('.leg');
-  if(leg) leg.innerHTML='';
+  // Scores
+  ['sv0','sv1','sv2'].forEach(function(id){var el=document.getElementById(id);if(el)el.textContent='—';});
+  ['sf0','sf1','sf2'].forEach(function(id){var el=document.getElementById(id);if(el)el.style.width='0%';});
+  var at=document.getElementById('alertT');if(at) at.textContent='—';
+  var as=document.getElementById('alertS');if(as) as.textContent='';
 
   // Support bars
-  var supBars=document.querySelectorAll('.c:last-of-type .br');
-  supBars.forEach(function(br){
-    var bf=br.querySelector('.bf');var bv=br.querySelector('.bv');
-    if(bf) bf.style.width='0%';if(bv) bv.textContent='—';
-  });
+  ['sup0','sup1','sup2','sup3'].forEach(function(id){var el=document.getElementById(id);if(el)el.style.width='0%';});
 
   // Team table
   var tbody=document.querySelector('.tbl tbody');
   if(tbody) tbody.innerHTML='<tr><td colspan="11" style="text-align:center;color:var(--muted);padding:18px;font-size:11px">📂 อัปโหลดไฟล์ Excel เพื่อแสดงข้อมูลรายทีม</td></tr>';
 
-  // Risk section — ใช้ id
-  var riskBody=document.getElementById('riskBody');
-  if(riskBody) riskBody.innerHTML='<div style="text-align:center;color:var(--muted);padding:16px;font-size:11px">📂 อัปโหลดไฟล์ Excel เพื่อแสดงข้อมูล</div>';
+  // Risk
+  var rb=document.getElementById('riskBody');
+  if(rb) rb.innerHTML='<div style="text-align:center;color:var(--muted);padding:16px;font-size:11px">📂 อัปโหลดไฟล์ Excel เพื่อแสดงข้อมูล</div>';
 
-  // Action section — ใช้ id
-  var actHead=document.getElementById('actionHead');
-  var actBody=document.getElementById('actionBody');
-  if(actHead) actHead.textContent='Action Items';
-  if(actBody) actBody.innerHTML='<div style="text-align:center;color:var(--muted);padding:16px;font-size:11px">📂 อัปโหลดไฟล์ Excel เพื่อแสดง Action Items</div>';
+  // Actions
+  var ah=document.getElementById('actionHead');if(ah) ah.textContent='Action Items';
+  var ab=document.getElementById('actionBody');
+  if(ab) ab.innerHTML='<div style="text-align:center;color:var(--muted);padding:16px;font-size:11px">📂 อัปโหลดไฟล์ Excel เพื่อแสดง Action Items</div>';
 
   // Footer
   var ftr=document.querySelector('.ftr span');
@@ -520,82 +487,62 @@ function clearAll(){
 }
 
 function renderAll(teams,totN,totR,totW,totWt,totNn,wPK,wGW,wCF,rate,prodC,objC,fname){
-  // Header sub
+  var g=function(id){return document.getElementById(id);};
+  // Header
   var sub=document.querySelector('.hdr-sub');
   if(sub) sub.textContent=totN+' คน · '+teams.filter(function(t){return t.n>0;}).length+' ทีม · ข้อมูลจาก '+fname;
-
-  // Rate pill
   var rp=document.querySelector('.rate-pill');
   if(rp) rp.innerHTML='<span class="rate-n">'+rate+'%</span>Submit-Ready Rate<br>'+totR+' จาก '+totN+' คน';
-
   // KPI
-  var kns=document.querySelectorAll('.kn');
-  var ks=document.querySelectorAll('.ks');
-  if(kns.length>=4){
-    kns[0].textContent=totR; ks[0].textContent=rate+'% · ข้อมูลจาก Excel';
-    kns[1].textContent=totW; ks[1].textContent=Math.round(totW/totN*100)+'% · กำลังดำเนินการ';
-    kns[2].textContent=totWt; ks[2].textContent=Math.round(totWt/totN*100)+'% · ต้องแก้ Objection';
-    kns[3].textContent=totNn; ks[3].textContent=Math.round(totNn/totN*100)+'% · ต้อง Coaching';
-  }
-
+  if(g('kn0')) g('kn0').textContent=totR;
+  if(g('kn1')) g('kn1').textContent=totW;
+  if(g('kn2')) g('kn2').textContent=totWt;
+  if(g('kn3')) g('kn3').textContent=totNn;
+  if(g('ks0')) g('ks0').textContent=rate+'% ของทั้งหมด';
+  if(g('ks1')) g('ks1').textContent=Math.round(totW/totN*100)+'% ของทั้งหมด';
+  if(g('ks2')) g('ks2').textContent=Math.round(totWt/totN*100)+'% ของทั้งหมด';
+  if(g('ks3')) g('ks3').textContent=Math.round(totNn/totN*100)+'% ของทั้งหมด';
   // Scores
-  var scoreData=[
-    {sel:'.sb:nth-child(1)',v:wPK,c:'var(--green)',dc:'var(--green-d)'},
-    {sel:'.sb:nth-child(2)',v:wGW,c:'var(--amber)',dc:'var(--amber-d)'},
-    {sel:'.sb:nth-child(3)',v:wCF,c:'var(--teal)',dc:'var(--teal-d)'}
-  ];
-  scoreData.forEach(function(s){
-    var el=document.querySelector(s.sel);
-    if(!el) return;
-    var sv=el.querySelector('.sv');var sf=el.querySelector('.sf');
-    if(sv) sv.textContent=s.v.toFixed(2);
-    if(sf) sf.style.width=(s.v/5*100)+'%';
-  });
+  if(g('sv0')) g('sv0').textContent=wPK.toFixed(2);
+  if(g('sf0')) g('sf0').style.width=(wPK/5*100)+'%';
+  if(g('sv1')) g('sv1').textContent=wGW.toFixed(2);
+  if(g('sf1')) g('sf1').style.width=(wGW/5*100)+'%';
+  if(g('sv2')) g('sv2').textContent=wCF.toFixed(2);
+  if(g('sf2')) g('sf2').style.width=(wCF/5*100)+'%';
   var lowest=Math.min(wPK,wGW,wCF);
   var lowestName=lowest===wPK?'Product Knowledge':lowest===wGW?'Genwing System':'ความมั่นใจ';
-  var at=document.querySelector('.alert-t');var as=document.querySelector('.alert-s');
-  if(at) at.textContent=lowestName+' = จุดอ่อนอันดับ 1';
-  if(as) as.textContent='คะแนนเฉลี่ย '+lowest.toFixed(2)+' / 5 — ต้อง Workshop เร่งด่วน';
-
+  if(g('gwLabel')) g('gwLabel').innerHTML='Genwing System'+(wGW===lowest?' <span style="font-size:9px;color:var(--amber-d);font-weight:500">⚠ ต่ำสุด</span>':'');
+  if(g('alertT')) g('alertT').textContent=lowestName+' = จุดอ่อนอันดับ 1';
+  if(g('alertS')) g('alertS').textContent='คะแนนเฉลี่ย '+lowest.toFixed(2)+' / 5 — ต้อง Workshop เร่งด่วน';
   // Products
-  var sortedProd=Object.entries(prodC).sort(function(a,b){return b[1]-a[1];});
-  var maxP=sortedProd[0]?sortedProd[0][1]:1;
   var prodColors=['var(--teal)','var(--blue)','var(--purple)','var(--amber)','var(--gray)'];
   var prodDark=['var(--teal-d)','var(--blue-d)','var(--purple-d)','var(--amber-d)','var(--gray-d)'];
-  var prodEl=document.querySelectorAll('.c')[0];
-  if(prodEl){
-    var brs=prodEl.querySelectorAll('.br');
-    sortedProd.slice(0,5).forEach(function(p,i){
-      if(!brs[i]) return;
-      var bl=brs[i].querySelector('.bl'); var bf=brs[i].querySelector('.bf'); var bv=brs[i].querySelector('.bv');
-      if(bl) bl.textContent=p[0];
-      if(bf){bf.style.width=(p[1]/maxP*100)+'%';bf.style.background=prodColors[i];}
-      if(bv){bv.textContent=p[1];bv.style.color=prodDark[i];}
-    });
-    // stacked bar
-    var stk=prodEl.querySelector('.stk');
-    var sortedObj=Object.entries(objC).sort(function(a,b){return b[1]-a[1];});
-    var totO=sortedObj.reduce(function(a,b){return a+b[1];},0)||1;
-    if(stk){
-      stk.innerHTML=sortedObj.slice(0,5).map(function(o,i){
-        return '<div class="ss" style="flex:'+o[1]+';background:'+prodColors[i]+'">'+o[0].substring(0,4)+' '+o[1]+'</div>';
-      }).join('');
-    }
-    var leg=prodEl.querySelector('.leg');
-    if(leg){
-      leg.innerHTML=sortedObj.slice(0,5).map(function(o,i){
-        return '<div class="li"><div class="lsq" style="background:'+prodColors[i]+'"></div>'+o[0]+' '+o[1]+'</div>';
-      }).join('');
-    }
-  }
-
+  var sortedProd=Object.entries(prodC).sort(function(a,b){return b[1]-a[1];});
+  var maxP=sortedProd[0]?sortedProd[0][1]:1;
+  var pb=g('prodBars');
+  if(pb) pb.innerHTML=sortedProd.slice(0,5).map(function(p,i){
+    return '<div class="br"><div class="bl">'+p[0]+'</div>'+
+      '<div class="bt"><div class="bf" style="width:'+(p[1]/maxP*100)+'%;background:'+prodColors[i]+'"></div></div>'+
+      '<div class="bv" style="color:'+prodDark[i]+'">'+p[1]+'</div></div>';
+  }).join('')||'<div style="text-align:center;color:var(--muted);padding:10px;font-size:10px">ไม่พบข้อมูลผลิตภัณฑ์</div>';
+  var sortedObj=Object.entries(objC).sort(function(a,b){return b[1]-a[1];});
+  var stk=g('stkBar');
+  if(stk) stk.innerHTML=sortedObj.slice(0,5).map(function(o,i){
+    return '<div class="ss" style="flex:'+o[1]+';background:'+prodColors[i]+'">'+o[0].substring(0,4)+' '+o[1]+'</div>';
+  }).join('');
+  var leg=g('legBar');
+  if(leg) leg.innerHTML=sortedObj.slice(0,5).map(function(o,i){
+    return '<div class="li"><div class="lsq" style="background:'+prodColors[i]+'"></div>'+o[0]+' '+o[1]+'</div>';
+  }).join('');
+  // Support bars (static labels, proportional widths)
+  var supPct=[100,77,62,46];
+  ['sup0','sup1','sup2','sup3'].forEach(function(id,i){var el=g(id);if(el) el.style.width=supPct[i]+'%';});
   // Team table
   var tbody=document.querySelector('.tbl tbody');
   if(tbody){
     var trows=teams.map(function(t){
       var s=stStyle(t.st);
-      return '<tr><td style="font-weight:500">'+t.name+'</td>'+
-        '<td>'+t.n+'</td>'+
+      return '<tr><td style="font-weight:500">'+t.name+'</td><td>'+t.n+'</td>'+
         '<td style="color:var(--green-d);font-weight:500">'+(t.ready||'—')+'</td>'+
         '<td style="color:var(--blue-d);font-weight:500">'+(t.wip||'—')+'</td>'+
         '<td style="color:var(--amber-d);font-weight:500">'+(t.wait||'—')+'</td>'+
@@ -604,8 +551,7 @@ function renderAll(teams,totN,totR,totW,totWt,totNn,wPK,wGW,wCF,rate,prodC,objC,
         '<td style="color:'+sc(t.gw)+';font-weight:500">'+(t.gw?t.gw.toFixed(1):'—')+'</td>'+
         '<td style="color:'+sc(t.cf)+';font-weight:500">'+(t.cf?t.cf.toFixed(1):'—')+'</td>'+
         '<td style="color:'+sc(t.avg)+';font-weight:500">'+(t.avg?t.avg.toFixed(2):'—')+'</td>'+
-        '<td><span class="pill" style="background:'+s.bg+';color:'+s.fc+'">'+t.st+'</span></td>'+
-        '</tr>';
+        '<td><span class="pill" style="background:'+s.bg+';color:'+s.fc+'">'+t.st+'</span></td></tr>';
     });
     var totAvg=(wPK+wGW+wCF)/3;
     trows.push('<tr><td>รวมทั้งหมด</td><td>'+totN+'</td>'+
@@ -615,34 +561,23 @@ function renderAll(teams,totN,totR,totW,totWt,totNn,wPK,wGW,wCF,rate,prodC,objC,
       '<td>'+wCF.toFixed(2)+'</td><td>'+totAvg.toFixed(2)+'</td><td></td></tr>');
     tbody.innerHTML=trows.join('');
   }
-
-  // Risk — ตรวจจากข้อมูลรายทีม (ใครมี pk/gw/cf ≤ 2)
-  var riskBody=document.getElementById('riskBody');
-  if(riskBody){
-    var riskPeople=[];
-    teams.forEach(function(t){
-      if((t.pk>0&&t.pk<=2)||(t.gw>0&&t.gw<=2)||(t.cf>0&&t.cf<=2)){
-        riskPeople.push(t);
-      }
-    });
-    if(!riskPeople.length){
-      riskBody.innerHTML='<div style="font-size:10px;color:var(--green-d);text-align:center;padding:12px">✅ ไม่มีบุคคลที่มีคะแนน ≤ 2 ในขณะนี้</div>';
+  // Risk
+  var rb=g('riskBody');
+  if(rb){
+    var rp2=teams.filter(function(t){return t.pk>0&&(t.pk<=2||t.gw<=2||t.cf<=2);});
+    if(!rp2.length){
+      rb.innerHTML='<div style="font-size:10px;color:var(--green-d);text-align:center;padding:12px">✅ ไม่มีบุคคลที่มีคะแนน ≤ 2</div>';
     } else {
-      riskBody.innerHTML=riskPeople.slice(0,5).map(function(t){
-        var isRed=t.pk<=2||t.gw<=2||t.cf<=2;
-        var bg=isRed?'var(--red-l)':'var(--amber-l)';
-        var bc=isRed?'var(--red)':'var(--amber)';
-        var fc=isRed?'var(--red-d)':'var(--amber-d)';
-        return '<div class="rk" style="background:'+bg+';border-color:'+bc+'">'+
-          '<div class="rn" style="color:'+fc+'">'+t.name+'</div>'+
-          '<div class="ri" style="color:'+fc+'">PK/GW/CF = '+t.pk.toFixed(1)+'/'+t.gw.toFixed(1)+'/'+t.cf.toFixed(1)+'</div>'+
-          '</div>';
+      rb.innerHTML=rp2.slice(0,5).map(function(t){
+        var isR=t.pk<=2||t.gw<=2||t.cf<=2;
+        return '<div class="rk" style="background:'+(isR?'var(--red-l)':'var(--amber-l)')+';border-color:'+(isR?'var(--red)':'var(--amber)')+'">'+
+          '<div class="rn" style="color:'+(isR?'var(--red-d)':'var(--amber-d)')+'">'+t.name+'</div>'+
+          '<div class="ri" style="color:'+(isR?'var(--red-d)':'var(--amber-d)')+'">PK/GW/CF = '+t.pk.toFixed(1)+'/'+t.gw.toFixed(1)+'/'+t.cf.toFixed(1)+'</div></div>';
       }).join('');
     }
   }
-
-  var footer=document.querySelector('.ftr span');
-  if(footer) footer.textContent='ข้อมูลจาก '+fname+' · '+totN+' คน · KKP Financial Group';
+  var ftr=document.querySelector('.ftr span');
+  if(ftr) ftr.textContent='ข้อมูลจาก '+fname+' · '+totN+' คน · KKP Financial Group';
 }
 
 function renderActions(actions){
