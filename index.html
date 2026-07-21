@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>OL/PH Pipeline — Report Insurance</title>
+<title>OL&PH Pipeline — Insurance Report</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -143,7 +143,7 @@ body{font-family:var(--f);font-size:12px;color:var(--text);background:var(--off)
 <div class="hdr">
   <div>
     <div class="hdr-pre">KKP Financial Group · Sales Development</div>
-    <div class="hdr-ttl">OL Pipeline — Report Insurance</div>
+    <div class="hdr-ttl">OL&PH Pipeline — Insurance Report</div>
     <div class="hdr-sub">Consumer Finance · 25 คน · 9 ทีม · 5 ผลิตภัณฑ์ · อัปเดต 18/07/2569</div>
   </div>
   <div class="rate-pill">
@@ -474,6 +474,7 @@ function parseXL(buf,fname){
     var wCF=actv.length?Math.round(actv.reduce(function(a,t){return a+t.cf*t.n;},0)/totN*100)/100:0;
     var rate=Math.round(totR/totN*100);
 
+    clearAll();
     renderAll(teams,totN,totR,totW,totWt,totNn,wPK,wGW,wCF,rate,prodC,objC,fname);
     showStatus('ok','✅ โหลดสำเร็จ — '+data.length+' คน · '+actv.length+' ทีม จาก '+fname);
     showPreview(teams);
@@ -485,6 +486,70 @@ function stStyle(s){
   if(s==='ปกติ') return{bg:'var(--green-l)',fc:'var(--green-d)'};
   if(s==='เร่งด่วน') return{bg:'var(--red-l)',fc:'var(--red-d)'};
   return{bg:'var(--amber-l)',fc:'var(--amber-d)'};
+}
+
+// ── ล้างข้อมูล hardcode ทั้งหมดออกก่อน render ใหม่ ──────────────────────
+function clearAll(){
+  // KPI numbers
+  document.querySelectorAll('.kn').forEach(function(el){el.textContent='—';});
+  document.querySelectorAll('.ks').forEach(function(el){el.textContent='';});
+
+  // Rate pill
+  var rp=document.querySelector('.rate-pill');
+  if(rp) rp.innerHTML='<span class="rate-n">—</span>กำลังโหลด...';
+
+  // Header sub
+  var sub=document.querySelector('.hdr-sub');
+  if(sub) sub.textContent='กรุณาอัปโหลดไฟล์ Excel เพื่อแสดงข้อมูล';
+
+  // Score bars
+  document.querySelectorAll('.sf').forEach(function(el){el.style.width='0%';});
+  document.querySelectorAll('.sv').forEach(function(el){el.textContent='—';});
+  var at=document.querySelector('.alert-t');var as=document.querySelector('.alert-s');
+  if(at) at.textContent='—';if(as) as.textContent='';
+
+  // Product bars — reset labels and widths
+  var prodBars=document.querySelectorAll('.c:first-of-type .br');
+  prodBars.forEach(function(br){
+    var bf=br.querySelector('.bf');var bv=br.querySelector('.bv');
+    if(bf) bf.style.width='0%';if(bv) bv.textContent='—';
+  });
+  var stk=document.querySelector('.stk');
+  if(stk) stk.innerHTML='';
+  var leg=document.querySelector('.leg');
+  if(leg) leg.innerHTML='';
+
+  // Support bars
+  var supBars=document.querySelectorAll('.c:last-of-type .br');
+  supBars.forEach(function(br){
+    var bf=br.querySelector('.bf');var bv=br.querySelector('.bv');
+    if(bf) bf.style.width='0%';if(bv) bv.textContent='—';
+  });
+
+  // Team table
+  var tbody=document.querySelector('.tbl tbody');
+  if(tbody) tbody.innerHTML='<tr><td colspan="11" style="text-align:center;color:var(--muted);padding:18px;font-size:11px">📂 อัปโหลดไฟล์ Excel เพื่อแสดงข้อมูลรายทีม</td></tr>';
+
+  // Risk section
+  var riskParent=document.querySelector('.rk');
+  if(riskParent&&riskParent.parentElement){
+    riskParent.parentElement.querySelectorAll('.rk').forEach(function(el){el.remove();});
+    var rp2=riskParent.parentElement;
+    rp2.insertAdjacentHTML('beforeend','<div style="text-align:center;color:var(--muted);padding:16px;font-size:11px">📂 ยังไม่มีข้อมูล</div>');
+  }
+
+  // Action section
+  var actParent=document.querySelector('.ak');
+  if(actParent&&actParent.parentElement){
+    var actHead=actParent.parentElement.querySelector('.ct');
+    actParent.parentElement.querySelectorAll('.ak').forEach(function(el){el.remove();});
+    if(actHead) actHead.textContent='Action Items';
+    actParent.parentElement.insertAdjacentHTML('beforeend','<div style="text-align:center;color:var(--muted);padding:16px;font-size:11px">📂 ยังไม่มีข้อมูล</div>');
+  }
+
+  // Footer
+  var ftr=document.querySelector('.ftr span');
+  if(ftr) ftr.textContent='กรุณาอัปโหลดไฟล์ Excel · KKP Financial Group';
 }
 
 function renderAll(teams,totN,totR,totW,totWt,totNn,wPK,wGW,wCF,rate,prodC,objC,fname){
@@ -614,6 +679,8 @@ function showPreview(teams){
     }).join('');
   el.classList.add('show');
 }
+// ล้างข้อมูล hardcode ออกทันทีที่โหลดหน้า — รอ Excel จริงแทน
+window.addEventListener('DOMContentLoaded', function(){ clearAll(); });
 </script>
 </body>
 </html>
