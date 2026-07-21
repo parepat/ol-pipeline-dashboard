@@ -291,24 +291,9 @@ body{font-family:var(--f);font-size:12px;color:var(--text);background:var(--off)
 <!-- RISK + ACTIONS -->
 <div class="g2">
 
-  <div class="c">
+  <div class="c" id="riskCard">
     <div class="ct">บุคคลที่ต้องดูแลเร่งด่วน</div>
-    <div class="rk" style="background:var(--red-l);border-color:var(--red)">
-      <div class="rn" style="color:var(--red-d)">Natthapong Thipsawat · HL1</div>
-      <div class="ri" style="color:var(--red-d)">PK/GW/CF = 2/2/2 · ลูกค้าไม่ตัดสินใจ ค่าเบี้ย</div>
-    </div>
-    <div class="rk" style="background:var(--red-l);border-color:var(--red)">
-      <div class="rn" style="color:var(--red-d)">Phongsak Jiarainairat · HL3</div>
-      <div class="ri" style="color:var(--red-d)">PK/GW/CF = 2/2/2 · ต้องสนับสนุนทุกด้าน</div>
-    </div>
-    <div class="rk" style="background:var(--amber-l);border-color:var(--amber)">
-      <div class="rn" style="color:var(--amber-d)">Rapheeong Tanawichsirodom · HL2</div>
-      <div class="ri" style="color:var(--amber-d)">GW = 2 ต่ำสุด · ยังไม่มีลูกค้าในมือ</div>
-    </div>
-    <div class="rk" style="background:var(--amber-l);border-color:var(--amber)">
-      <div class="rn" style="color:var(--amber-d)">Kanokporn Worametpasuk · HL3</div>
-      <div class="ri" style="color:var(--amber-d)">ยังไม่มีลูกค้าเลย · ภาระงานมาก</div>
-    </div>
+    <div id="riskBody" style="text-align:center;color:var(--muted);padding:16px;font-size:11px">📂 อัปโหลดไฟล์ Excel เพื่อแสดงข้อมูล</div>
   </div>
 
   <div class="c" id="actionCard">
@@ -519,13 +504,9 @@ function clearAll(){
   var tbody=document.querySelector('.tbl tbody');
   if(tbody) tbody.innerHTML='<tr><td colspan="11" style="text-align:center;color:var(--muted);padding:18px;font-size:11px">📂 อัปโหลดไฟล์ Excel เพื่อแสดงข้อมูลรายทีม</td></tr>';
 
-  // Risk section
-  var riskParent=document.querySelector('.rk');
-  if(riskParent&&riskParent.parentElement){
-    riskParent.parentElement.querySelectorAll('.rk').forEach(function(el){el.remove();});
-    var rp2=riskParent.parentElement;
-    rp2.insertAdjacentHTML('beforeend','<div style="text-align:center;color:var(--muted);padding:16px;font-size:11px">📂 ยังไม่มีข้อมูล</div>');
-  }
+  // Risk section — ใช้ id
+  var riskBody=document.getElementById('riskBody');
+  if(riskBody) riskBody.innerHTML='<div style="text-align:center;color:var(--muted);padding:16px;font-size:11px">📂 อัปโหลดไฟล์ Excel เพื่อแสดงข้อมูล</div>';
 
   // Action section — ใช้ id
   var actHead=document.getElementById('actionHead');
@@ -635,18 +616,30 @@ function renderAll(teams,totN,totR,totW,totWt,totNn,wPK,wGW,wCF,rate,prodC,objC,
     tbody.innerHTML=trows.join('');
   }
 
-  // Risk — auto detect low scorers
-  var riskEl=document.querySelector('.rk');
-  if(riskEl&&riskEl.parentElement){
-    var riskParent=riskEl.parentElement;
-    riskParent.querySelectorAll('.rk').forEach(function(el){el.remove();});
+  // Risk — ตรวจจากข้อมูลรายทีม (ใครมี pk/gw/cf ≤ 2)
+  var riskBody=document.getElementById('riskBody');
+  if(riskBody){
+    var riskPeople=[];
+    teams.forEach(function(t){
+      if((t.pk>0&&t.pk<=2)||(t.gw>0&&t.gw<=2)||(t.cf>0&&t.cf<=2)){
+        riskPeople.push(t);
+      }
+    });
+    if(!riskPeople.length){
+      riskBody.innerHTML='<div style="font-size:10px;color:var(--green-d);text-align:center;padding:12px">✅ ไม่มีบุคคลที่มีคะแนน ≤ 2 ในขณะนี้</div>';
+    } else {
+      riskBody.innerHTML=riskPeople.slice(0,5).map(function(t){
+        var isRed=t.pk<=2||t.gw<=2||t.cf<=2;
+        var bg=isRed?'var(--red-l)':'var(--amber-l)';
+        var bc=isRed?'var(--red)':'var(--amber)';
+        var fc=isRed?'var(--red-d)':'var(--amber-d)';
+        return '<div class="rk" style="background:'+bg+';border-color:'+bc+'">'+
+          '<div class="rn" style="color:'+fc+'">'+t.name+'</div>'+
+          '<div class="ri" style="color:'+fc+'">PK/GW/CF = '+t.pk.toFixed(1)+'/'+t.gw.toFixed(1)+'/'+t.cf.toFixed(1)+'</div>'+
+          '</div>';
+      }).join('');
+    }
   }
-
-  // Action Items — อัปเดตผ่าน id (ข้อมูลจาก Action Tracker sheet ถ้ามี)
-  var actHead=document.getElementById('actionHead');
-  var actBody=document.getElementById('actionBody');
-  if(actHead) actHead.textContent='Action Items — อ่านจาก Sheet ✅ Action Tracker';
-  if(actBody) actBody.innerHTML='<div style="text-align:center;color:var(--muted);padding:10px;font-size:10px">📋 อ่านจาก Sheet "✅ Action Tracker" ในไฟล์ Excel<br>ถ้าไม่พบ Sheet นี้ ระบบจะแสดงว่าง</div>';
 
   var footer=document.querySelector('.ftr span');
   if(footer) footer.textContent='ข้อมูลจาก '+fname+' · '+totN+' คน · KKP Financial Group';
