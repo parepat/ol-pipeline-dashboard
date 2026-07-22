@@ -1,11 +1,5 @@
 <!DOCTYPE html>
-<html lang="th">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Insurance Pipeline — Report</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
+<!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml" lang="th"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width,initial-scale=1" /><title>OL Pipeline Dashboard</title><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500&amp;display=swap" rel="stylesheet" /><style>
 :root{
   --navy:#0D2137;--teal:#0D9488;--teal-l:#E1F5EE;--teal-d:#085041;
   --off:#F8FAFC;--white:#fff;--border:#E2E8F0;--muted:#64748B;
@@ -78,7 +72,7 @@ body{font-family:var(--f);font-size:12px;color:var(--text);background:var(--off)
 .tbl tr:last-child td{background:var(--navy);color:#fff;font-weight:500}
 .pill{display:inline-block;font-size:9px;padding:1px 6px;border-radius:20px;font-weight:500;white-space:nowrap}
 
-/* risk & action cards */
+/* risk &amp; action cards */
 .rk{border-radius:6px;padding:6px 9px;border-left:2px solid;margin-bottom:5px}
 .rn{font-size:10px;font-weight:500;margin-bottom:1px}
 .ri{font-size:9px;opacity:.8}
@@ -129,27 +123,45 @@ body{font-family:var(--f);font-size:12px;color:var(--text);background:var(--off)
 .uf-hint{font-size:9px;color:var(--muted);margin-top:7px;line-height:1.5}
 .uf-print{width:100%;margin-top:7px;padding:7px;background:var(--navy);color:#fff;border:none;border-radius:var(--r);font-family:var(--f);font-size:11px;font-weight:500;cursor:pointer}
 .uf-print:hover{opacity:.9}
+/* modal */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(13,33,55,.6);z-index:1000;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:14px;width:92%;max-width:820px;max-height:88vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 16px 48px rgba(0,0,0,.2)}
+.modal-hd{background:var(--navy);padding:14px 20px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.modal-hd-title{color:#fff;font-size:14px;font-weight:500}
+.modal-hd-sub{color:#94A3B8;font-size:10px;margin-top:2px}
+.modal-close{background:none;border:none;color:#94A3B8;font-size:20px;cursor:pointer;padding:0;line-height:1}
+.modal-close:hover{color:#fff}
+.modal-body{padding:16px 20px;overflow-y:auto;flex:1}
+.modal-stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.modal-stat{border-radius:8px;padding:10px 12px;text-align:center}
+.modal-stat-n{font-size:20px;font-weight:500;line-height:1;margin-bottom:2px}
+.modal-stat-l{font-size:9px}
+.mtbl{width:100%;border-collapse:collapse;font-size:11px}
+.mtbl th{background:var(--teal);color:#fff;font-weight:500;padding:6px 8px;text-align:left;white-space:nowrap}
+.mtbl th:not(:first-child){text-align:center}
+.mtbl td{padding:6px 8px;border-bottom:.5px solid var(--border);vertical-align:middle;white-space:nowrap}
+.mtbl td:not(:first-child){text-align:center}
+.mtbl tr:nth-child(even) td{background:var(--off)}
+.detail-link{font-size:9px;color:var(--teal);cursor:pointer;text-decoration:underline;white-space:nowrap;background:none;border:none;font-family:var(--f);padding:0}
+.detail-link:hover{color:var(--teal-d)}
+
 @media print{
   body{background:#fff}
   .page{padding:6px}
   .uf{display:none!important}
 }
-</style>
-</head>
-<body>
+</style><script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script></head><body>
 <div class="page">
 
 <!-- HEADER -->
 <div class="hdr">
   <div>
-    <div class="hdr-pre">Sales Development</div>
+    <div class="hdr-pre">Consumer Finance</div>
     <div class="hdr-ttl">Insurance Pipeline — Report</div>
     <div class="hdr-sub">กรุณาอัปโหลดไฟล์ Excel เพื่อแสดงข้อมูล</div>
   </div>
-  <div class="rate-pill">
-    <span class="rate-n">—</span>
-    รอข้อมูล Excel
-  </div>
+  <div class="rate-pill"><span class="rate-n">—</span>รอข้อมูล Excel</div>
 </div>
 
 <!-- KPI ROW -->
@@ -182,9 +194,7 @@ body{font-family:var(--f);font-size:12px;color:var(--text);background:var(--off)
   <!-- Product -->
   <div class="c">
     <div class="ct">ผลิตภัณฑ์ที่เสนอ</div>
-    <div id="prodBars">
-      <div style="text-align:center;color:var(--muted);padding:12px;font-size:10px">📂 รอข้อมูล Excel</div>
-    </div>
+    <div id="prodBars"><div style="text-align:center;color:var(--muted);padding:12px;font-size:10px">📂 รอข้อมูล Excel</div></div>
     <div class="div"></div>
     <div style="font-size:9px;color:var(--muted);margin-bottom:4px">วัตถุประสงค์ลูกค้า</div>
     <div class="stk" id="stkBar"></div>
@@ -196,18 +206,18 @@ body{font-family:var(--f);font-size:12px;color:var(--text);background:var(--off)
     <div class="ct">คะแนนความพร้อมเฉลี่ย (จาก 5)</div>
     <div class="sb">
       <div class="sm"><span class="sn">Product Knowledge</span><span class="sv" id="sv0" style="color:var(--green-d)">—</span></div>
-      <div class="st"><div class="sf" id="sf0" style="width:0%;background:var(--green)"></div></div>
+      <div class="st"><div class="sf" id="sf0" style="width: 0%; background: var(--green);"></div></div>
     </div>
     <div class="sb">
       <div class="sm">
-        <span class="sn" id="gwLabel">Genwing System</span>
+        <span class="sn" id="gwLabel">Genwing System <span style="font-size:9px;color:var(--amber-d);font-weight:500">⚠ ต่ำสุด</span></span>
         <span class="sv" id="sv1" style="color:var(--amber-d)">—</span>
       </div>
-      <div class="st"><div class="sf" id="sf1" style="width:0%;background:var(--amber)"></div></div>
+      <div class="st"><div class="sf" id="sf1" style="width: 0%; background: var(--amber);"></div></div>
     </div>
     <div class="sb">
       <div class="sm"><span class="sn">ความมั่นใจนำเสนอ</span><span class="sv" id="sv2" style="color:var(--teal-d)">—</span></div>
-      <div class="st"><div class="sf" id="sf2" style="width:0%;background:var(--teal)"></div></div>
+      <div class="st"><div class="sf" id="sf2" style="width: 0%; background: var(--teal);"></div></div>
     </div>
     <div class="alert">
       <div class="alert-t" id="alertT">—</div>
@@ -218,16 +228,16 @@ body{font-family:var(--f);font-size:12px;color:var(--text);background:var(--off)
   <!-- Support needs -->
   <div class="c">
     <div class="ct">สนับสนุนที่ทีมต้องการ</div>
-    <div class="br"><div class="bl xs">Script/เอกสารขาย</div><div class="bt"><div class="bf" id="sup0" style="width:0%;background:var(--teal)"></div></div></div>
-    <div class="br"><div class="bl xs">ระบบ Genwing</div><div class="bt"><div class="bf" id="sup1" style="width:0%;background:var(--blue)"></div></div></div>
-    <div class="br"><div class="bl xs">Role Play / เทคนิค</div><div class="bt"><div class="bf" id="sup2" style="width:0%;background:var(--purple)"></div></div></div>
-    <div class="br"><div class="bl xs">Need Finding</div><div class="bt"><div class="bf" id="sup3" style="width:0%;background:var(--amber)"></div></div></div>
+    <div class="br"><div class="bl xs">Script/เอกสารขาย</div><div class="bt"><div class="bf" id="sup0" style="width: 0%; background: var(--teal);"></div></div></div>
+    <div class="br"><div class="bl xs">ระบบ Genwing</div><div class="bt"><div class="bf" id="sup1" style="width: 0%; background: var(--blue);"></div></div></div>
+    <div class="br"><div class="bl xs">Role Play / เทคนิค</div><div class="bt"><div class="bf" id="sup2" style="width: 0%; background: var(--purple);"></div></div></div>
+    <div class="br"><div class="bl xs">Need Finding</div><div class="bt"><div class="bf" id="sup3" style="width: 0%; background: var(--amber);"></div></div></div>
     <div class="div"></div>
     <div class="ct" style="margin-top:2px">Matching Guide</div>
     <div style="font-size:10px;color:var(--teal-d);line-height:1.7">
-      ออมเงิน → Wealth 10/3<br>
-      เกษียณ → Flow 678<br>
-      สุขภาพ → Preferred Health<br>
+      ออมเงิน → Wealth 10/3<br />
+      เกษียณ → Flow 678<br />
+      สุขภาพ → Preferred Health<br />
       ส่งต่อ → Heritage 90/2
     </div>
   </div>
@@ -241,21 +251,22 @@ body{font-family:var(--f);font-size:12px;color:var(--text);background:var(--off)
     <table class="tbl">
       <thead>
         <tr>
-          <th>ทีม</th><th style="width:6%">จำนวน</th>
-          <th style="width:8%;color:#A7F3D0">พร้อม Submit</th>
-          <th style="width:9%;color:#BFDBFE">กำลังดำเนินการ</th>
-          <th style="width:8%;color:#FDE68A">รอ/ติดเงื่อนไข</th>
-          <th style="width:8%;color:#FCA5A5">ยังไม่มีลูกค้า</th>
-          <th style="width:7%">PK</th>
-          <th style="width:7%">Genwing</th>
-          <th style="width:7%">มั่นใจ</th>
-          <th style="width:8%">เฉลี่ย</th>
-          <th style="width:9%">สถานะ</th>
+          <th>ทีม</th><th style="width:5%">จำนวน</th>
+          <th style="width:9%;color:#FDE68A">เบี้ยเฉลี่ย (฿)</th>
+          <th style="width:7%;color:#A7F3D0">พร้อม Submit</th>
+          <th style="width:8%;color:#BFDBFE">กำลังดำเนินการ</th>
+          <th style="width:7%;color:#FDE68A">รอ/ติดเงื่อนไข</th>
+          <th style="width:7%;color:#FCA5A5">ยังไม่มีลูกค้า</th>
+          <th style="width:5%">PK</th>
+          <th style="width:5%">Genwing</th>
+          <th style="width:5%">มั่นใจ</th>
+          <th style="width:6%">เฉลี่ย</th>
+          <th style="width:14%">ผลิตภัณฑ์</th>
+          <th style="width:7%">สถานะ</th>
+          <th style="width:7%">รายละเอียด</th>
         </tr>
       </thead>
-      <tbody>
-        <tr><td colspan="11" style="text-align:center;color:var(--muted);padding:18px;font-size:11px">📂 อัปโหลดไฟล์ Excel เพื่อแสดงข้อมูลรายทีม</td></tr>
-      </tbody>
+      <tbody><tr><td colspan="14" style="text-align:center;color:var(--muted);padding:18px;font-size:11px">📂 อัปโหลดไฟล์ Excel เพื่อแสดงข้อมูลรายทีม</td></tr></tbody>
     </table>
   </div>
   <div style="font-size:9px;color:var(--muted);margin-top:6px">
@@ -270,52 +281,52 @@ body{font-family:var(--f);font-size:12px;color:var(--text);background:var(--off)
 
   <div class="c" id="riskCard">
     <div class="ct">บุคคลที่ต้องดูแลเร่งด่วน</div>
-    <div id="riskBody" style="text-align:center;color:var(--muted);padding:16px;font-size:11px">📂 อัปโหลดไฟล์ Excel เพื่อแสดงข้อมูล</div>
+    <div id="riskBody" style="text-align:center;color:var(--muted);padding:16px;font-size:11px"><div style="text-align:center;color:var(--muted);padding:16px;font-size:11px">📂 อัปโหลดไฟล์ Excel เพื่อแสดงข้อมูล</div></div>
   </div>
 
   <div class="c" id="actionCard">
     <div class="ct" id="actionHead">Action Items</div>
-    <div id="actionBody" style="text-align:center;color:var(--muted);padding:16px;font-size:11px">📂 อัปโหลดไฟล์ Excel เพื่อแสดง Action Items</div>
+    <div id="actionBody" style="text-align:center;color:var(--muted);padding:16px;font-size:11px"><div style="text-align:center;color:var(--muted);padding:16px;font-size:11px">📂 อัปโหลดไฟล์ Excel เพื่อแสดง Action Items</div></div>
   </div>
 
 </div>
 
 <!-- FOOTER -->
 <div class="ftr">
-  <span>KKP Financial Group · Sales Development</span>
+  <span>กรุณาอัปโหลดไฟล์ Excel · KKP Financial Group</span>
   <span id="footerRight">จัดทำโดย ทีม Sales Development</span>
 </div>
 
 </div>
-<!-- UPLOAD FLOAT -->
-<div class="uf" id="uf">
-  <div class="uf-hd" onclick="toggleUF()">
-    <div class="uf-hd-l">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-      อัปโหลด Excel อัปเดต Dashboard
+<!-- MODAL DETAIL -->
+<div class="modal-overlay" id="detailModal" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-hd">
+      <div>
+        <div class="modal-hd-title" id="modalTitle">Home Loan Acq. 1</div>
+        <div class="modal-hd-sub" id="modalSub">3 คน · เบี้ยเฉลี่ย 13,500 ฿/ปี · เฉลี่ยคะแนน 3.78</div>
+      </div>
+      <button class="modal-close" onclick="document.getElementById('detailModal').classList.remove('open')">×</button>
     </div>
-    <button class="uf-tog" id="uf-tog">▾</button>
-  </div>
-  <div class="uf-bd" id="uf-bd">
-    <div class="uz" id="uz"
-      ondragover="event.preventDefault();this.classList.add('drag')"
-      ondragleave="this.classList.remove('drag')"
-      ondrop="onDrop(event)">
-      <input type="file" accept=".xlsx,.xls" onchange="onFile(this.files[0])">
-      <div class="uz-ic">📊</div>
-      <div class="uz-t">วาง หรือ คลิกเพื่อเลือกไฟล์</div>
-      <div class="uz-s">รองรับ OL_Pipeline_Template.xlsx</div>
+    <div class="modal-body">
+      <div class="modal-stat-row" id="modalStats"><div class="modal-stat" style="background:var(--green-l)"><div class="modal-stat-n" style="color:var(--green-d)">2</div><div class="modal-stat-l" style="color:var(--green-d)">พร้อม Submit</div></div><div class="modal-stat" style="background:var(--blue-l)"><div class="modal-stat-n" style="color:var(--blue-d)">0</div><div class="modal-stat-l" style="color:var(--blue-d)">กำลังดำเนินการ</div></div><div class="modal-stat" style="background:var(--amber-l)"><div class="modal-stat-n" style="color:var(--amber-d)">1</div><div class="modal-stat-l" style="color:var(--amber-d)">รอ/ติดเงื่อนไข</div></div><div class="modal-stat" style="background:var(--red-l)"><div class="modal-stat-n" style="color:var(--red-d)">0</div><div class="modal-stat-l" style="color:var(--red-d)">ยังไม่มีลูกค้า</div></div></div>
+      <div style="overflow-x:auto">
+        <table class="mtbl">
+          <thead>
+            <tr>
+              <th>ชื่อ-สกุล</th><th>ตำแหน่ง</th><th>ผลิตภัณฑ์</th>
+              <th>เบี้ย (฿)</th><th>PK</th><th>GW</th><th>CF</th><th>Pipeline Status</th>
+            </tr>
+          </thead>
+          <tbody id="modalBody"><tr><td style="font-weight:500">Wichaya Sangsuk</td><td>TM</td><td style="font-size:10px">Wealth 10/3</td><td style="text-align:right;color:var(--amber-d)">15,600</td><td style="color:var(--green-d);font-weight:500">5</td><td style="color:var(--green-d);font-weight:500">4</td><td style="color:var(--green-d);font-weight:500">5</td><td><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:var(--green-l);color:var(--green-d)">พร้อม Submit</span></td></tr><tr><td style="font-weight:500">Natthapong Thipsawat</td><td>TM</td><td style="font-size:10px">Wealth 10/3</td><td style="text-align:right;color:var(--amber-d)">9,300</td><td style="color:var(--red-d);font-weight:500">2</td><td style="color:var(--red-d);font-weight:500">2</td><td style="color:var(--red-d);font-weight:500">2</td><td><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:var(--amber-l);color:var(--amber-d)">รอ/ติดเงื่อนไข</span></td></tr><tr><td style="font-weight:500">Parinee Kormkhuntod</td><td>TM</td><td style="font-size:10px">Wealth 10/3</td><td style="text-align:right;color:var(--amber-d)">15,600</td><td style="color:var(--green-d);font-weight:500">5</td><td style="color:var(--green-d);font-weight:500">4</td><td style="color:var(--green-d);font-weight:500">5</td><td><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:var(--green-l);color:var(--green-d)">พร้อม Submit</span></td></tr></tbody>
+        </table>
+      </div>
     </div>
-    <div class="us" id="us"></div>
-    <div class="upv" id="upv"></div>
-    <div class="uf-hint">
-      💡 อ่าน Sheet 📊 Pipeline Overview อัตโนมัติ<br>
-      คอลัมน์: ทีม (B) · PK (L) · GW (M) · CF (N) · Status (O)<br>
-      <span id="xlsxStatus" style="color:var(--amber-d)">⏳ กำลังโหลด SheetJS...</span>
-    </div>
-    <button class="uf-print" onclick="window.print()">🖨️ พิมพ์ / บันทึก PDF</button>
   </div>
 </div>
+
+<!-- UPLOAD FLOAT -->
+
 
 <script>
 // โหลด SheetJS แบบ multi-CDN fallback — ไม่บล็อก onFile()
@@ -328,7 +339,7 @@ var XLSX; // declare ไว้ก่อน
   ];
   var idx = 0;
   function tryNext(){
-    if(idx >= cdns.length){
+    if(idx &gt;= cdns.length){
       var el=document.getElementById('xlsxStatus');
       if(el){ el.style.color='var(--red-d)'; el.textContent='❌ โหลด SheetJS ไม่ได้ — ตรวจสอบอินเทอร์เน็ต'; }
       return;
@@ -366,7 +377,7 @@ function onFile(f){
       if(typeof XLSX !== 'undefined'){
         clearInterval(wait);
         doRead(f);
-      } else if(tries>=10){
+      } else if(tries&gt;=10){
         clearInterval(wait);
         showStatus('err','❌ SheetJS โหลดไม่ได้ — ตรวจสอบอินเทอร์เน็ต');
       }
@@ -402,9 +413,9 @@ function matchTeam(raw){
   raw=str(raw);
   return TEAMS.find(function(t){
     return raw===t||t===raw||raw.includes(t)||t.includes(raw)||
-    (t.includes('Home Loan Acquiring 1')&&raw.includes('HL1'))||
-    (t.includes('Home Loan Acquiring 2')&&raw.includes('HL2'))||
-    (t.includes('Home Loan Acquiring 3')&&raw.includes('HL3'));
+    (t.includes('Home Loan Acquiring 1')&amp;&amp;raw.includes('HL1'))||
+    (t.includes('Home Loan Acquiring 2')&amp;&amp;raw.includes('HL2'))||
+    (t.includes('Home Loan Acquiring 3')&amp;&amp;raw.includes('HL3'));
   });
 }
 
@@ -416,40 +427,45 @@ function parseXL(buf,fname){
     if(!sn){showStatus('err','❌ ไม่พบ Sheet "Pipeline Overview"');return;}
     var rows=XLSX.utils.sheet_to_json(wb.Sheets[sn],{header:1,defval:''});
     var hdr=rows.findIndex(function(r){return r.some(function(c){return str(c).includes('Pipeline Status')||str(c).includes('ทีม');});});
-    if(hdr<0) hdr=4;
+    if(hdr&lt;0) hdr=4;
     var data=rows.slice(hdr+1).filter(function(r){
-      var n=str(r[0]),t=str(r[1]);return n&&t&&n!=='สรุปรวม'&&!n.startsWith('#');
+      var n=str(r[0]),t=str(r[1]);return n&amp;&amp;t&amp;&amp;n!=='สรุปรวม'&amp;&amp;!n.startsWith('#');
     });
     if(!data.length){showStatus('err','❌ ไม่พบข้อมูลใน Pipeline Overview');return;}
 
     var td={};
-    TEAMS.forEach(function(t){td[t]={n:0,ready:0,wip:0,wait:0,none:0,pkS:0,gwS:0,cfS:0,cnt:0,members:[]};});
+    TEAMS.forEach(function(t){td[t]={n:0,ready:0,wip:0,wait:0,none:0,pkS:0,gwS:0,cfS:0,cnt:0,premSum:0,premCnt:0,members:[],prods:{}};});
+    var allMembers=[];
     var prodC={},objC={};
 
     data.forEach(function(r){
       var tk=matchTeam(r[1]);if(!tk) return;
       var d=td[tk]; d.n++;
-      var pk=num(r[11]),gw=num(r[12]),cf=num(r[13]);
-      if(pk>0){d.pkS+=pk;d.gwS+=gw;d.cfS+=cf;d.cnt++;}
-      var pipe=str(r[14]);
+      var pk=num(r[12]),gw=num(r[13]),cf=num(r[14]);
+      if(pk&gt;0){d.pkS+=pk;d.gwS+=gw;d.cfS+=cf;d.cnt++;}
+      var pipe=str(r[15]);
       if(pipe==='พร้อม Submit'||pipe==='พร้อม Submit เร็ว') d.ready++;
       else if(pipe==='กำลังดำเนินการ') d.wip++;
       else if(pipe==='รอ/ติดเงื่อนไข') d.wait++;
       else if(pipe==='ยังไม่มีลูกค้า') d.none++;
-      var prod=str(r[6]);if(prod){var pk2=prod.replace('KKPGEN ','').replace('(Par)','').trim();prodC[pk2]=(prodC[pk2]||0)+1;}
+      var prem=num(r[7]);if(prem&gt;0){d.premSum+=prem;d.premCnt++;}
+      d.members.push({name:str(r[0]),pos:str(r[2]),prod:str(r[6]),prem:prem,pk:num(r[12]),gw:num(r[13]),cf:num(r[14]),pipe:str(r[15]),reason:str(r[16])});
+      allMembers.push({name:str(r[0]),team:tk,pos:str(r[2]),prod:str(r[6]),prem:prem,pk:num(r[12]),gw:num(r[13]),cf:num(r[14]),pipe:str(r[15]),reason:str(r[16])});
+      var prod=str(r[6]);if(prod){var pk2=prod.replace('KKPGEN ','').replace('(Par)','').trim();prodC[pk2]=(prodC[pk2]||0)+1;d.prods[pk2]=(d.prods[pk2]||0)+1;}
       var obj=str(r[5]);if(obj) objC[obj]=(objC[obj]||0)+1;
     });
 
     var teams=TEAMS.map(function(t){
       var d=td[t],c=d.cnt||1;
-      var pk=d.cnt>0?Math.round(d.pkS/c*100)/100:0;
-      var gw=d.cnt>0?Math.round(d.gwS/c*100)/100:0;
-      var cf=d.cnt>0?Math.round(d.cfS/c*100)/100:0;
+      var pk=d.cnt&gt;0?Math.round(d.pkS/c*100)/100:0;
+      var gw=d.cnt&gt;0?Math.round(d.gwS/c*100)/100:0;
+      var cf=d.cnt&gt;0?Math.round(d.cfS/c*100)/100:0;
       var avg=(pk+gw+cf)/3;
       var st='ติดตาม';
-      if(d.n===0||avg<3.5||d.ready===0) st='เร่งด่วน';
-      else if(d.n>0&&d.ready/d.n>=0.3) st='ปกติ';
-      return{name:SHORT[t]||t,n:d.n,ready:d.ready,wip:d.wip,wait:d.wait,none:d.none,pk:pk,gw:gw,cf:cf,avg:avg,st:st};
+      if(d.n===0||avg&lt;3.5||d.ready===0) st='เร่งด่วน';
+      else if(d.n&gt;0&amp;&amp;d.ready/d.n&gt;=0.3) st='ปกติ';
+      var avgPrem=d.premCnt&gt;0?Math.round(d.premSum/d.premCnt):0;
+      return{name:SHORT[t]||t,n:d.n,ready:d.ready,wip:d.wip,wait:d.wait,none:d.none,pk:pk,gw:gw,cf:cf,avg:avg,st:st,prods:d.prods,premSum:d.premSum,premCnt:d.premCnt,avgPrem:avgPrem,members:d.members};
     });
 
     var totN=teams.reduce(function(a,t){return a+t.n;},0)||1;
@@ -457,7 +473,7 @@ function parseXL(buf,fname){
     var totW=teams.reduce(function(a,t){return a+t.wip;},0);
     var totWt=teams.reduce(function(a,t){return a+t.wait;},0);
     var totNn=teams.reduce(function(a,t){return a+t.none;},0);
-    var actv=teams.filter(function(t){return t.n>0;});
+    var actv=teams.filter(function(t){return t.n&gt;0;});
     var wPK=actv.length?Math.round(actv.reduce(function(a,t){return a+t.pk*t.n;},0)/totN*100)/100:0;
     var wGW=actv.length?Math.round(actv.reduce(function(a,t){return a+t.gw*t.n;},0)/totN*100)/100:0;
     var wCF=actv.length?Math.round(actv.reduce(function(a,t){return a+t.cf*t.n;},0)/totN*100)/100:0;
@@ -471,13 +487,13 @@ function parseXL(buf,fname){
       // หา header row — ต้องมีทั้ง '#' หรือ 'ชื่อ' และ 'Action'
       var atHdr=atRows.findIndex(function(r){
         var joined=r.map(function(c){return str(c);}).join('|');
-        return (joined.includes('#')||joined.includes('ชื่อ-สกุล'))&&joined.includes('Action');
+        return (joined.includes('#')||joined.includes('ชื่อ-สกุล'))&amp;&amp;joined.includes('Action');
       });
-      if(atHdr<0) atHdr=4; // fallback row 5 (index 4)
+      if(atHdr&lt;0) atHdr=4; // fallback row 5 (index 4)
       var atData=atRows.slice(atHdr+1).filter(function(r){
         var name=str(r[1]);var action=str(r[4]);
         // กรอง: ต้องมีชื่อ + action และไม่ใช่ header หรือแถวว่าง
-        return name&&action&&name!=='ชื่อ-สกุล (ลูกค้า)'&&!name.startsWith('#');
+        return name&amp;&amp;action&amp;&amp;name!=='ชื่อ-สกุล (ลูกค้า)'&amp;&amp;!name.startsWith('#');
       });
       actions=atData.slice(0,8).map(function(r){
         return{no:r[0],name:str(r[1]),team:str(r[2]),pipe:str(r[3]),action:str(r[4]),type:str(r[5]),owner:str(r[6]),due:str(r[7]),status:str(r[8])};
@@ -487,28 +503,33 @@ function parseXL(buf,fname){
     // เก็บ risk people จากรายคน (data rows) — คะแนน ≤ 2 อย่างน้อย 1 ด้าน
     var riskPeople=data.filter(function(r){
       var pk=num(r[11]),gw=num(r[12]),cf=num(r[13]);
-      return (pk>0&&pk<=2)||(gw>0&&gw<=2)||(cf>0&&cf<=2);
+      return (pk&gt;0&amp;&amp;pk&lt;=2)||(gw&gt;0&amp;&amp;gw&lt;=2)||(cf&gt;0&amp;&amp;cf&lt;=2);
     }).map(function(r){
       var tk=matchTeam(r[1]);
       return{
         name:str(r[0]),
         team:SHORT[tk]||str(r[1]),
-        pk:num(r[11]),gw:num(r[12]),cf:num(r[13]),
-        pipe:str(r[14]),
-        reason:str(r[15])
+        pk:num(r[12]),gw:num(r[13]),cf:num(r[14]),
+        pipe:str(r[15]),
+        reason:str(r[16])
       };
     });
 
+    window._dashTeams=teams;
+    window._exportMeta={totN:totN,totR:totR,totW:totW,totWt:totWt,totNn:totNn,wPK:wPK,wGW:wGW,wCF:wCF,rate:rate,prodC:prodC,objC:objC,fname:fname};
+    window._exportActions=actions;
+    window._exportRisk=riskPeople;
     clearAll();
     renderAll(teams,totN,totR,totW,totWt,totNn,wPK,wGW,wCF,rate,prodC,objC,fname);
     renderActions(actions);
     renderRisk(riskPeople);
     showStatus('ok','✅ โหลดสำเร็จ — '+data.length+' คน · '+actv.length+' ทีม จาก '+fname);
     showPreview(teams);
+    var eb=document.getElementById('exportBtn');if(eb) eb.style.display='block';
   }catch(e){showStatus('err','❌ '+e.message);}
 }
 
-function sc(v){return v>=4?'var(--green-d)':v>=3.5?'#D97706':'var(--red-d)';}
+function sc(v){return v&gt;=4?'var(--green-d)':v&gt;=3.5?'#D97706':'var(--red-d)';}
 function stStyle(s){
   if(s==='ปกติ') return{bg:'var(--green-l)',fc:'var(--green-d)'};
   if(s==='เร่งด่วน') return{bg:'var(--red-l)',fc:'var(--red-d)'};
@@ -523,7 +544,7 @@ function clearAll(){
 
   // Rate pill
   var rp=document.querySelector('.rate-pill');
-  if(rp) rp.innerHTML='<span class="rate-n">—</span>รอข้อมูล Excel';
+  if(rp) rp.innerHTML='&lt;span class="rate-n"&gt;—&lt;/span&gt;รอข้อมูล Excel';
 
   // Header
   var sub=document.querySelector('.hdr-sub');
@@ -531,7 +552,7 @@ function clearAll(){
 
   // Products
   var pb=document.getElementById('prodBars');
-  if(pb) pb.innerHTML='<div style="text-align:center;color:var(--muted);padding:12px;font-size:10px">📂 รอข้อมูล Excel</div>';
+  if(pb) pb.innerHTML='&lt;div style="text-align:center;color:var(--muted);padding:12px;font-size:10px"&gt;📂 รอข้อมูล Excel&lt;/div&gt;';
   var stk=document.getElementById('stkBar');if(stk) stk.innerHTML='';
   var leg=document.getElementById('legBar');if(leg) leg.innerHTML='';
 
@@ -546,16 +567,16 @@ function clearAll(){
 
   // Team table
   var tbody=document.querySelector('.tbl tbody');
-  if(tbody) tbody.innerHTML='<tr><td colspan="11" style="text-align:center;color:var(--muted);padding:18px;font-size:11px">📂 อัปโหลดไฟล์ Excel เพื่อแสดงข้อมูลรายทีม</td></tr>';
+  if(tbody) tbody.innerHTML='&lt;tr&gt;&lt;td colspan="14" style="text-align:center;color:var(--muted);padding:18px;font-size:11px"&gt;📂 อัปโหลดไฟล์ Excel เพื่อแสดงข้อมูลรายทีม&lt;/td&gt;&lt;/tr&gt;';
 
   // Risk
   var rb=document.getElementById('riskBody');
-  if(rb) rb.innerHTML='<div style="text-align:center;color:var(--muted);padding:16px;font-size:11px">📂 อัปโหลดไฟล์ Excel เพื่อแสดงข้อมูล</div>';
+  if(rb) rb.innerHTML='&lt;div style="text-align:center;color:var(--muted);padding:16px;font-size:11px"&gt;📂 อัปโหลดไฟล์ Excel เพื่อแสดงข้อมูล&lt;/div&gt;';
 
   // Actions
   var ah=document.getElementById('actionHead');if(ah) ah.textContent='Action Items';
   var ab=document.getElementById('actionBody');
-  if(ab) ab.innerHTML='<div style="text-align:center;color:var(--muted);padding:16px;font-size:11px">📂 อัปโหลดไฟล์ Excel เพื่อแสดง Action Items</div>';
+  if(ab) ab.innerHTML='&lt;div style="text-align:center;color:var(--muted);padding:16px;font-size:11px"&gt;📂 อัปโหลดไฟล์ Excel เพื่อแสดง Action Items&lt;/div&gt;';
 
   // Footer
   var ftr=document.querySelector('.ftr span');
@@ -566,9 +587,9 @@ function renderAll(teams,totN,totR,totW,totWt,totNn,wPK,wGW,wCF,rate,prodC,objC,
   var g=function(id){return document.getElementById(id);};
   // Header
   var sub=document.querySelector('.hdr-sub');
-  if(sub) sub.textContent=totN+' คน · '+teams.filter(function(t){return t.n>0;}).length+' ทีม · ข้อมูลจาก '+fname;
+  if(sub) sub.textContent=totN+' คน · '+teams.filter(function(t){return t.n&gt;0;}).length+' ทีม · ข้อมูลจาก '+fname;
   var rp=document.querySelector('.rate-pill');
-  if(rp) rp.innerHTML='<span class="rate-n">'+rate+'%</span>Submit-Ready Rate<br>'+totR+' จาก '+totN+' คน';
+  if(rp) rp.innerHTML='&lt;span class="rate-n"&gt;'+rate+'%&lt;/span&gt;Submit-Ready Rate&lt;br&gt;'+totR+' จาก '+totN+' คน';
   // KPI
   if(g('kn0')) g('kn0').textContent=totR;
   if(g('kn1')) g('kn1').textContent=totW;
@@ -587,7 +608,7 @@ function renderAll(teams,totN,totR,totW,totWt,totNn,wPK,wGW,wCF,rate,prodC,objC,
   if(g('sf2')) g('sf2').style.width=(wCF/5*100)+'%';
   var lowest=Math.min(wPK,wGW,wCF);
   var lowestName=lowest===wPK?'Product Knowledge':lowest===wGW?'Genwing System':'ความมั่นใจ';
-  if(g('gwLabel')) g('gwLabel').innerHTML='Genwing System'+(wGW===lowest?' <span style="font-size:9px;color:var(--amber-d);font-weight:500">⚠ ต่ำสุด</span>':'');
+  if(g('gwLabel')) g('gwLabel').innerHTML='Genwing System'+(wGW===lowest?' &lt;span style="font-size:9px;color:var(--amber-d);font-weight:500"&gt;⚠ ต่ำสุด&lt;/span&gt;':'');
   if(g('alertT')) g('alertT').textContent=lowestName+' = จุดอ่อนอันดับ 1';
   if(g('alertS')) g('alertS').textContent='คะแนนเฉลี่ย '+lowest.toFixed(2)+' / 5 — ต้อง Workshop เร่งด่วน';
   // Products
@@ -597,18 +618,18 @@ function renderAll(teams,totN,totR,totW,totWt,totNn,wPK,wGW,wCF,rate,prodC,objC,
   var maxP=sortedProd[0]?sortedProd[0][1]:1;
   var pb=g('prodBars');
   if(pb) pb.innerHTML=sortedProd.slice(0,5).map(function(p,i){
-    return '<div class="br"><div class="bl">'+p[0]+'</div>'+
-      '<div class="bt"><div class="bf" style="width:'+(p[1]/maxP*100)+'%;background:'+prodColors[i]+'"></div></div>'+
-      '<div class="bv" style="color:'+prodDark[i]+'">'+p[1]+'</div></div>';
-  }).join('')||'<div style="text-align:center;color:var(--muted);padding:10px;font-size:10px">ไม่พบข้อมูลผลิตภัณฑ์</div>';
+    return '&lt;div class="br"&gt;&lt;div class="bl"&gt;'+p[0]+'&lt;/div&gt;'+
+      '&lt;div class="bt"&gt;&lt;div class="bf" style="width:'+(p[1]/maxP*100)+'%;background:'+prodColors[i]+'"&gt;&lt;/div&gt;&lt;/div&gt;'+
+      '&lt;div class="bv" style="color:'+prodDark[i]+'"&gt;'+p[1]+'&lt;/div&gt;&lt;/div&gt;';
+  }).join('')||'&lt;div style="text-align:center;color:var(--muted);padding:10px;font-size:10px"&gt;ไม่พบข้อมูลผลิตภัณฑ์&lt;/div&gt;';
   var sortedObj=Object.entries(objC).sort(function(a,b){return b[1]-a[1];});
   var stk=g('stkBar');
   if(stk) stk.innerHTML=sortedObj.slice(0,5).map(function(o,i){
-    return '<div class="ss" style="flex:'+o[1]+';background:'+prodColors[i]+'">'+o[0].substring(0,4)+' '+o[1]+'</div>';
+    return '&lt;div class="ss" style="flex:'+o[1]+';background:'+prodColors[i]+'"&gt;'+o[0].substring(0,4)+' '+o[1]+'&lt;/div&gt;';
   }).join('');
   var leg=g('legBar');
   if(leg) leg.innerHTML=sortedObj.slice(0,5).map(function(o,i){
-    return '<div class="li"><div class="lsq" style="background:'+prodColors[i]+'"></div>'+o[0]+' '+o[1]+'</div>';
+    return '&lt;div class="li"&gt;&lt;div class="lsq" style="background:'+prodColors[i]+'"&gt;&lt;/div&gt;'+o[0]+' '+o[1]+'&lt;/div&gt;';
   }).join('');
   // Support bars (static labels, proportional widths)
   var supPct=[100,77,62,46];
@@ -616,25 +637,43 @@ function renderAll(teams,totN,totR,totW,totWt,totNn,wPK,wGW,wCF,rate,prodC,objC,
   // Team table
   var tbody=document.querySelector('.tbl tbody');
   if(tbody){
-    var trows=teams.map(function(t){
+    // short product name map
+    var PSHORT={
+      'Wealth 10/3':'W10/3','Heritage Plus 90/2':'Heritage','Wealth Plus 15/5':'W+15/5',
+      'Flow 678':'Flow678','Preferred Health':'PrefHealth'
+    };
+    var PCOL=['var(--teal-d)','var(--amber-d)','var(--blue-d)','var(--purple-d)','var(--gray-d)'];
+    var prodKeys=Object.keys(PSHORT);
+    var trows=teams.map(function(t,i){
       var s=stStyle(t.st);
-      return '<tr><td style="font-weight:500">'+t.name+'</td><td>'+t.n+'</td>'+
-        '<td style="color:var(--green-d);font-weight:500">'+(t.ready||'—')+'</td>'+
-        '<td style="color:var(--blue-d);font-weight:500">'+(t.wip||'—')+'</td>'+
-        '<td style="color:var(--amber-d);font-weight:500">'+(t.wait||'—')+'</td>'+
-        '<td style="color:var(--red-d);font-weight:500">'+(t.none||'—')+'</td>'+
-        '<td style="color:'+sc(t.pk)+';font-weight:500">'+(t.pk?t.pk.toFixed(1):'—')+'</td>'+
-        '<td style="color:'+sc(t.gw)+';font-weight:500">'+(t.gw?t.gw.toFixed(1):'—')+'</td>'+
-        '<td style="color:'+sc(t.cf)+';font-weight:500">'+(t.cf?t.cf.toFixed(1):'—')+'</td>'+
-        '<td style="color:'+sc(t.avg)+';font-weight:500">'+(t.avg?t.avg.toFixed(2):'—')+'</td>'+
-        '<td><span class="pill" style="background:'+s.bg+';color:'+s.fc+'">'+t.st+'</span></td></tr>';
+      // สร้าง product badges
+      var prods=t.prods||{};
+      var prodBadges=Object.entries(prods).filter(function(e){return e[1]&gt;0;}).map(function(e,i){
+        var short=PSHORT[e[0]]||e[0].substring(0,6);
+        var col=PCOL[prodKeys.indexOf(e[0])]||'var(--muted)';
+        return '&lt;span style="display:inline-block;font-size:8px;padding:1px 5px;border-radius:3px;background:'+col.replace('-d)','-l)')+';color:'+col+';margin:1px"&gt;'+short+'×'+e[1]+'&lt;/span&gt;';
+      }).join('');
+      var ti=TEAMS.indexOf(Object.keys(SHORT).find(function(k){return SHORT[k]===t.name;})||t.name);
+      return '&lt;tr&gt;&lt;td style="font-weight:500"&gt;'+t.name+'&lt;/td&gt;&lt;td&gt;'+t.n+'&lt;/td&gt;'+
+        '&lt;td style="text-align:right;color:var(--amber-d);font-weight:500"&gt;'+(t.avgPrem&gt;0?t.avgPrem.toLocaleString():'—')+'&lt;/td&gt;'+
+        '&lt;td style="color:var(--green-d);font-weight:500"&gt;'+(t.ready||'—')+'&lt;/td&gt;'+
+        '&lt;td style="color:var(--blue-d);font-weight:500"&gt;'+(t.wip||'—')+'&lt;/td&gt;'+
+        '&lt;td style="color:var(--amber-d);font-weight:500"&gt;'+(t.wait||'—')+'&lt;/td&gt;'+
+        '&lt;td style="color:var(--red-d);font-weight:500"&gt;'+(t.none||'—')+'&lt;/td&gt;'+
+        '&lt;td style="color:'+sc(t.pk)+';font-weight:500"&gt;'+(t.pk?t.pk.toFixed(1):'—')+'&lt;/td&gt;'+
+        '&lt;td style="color:'+sc(t.gw)+';font-weight:500"&gt;'+(t.gw?t.gw.toFixed(1):'—')+'&lt;/td&gt;'+
+        '&lt;td style="color:'+sc(t.cf)+';font-weight:500"&gt;'+(t.cf?t.cf.toFixed(1):'—')+'&lt;/td&gt;'+
+        '&lt;td style="color:'+sc(t.avg)+';font-weight:500"&gt;'+(t.avg?t.avg.toFixed(2):'—')+'&lt;/td&gt;'+
+        '&lt;td style="line-height:1.6"&gt;'+(prodBadges||'—')+'&lt;/td&gt;'+
+        '&lt;td&gt;&lt;span class="pill" style="background:'+s.bg+';color:'+s.fc+'"&gt;'+t.st+'&lt;/span&gt;&lt;/td&gt;'+
+        '&lt;td&gt;&lt;button class="detail-link" onclick="openModalByIdx('+i+')"&gt;ดูรายละเอียด →&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;';
     });
     var totAvg=(wPK+wGW+wCF)/3;
-    trows.push('<tr><td>รวมทั้งหมด</td><td>'+totN+'</td>'+
-      '<td style="color:#A7F3D0">'+totR+'</td><td style="color:#BFDBFE">'+totW+'</td>'+
-      '<td style="color:#FDE68A">'+totWt+'</td><td style="color:#FCA5A5">'+totNn+'</td>'+
-      '<td>'+wPK.toFixed(2)+'</td><td style="color:#FBBF24">'+wGW.toFixed(2)+'</td>'+
-      '<td>'+wCF.toFixed(2)+'</td><td>'+totAvg.toFixed(2)+'</td><td></td></tr>');
+    trows.push('&lt;tr&gt;&lt;td&gt;รวมทั้งหมด&lt;/td&gt;&lt;td&gt;'+totN+'&lt;/td&gt;'+
+      '&lt;td style="color:#A7F3D0"&gt;'+totR+'&lt;/td&gt;&lt;td style="color:#BFDBFE"&gt;'+totW+'&lt;/td&gt;'+
+      '&lt;td style="color:#FDE68A"&gt;'+totWt+'&lt;/td&gt;&lt;td style="color:#FCA5A5"&gt;'+totNn+'&lt;/td&gt;'+
+      '&lt;td&gt;'+wPK.toFixed(2)+'&lt;/td&gt;&lt;td style="color:#FBBF24"&gt;'+wGW.toFixed(2)+'&lt;/td&gt;'+
+      '&lt;td&gt;'+wCF.toFixed(2)+'&lt;/td&gt;&lt;td&gt;'+totAvg.toFixed(2)+'&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;');
     tbody.innerHTML=trows.join('');
   }
   var ftr=document.querySelector('.ftr span');
@@ -645,19 +684,19 @@ function renderRisk(riskPeople){
   var rb=document.getElementById('riskBody');
   if(!rb) return;
   if(!riskPeople||!riskPeople.length){
-    rb.innerHTML='<div style="font-size:10px;color:var(--green-d);text-align:center;padding:12px">✅ ไม่มีบุคคลที่มีคะแนน ≤ 2 ในขณะนี้</div>';
+    rb.innerHTML='&lt;div style="font-size:10px;color:var(--green-d);text-align:center;padding:12px"&gt;✅ ไม่มีบุคคลที่มีคะแนน ≤ 2 ในขณะนี้&lt;/div&gt;';
     return;
   }
   rb.innerHTML=riskPeople.slice(0,6).map(function(p){
-    var isR=(p.pk>0&&p.pk<=2)||(p.gw>0&&p.gw<=2)||(p.cf>0&&p.cf<=2);
+    var isR=(p.pk&gt;0&amp;&amp;p.pk&lt;=2)||(p.gw&gt;0&amp;&amp;p.gw&lt;=2)||(p.cf&gt;0&amp;&amp;p.cf&lt;=2);
     var bg=isR?'var(--red-l)':'var(--amber-l)';
     var bc=isR?'var(--red)':'var(--amber)';
     var fc=isR?'var(--red-d)':'var(--amber-d)';
-    return '<div class="rk" style="background:'+bg+';border-color:'+bc+'">'+
-      '<div class="rn" style="color:'+fc+'">'+p.name+' · '+p.team+'</div>'+
-      '<div class="ri" style="color:'+fc+'">PK/GW/CF = '+p.pk+'/'+p.gw+'/'+p.cf+
-        (p.reason?' · '+p.reason:'')+'</div>'+
-      '</div>';
+    return '&lt;div class="rk" style="background:'+bg+';border-color:'+bc+'"&gt;'+
+      '&lt;div class="rn" style="color:'+fc+'"&gt;'+p.name+' · '+p.team+'&lt;/div&gt;'+
+      '&lt;div class="ri" style="color:'+fc+'"&gt;PK/GW/CF = '+p.pk+'/'+p.gw+'/'+p.cf+
+        (p.reason?' · '+p.reason:'')+'&lt;/div&gt;'+
+      '&lt;/div&gt;';
   }).join('');
 }
 
@@ -667,7 +706,7 @@ function renderActions(actions){
   if(!body) return;
   if(!actions||!actions.length){
     if(head) head.textContent='Action Items';
-    body.innerHTML='<div style="text-align:center;color:var(--muted);padding:16px;font-size:10px">📋 ไม่พบข้อมูลใน Sheet "✅ Action Tracker"</div>';
+    body.innerHTML='&lt;div style="text-align:center;color:var(--muted);padding:16px;font-size:10px"&gt;📋 ไม่พบข้อมูลใน Sheet "✅ Action Tracker"&lt;/div&gt;';
     return;
   }
   var done=actions.filter(function(a){return a.status.includes('✅');}).length;
@@ -681,14 +720,14 @@ function renderActions(actions){
   }
   body.innerHTML=actions.map(function(a){
     var c=akColor(a);
-    return '<div class="ak" style="background:'+c.bg+'">'+
-      '<div class="dot" style="background:'+c.dot+'"></div>'+
-      '<div style="flex:1">'+
-        '<div class="an" style="color:'+c.tc+'">'+a.name+(a.team?' · '+a.team:'')+'</div>'+
-        '<div class="am" style="color:'+c.tc+'">'+a.action+(a.owner?' · '+a.owner:'')+(a.due?' · '+a.due:'')+'</div>'+
-      '</div>'+
-      '<span class="ab" style="background:'+c.dc+';color:'+c.tc+'">'+c.badge+'</span>'+
-    '</div>';
+    return '&lt;div class="ak" style="background:'+c.bg+'"&gt;'+
+      '&lt;div class="dot" style="background:'+c.dot+'"&gt;&lt;/div&gt;'+
+      '&lt;div style="flex:1"&gt;'+
+        '&lt;div class="an" style="color:'+c.tc+'"&gt;'+a.name+(a.team?' · '+a.team:'')+'&lt;/div&gt;'+
+        '&lt;div class="am" style="color:'+c.tc+'"&gt;'+a.action+(a.owner?' · '+a.owner:'')+(a.due?' · '+a.due:'')+'&lt;/div&gt;'+
+      '&lt;/div&gt;'+
+      '&lt;span class="ab" style="background:'+c.dc+';color:'+c.tc+'"&gt;'+c.badge+'&lt;/span&gt;'+
+    '&lt;/div&gt;';
   }).join('');
 }
 function showStatus(type,msg){
@@ -697,20 +736,223 @@ function showStatus(type,msg){
 }
 function showPreview(teams){
   var el=document.getElementById('upv');
-  var active=teams.filter(function(t){return t.n>0;});
-  el.innerHTML='<div style="font-weight:500;color:var(--text);margin-bottom:4px;font-size:9px">พรีวิวรายทีม:</div>'+
+  var active=teams.filter(function(t){return t.n&gt;0;});
+  el.innerHTML='&lt;div style="font-weight:500;color:var(--text);margin-bottom:4px;font-size:9px"&gt;พรีวิวรายทีม:&lt;/div&gt;'+
     active.map(function(t){
       var s=stStyle(t.st);
-      return '<div class="upvr">'+
-        '<span style="font-weight:500;font-size:9px;min-width:90px;color:var(--text)">'+t.name+'</span>'+
-        '<span style="font-size:9px;color:var(--muted)">'+t.n+' คน</span>'+
-        '<span style="font-size:9px;color:var(--green-d)">✓'+t.ready+'</span>'+
-        '<span style="font-size:9px;color:'+s.fc+';font-weight:500">'+t.st+'</span>'+
-        '</div>';
+      return '&lt;div class="upvr"&gt;'+
+        '&lt;span style="font-weight:500;font-size:9px;min-width:90px;color:var(--text)"&gt;'+t.name+'&lt;/span&gt;'+
+        '&lt;span style="font-size:9px;color:var(--muted)"&gt;'+t.n+' คน&lt;/span&gt;'+
+        '&lt;span style="font-size:9px;color:var(--green-d)"&gt;✓'+t.ready+'&lt;/span&gt;'+
+        '&lt;span style="font-size:9px;color:'+s.fc+';font-weight:500"&gt;'+t.st+'&lt;/span&gt;'+
+        '&lt;/div&gt;';
     }).join('');
   el.classList.add('show');
 }
 // ล้างข้อมูล hardcode ออกทันทีที่โหลดหน้า — รอ Excel จริงแทน
+
+
+function exportHTML(){
+  var meta=window._exportMeta;
+  if(!meta||!window._dashTeams||!window._dashTeams.length){
+    alert('กรุณาอัปโหลดไฟล์ Excel ก่อนค่ะ'); return;
+  }
+  try{
+    var d={
+      teams:window._dashTeams,
+      actions:window._exportActions||[],
+      riskPeople:window._exportRisk||[],
+      totN:meta.totN,totR:meta.totR,totW:meta.totW,
+      totWt:meta.totWt,totNn:meta.totNn,
+      wPK:meta.wPK,wGW:meta.wGW,wCF:meta.wCF,rate:meta.rate,
+      prodC:meta.prodC,objC:meta.objC,fname:meta.fname
+    };
+
+    // Build export HTML using iframe — avoids any script tag string issues
+    var iframe=document.createElement('iframe');
+    iframe.style.display='none';
+    document.body.appendChild(iframe);
+    var idoc=iframe.contentDocument||iframe.contentWindow.document;
+
+    // Copy current page styles + HTML (without upload zone)
+    var styles='';
+    var styleEls=document.querySelectorAll('style');
+    styleEls.forEach(function(s){styles+=s.outerHTML;});
+
+    // Build the body content (clone current rendered state)
+    var bodyHTML=document.body.innerHTML;
+
+    // Remove upload float
+    var ufS=bodyHTML.indexOf('&lt;div class="uf" id="uf"&gt;');
+    if(ufS&gt;=0){
+      var ufE=bodyHTML.indexOf('&lt;/div&gt;\n\n&lt;!-- MODAL', ufS);
+      if(ufE&lt;0) ufE=bodyHTML.indexOf('&lt;/div&gt;\n\n&lt;',ufS);
+      if(ufE&gt;=0) bodyHTML=bodyHTML.slice(0,ufS)+bodyHTML.slice(ufE+6);
+    }
+
+    // Write base HTML
+    idoc.open();
+    idoc.write('&lt;!DOCTYPE html&gt;&lt;html lang="th"&gt;&lt;head&gt;&lt;meta charset="UTF-8"&gt;'+
+      '&lt;meta name="viewport" content="width=device-width,initial-scale=1"&gt;'+
+      '&lt;title&gt;OL Pipeline Dashboard&lt;/title&gt;'+
+      '&lt;link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500&amp;display=swap" rel="stylesheet"&gt;'+
+      styles+'&lt;/head&gt;&lt;body&gt;'+bodyHTML+'&lt;/body&gt;&lt;/html&gt;');
+    idoc.close();
+
+    // Inject openModalByIdx into iframe
+    var iwin=iframe.contentWindow;
+    iwin.openModalByIdx=function(idx){
+      var t=d.teams[idx]; if(!t) return;
+      var modal=idoc.getElementById('detailModal');
+      if(!modal) return;
+      idoc.getElementById('modalTitle').textContent=t.name;
+      idoc.getElementById('modalSub').textContent=t.n+' คน · เบี้ยเฉลี่ย '+(t.avgPrem&gt;0?t.avgPrem.toLocaleString():'—')+' ฿/ปี';
+      var stDefs=[{n:t.ready,l:'พร้อม Submit',bg:'var(--green-l)',fc:'var(--green-d)'},
+        {n:t.wip,l:'กำลังดำเนินการ',bg:'var(--blue-l)',fc:'var(--blue-d)'},
+        {n:t.wait,l:'รอ/ติดเงื่อนไข',bg:'var(--amber-l)',fc:'var(--amber-d)'},
+        {n:t.none,l:'ยังไม่มีลูกค้า',bg:'var(--red-l)',fc:'var(--red-d)'}];
+      idoc.getElementById('modalStats').innerHTML=stDefs.map(function(s){
+        return '&lt;div class="modal-stat" style="background:'+s.bg+'"&gt;'+
+          '&lt;div class="modal-stat-n" style="color:'+s.fc+'"&gt;'+s.n+'&lt;/div&gt;'+
+          '&lt;div class="modal-stat-l" style="color:'+s.fc+'"&gt;'+s.l+'&lt;/div&gt;&lt;/div&gt;';
+      }).join('');
+      var ms=t.members||[];
+      function sc2(v){return v&gt;=4?'var(--green-d)':v&gt;=3?'var(--amber-d)':'var(--red-d)';}
+      function ps(p){
+        if(!p) return '';
+        if(p.indexOf('พร้อม')&gt;=0) return 'background:var(--green-l);color:var(--green-d)';
+        if(p.indexOf('กำลัง')&gt;=0) return 'background:var(--blue-l);color:var(--blue-d)';
+        if(p.indexOf('รอ')&gt;=0) return 'background:var(--amber-l);color:var(--amber-d)';
+        return 'background:var(--red-l);color:var(--red-d)';
+      }
+      idoc.getElementById('modalBody').innerHTML=ms.length?ms.map(function(m){
+        return '&lt;tr&gt;&lt;td style="font-weight:500"&gt;'+m.name+'&lt;/td&gt;&lt;td&gt;'+m.pos+'&lt;/td&gt;'+
+          '&lt;td&gt;'+(m.prod||'').replace('KKPGEN ','').replace('(Par)','').trim()+'&lt;/td&gt;'+
+          '&lt;td style="text-align:right;color:var(--amber-d)"&gt;'+(m.prem&gt;0?m.prem.toLocaleString():'—')+'&lt;/td&gt;'+
+          '&lt;td style="color:'+sc2(m.pk)+';font-weight:500"&gt;'+m.pk+'&lt;/td&gt;'+
+          '&lt;td style="color:'+sc2(m.gw)+';font-weight:500"&gt;'+m.gw+'&lt;/td&gt;'+
+          '&lt;td style="color:'+sc2(m.cf)+';font-weight:500"&gt;'+m.cf+'&lt;/td&gt;'+
+          '&lt;td&gt;&lt;span style="font-size:9px;padding:2px 6px;border-radius:10px;'+ps(m.pipe)+'"&gt;'+m.pipe+'&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;';
+      }).join(''):'&lt;tr&gt;&lt;td colspan="8" style="text-align:center;color:var(--muted);padding:16px"&gt;ไม่มีข้อมูลรายคน&lt;/td&gt;&lt;/tr&gt;';
+      modal.classList.add('open');
+    };
+
+    // Fix modal close in iframe
+    var mo=idoc.getElementById('detailModal');
+    if(mo){
+      mo.addEventListener('click',function(e){
+        if(e.target===mo) mo.classList.remove('open');
+      });
+      var mc=idoc.querySelector('.modal-close');
+      if(mc) mc.addEventListener('click',function(){mo.classList.remove('open');});
+    }
+
+    // Rebind all detail-link buttons in iframe
+    var btns=idoc.querySelectorAll('.detail-link[onclick]');
+    btns.forEach(function(btn){
+      var onclick=btn.getAttribute('onclick');
+      var m=onclick&amp;&amp;onclick.match(/openModalByIdx\((\d+)\)/);
+      if(m){
+        var idx=parseInt(m[1]);
+        btn.removeAttribute('onclick');
+        btn.addEventListener('click',function(){iwin.openModalByIdx(idx);});
+      }
+    });
+
+    // Serialize and download
+    var serializer=new XMLSerializer();
+    var html=serializer.serializeToString(idoc);
+    html='&lt;!DOCTYPE html&gt;\n'+html.replace(/^&lt;html/,'&lt;html lang="th"');
+
+    document.body.removeChild(iframe);
+
+    var today=new Date();
+    var dd=String(today.getDate()).padStart(2,'0');
+    var mm2=String(today.getMonth()+1).padStart(2,'0');
+    var yy=today.getFullYear();
+    var safeName=(meta.fname||'dashboard').replace(/\.xlsx$/i,'').replace(/[\s\/\\:*?"&lt;&gt;|]/g,'_');
+    var filename='OL_Dashboard_'+safeName+'_'+dd+mm2+yy+'.html';
+
+    var blob=new Blob([html],{type:'text/html;charset=utf-8'});
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement('a');
+    a.href=url; a.download=filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function(){URL.revokeObjectURL(url);},2000);
+    showStatus('ok','✅ Export สำเร็จ — '+filename);
+  }catch(e){
+    console.error('Export error:',e);
+    showStatus('err','❌ Export ไม่สำเร็จ: '+e.message);
+  }
+}
+
+function openModalByIdx(idx){
+  var teams=window._dashTeams;
+  if(!teams||!teams[idx]) return;
+  openModal(teams[idx]);
+}
+function openModal(team){
+  var modal=document.getElementById('detailModal');
+  var title=document.getElementById('modalTitle');
+  var sub=document.getElementById('modalSub');
+  var stats=document.getElementById('modalStats');
+  var tbody=document.getElementById('modalBody');
+  if(!modal||!team) return;
+
+  title.textContent=team.name;
+  sub.textContent=team.n+' คน · เบี้ยเฉลี่ย '+(team.avgPrem&gt;0?team.avgPrem.toLocaleString():'—')+' ฿/ปี · เฉลี่ยคะแนน '+team.avg.toFixed(2);
+
+  // stat boxes
+  var stDefs=[
+    {n:team.ready,l:'พร้อม Submit',bg:'var(--green-l)',fc:'var(--green-d)'},
+    {n:team.wip,  l:'กำลังดำเนินการ',bg:'var(--blue-l)', fc:'var(--blue-d)'},
+    {n:team.wait, l:'รอ/ติดเงื่อนไข',bg:'var(--amber-l)',fc:'var(--amber-d)'},
+    {n:team.none, l:'ยังไม่มีลูกค้า',bg:'var(--red-l)',  fc:'var(--red-d)'},
+  ];
+  stats.innerHTML=stDefs.map(function(s){
+    return '&lt;div class="modal-stat" style="background:'+s.bg+'"&gt;'+
+      '&lt;div class="modal-stat-n" style="color:'+s.fc+'"&gt;'+s.n+'&lt;/div&gt;'+
+      '&lt;div class="modal-stat-l" style="color:'+s.fc+'"&gt;'+s.l+'&lt;/div&gt;'+
+    '&lt;/div&gt;';
+  }).join('');
+
+  // member table
+  function sc2(v){return v&gt;=4?'var(--green-d)':v&gt;=3?'var(--amber-d)':'var(--red-d)';}
+  function pipeStyle2(p){
+    if(p.includes('พร้อม')) return 'background:var(--green-l);color:var(--green-d)';
+    if(p.includes('กำลัง')) return 'background:var(--blue-l);color:var(--blue-d)';
+    if(p.includes('รอ'))    return 'background:var(--amber-l);color:var(--amber-d)';
+    return 'background:var(--red-l);color:var(--red-d)';
+  }
+  var members=team.members||[];
+  if(!members.length){
+    tbody.innerHTML='&lt;tr&gt;&lt;td colspan="8" style="text-align:center;color:var(--muted);padding:16px"&gt;ไม่มีข้อมูลรายคน&lt;/td&gt;&lt;/tr&gt;';
+  } else {
+    tbody.innerHTML=members.map(function(m){
+      var prodShort=(m.prod||'').replace('KKPGEN ','').replace('(Par)','').trim();
+      return '&lt;tr&gt;'+
+        '&lt;td style="font-weight:500"&gt;'+m.name+'&lt;/td&gt;'+
+        '&lt;td&gt;'+m.pos+'&lt;/td&gt;'+
+        '&lt;td style="font-size:10px"&gt;'+prodShort+'&lt;/td&gt;'+
+        '&lt;td style="text-align:right;color:var(--amber-d)"&gt;'+(m.prem&gt;0?m.prem.toLocaleString():'—')+'&lt;/td&gt;'+
+        '&lt;td style="color:'+sc2(m.pk)+';font-weight:500"&gt;'+(m.pk||'—')+'&lt;/td&gt;'+
+        '&lt;td style="color:'+sc2(m.gw)+';font-weight:500"&gt;'+(m.gw||'—')+'&lt;/td&gt;'+
+        '&lt;td style="color:'+sc2(m.cf)+';font-weight:500"&gt;'+(m.cf||'—')+'&lt;/td&gt;'+
+        '&lt;td&gt;&lt;span style="font-size:9px;padding:2px 6px;border-radius:10px;'+pipeStyle2(m.pipe||'')+'"&gt;'+m.pipe+'&lt;/span&gt;&lt;/td&gt;'+
+      '&lt;/tr&gt;';
+    }).join('');
+  }
+
+  modal.classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeModal(e){
+  if(e&amp;&amp;e.target!==document.getElementById('detailModal')) return;
+  document.getElementById('detailModal').classList.remove('open');
+  document.body.style.overflow='';
+}
+
 window.addEventListener('DOMContentLoaded', function(){
   clearAll();
   // ผูก event ผ่าน JS แทน inline onchange/ondrop — ทำงานได้แน่นอนกว่า
@@ -733,5 +975,6 @@ window.addEventListener('DOMContentLoaded', function(){
   }
 });
 </script>
-</body>
-</html>
+
+
+<iframe style="display: none;"></iframe></body></html>
