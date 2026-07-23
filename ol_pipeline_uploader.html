@@ -234,6 +234,7 @@ function doExport(){
   fetch('ol_pipeline_dashboard.html')
     .then(function(r){if(!r.ok)throw new Error('โหลด ol_pipeline_dashboard.html ไม่ได้ — ต้องวาง 2 ไฟล์ใน folder เดียวกัน');return r.text();})
     .then(function(html){
+      console.log('[FETCH] got html size=',html.length,'_D=',_D?'OK':'NULL');
       try{build(html);}catch(e){
         btn.disabled=false;btn.textContent='💾 Export Dashboard HTML';
         setMsg('err','❌ '+e.message);console.error(e);
@@ -433,6 +434,9 @@ function build(html){
 // ── Override build() to use RUNNER_B64 ───────────────────────────────────────
 function build(html){
   var d=_D;
+  console.log('[BUILD] called, _D=', d ? 'has data, teams='+d.teams.length : 'NULL');
+  console.log('[BUILD] html size=', html.length);
+  if(!d){setMsg('err','ไม่มีข้อมูล _D');return;}
 
   // Remove upload zone
   var us=html.indexOf('<div class="uf" id="uf">');
