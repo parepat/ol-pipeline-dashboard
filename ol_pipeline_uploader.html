@@ -315,7 +315,7 @@ function build(html){
     'renderAll(_T,_M.totN,_M.totR,_M.totW,_M.totWt,_M.totNn,_M.wPK,_M.wGW,_M.wCF,_M.rate,_M.prodC,_M.objC,_M.fname);'+
     'renderActions(_A);renderRisk(_R);'+
     '}'+
-    'if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",waitRender);}else{waitRender();}'+
+    'window.addEventListener("load",function(){setTimeout(waitRender,300);});'+
     '})();';
 
   // Inject modal + script before body end
