@@ -13,15 +13,11 @@
   --blue:#378ADD;--blue-l:#DBEAFE;--blue-d:#1E40AF;
   --amber:#F59E0B;--amber-l:#FEF3C7;--amber-d:#92400E;
   --red:#EF4444;--red-l:#FEE2E2;--red-d:#7F1D1D;
-  --purple:#7F77DD;--purple-l:#EEEDFE;--purple-d:#3C3489;
-  --gray:#888780;--gray-l:#F1EFE8;--gray-d:#444441;
-  --text:#1E293B;--text-m:#64748B;
-  --f:'IBM Plex Sans Thai',system-ui,sans-serif;
-  --r:8px;
+  --f:'IBM Plex Sans Thai',system-ui,sans-serif;--r:8px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--f);background:var(--off);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
-.wrap{width:100%;max-width:520px}
+.wrap{width:100%;max-width:500px}
 .hdr{background:var(--navy);border-radius:12px;padding:18px 22px;margin-bottom:16px;text-align:center}
 .hdr-pre{font-size:9px;letter-spacing:.12em;color:var(--teal);font-weight:500;text-transform:uppercase;margin-bottom:3px}
 .hdr-ttl{font-size:18px;font-weight:500;color:#fff}
@@ -31,11 +27,11 @@ body{font-family:var(--f);background:var(--off);min-height:100vh;display:flex;fl
 .step:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}
 .step-n{width:26px;height:26px;border-radius:50%;background:var(--teal);color:#fff;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
 .step-body{flex:1}
-.step-title{font-size:12px;font-weight:500;color:var(--text);margin-bottom:4px}
+.step-title{font-size:12px;font-weight:500;color:var(--text,#1E293B);margin-bottom:4px}
 .step-desc{font-size:10px;color:var(--muted);line-height:1.5;margin-bottom:8px}
-.uz{border:1.5px dashed var(--teal);border-radius:var(--r);padding:16px;text-align:center;cursor:pointer;background:var(--teal-l);position:relative;transition:background .15s;overflow:hidden}
+.uz{border:1.5px dashed var(--teal);border-radius:var(--r);padding:16px;text-align:center;cursor:pointer;background:var(--teal-l);position:relative;overflow:hidden;transition:background .15s}
 .uz:hover,.uz.drag{background:#C7EFE4;border-style:solid}
-.uz input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;z-index:10;font-size:0}
+.uz input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;z-index:10;font-size:0}
 .uz-icon{font-size:24px;margin-bottom:4px}
 .uz-t{font-size:12px;font-weight:500;color:var(--teal-d)}
 .uz-s{font-size:10px;color:var(--teal-d);opacity:.75;margin-top:2px}
@@ -43,185 +39,137 @@ body{font-family:var(--f);background:var(--off);min-height:100vh;display:flex;fl
 .status.ok{display:block;background:var(--green-l);color:var(--green-d)}
 .status.err{display:block;background:var(--red-l);color:var(--red-d)}
 .status.info{display:block;background:var(--blue-l);color:var(--blue-d)}
-.preview{margin-top:10px;font-size:10px;color:var(--muted);display:none;max-height:160px;overflow-y:auto;border:.5px solid var(--border);border-radius:var(--r)}
-.preview.show{display:block}
-.prev-row{display:flex;gap:8px;padding:5px 10px;border-bottom:.5px solid var(--border);align-items:center}
-.prev-row:last-child{border-bottom:none}
-.prev-team{font-size:10px;font-weight:500;color:var(--text);flex:1}
-.prev-n{font-size:10px;color:var(--muted)}
-.prev-badge{font-size:9px;padding:1px 6px;border-radius:20px;font-weight:500}
-.btn{width:100%;padding:11px;border:none;border-radius:var(--r);font-family:var(--f);font-size:13px;font-weight:500;cursor:pointer;transition:opacity .15s}
-.btn:hover{opacity:.9}
+.prev{margin-top:10px;font-size:10px;color:var(--muted);display:none;max-height:150px;overflow-y:auto;border:.5px solid var(--border);border-radius:var(--r)}
+.prev.show{display:block}
+.pr{display:flex;gap:8px;padding:5px 10px;border-bottom:.5px solid var(--border);align-items:center}
+.pr:last-child{border-bottom:none}
+.pr-team{font-size:10px;font-weight:500;color:var(--text,#1E293B);flex:1}
+.pr-n{font-size:10px;color:var(--muted)}
+.pr-badge{font-size:9px;padding:1px 6px;border-radius:20px;font-weight:500}
+.btn{width:100%;padding:11px;border:none;border-radius:var(--r);font-family:var(--f);font-size:13px;font-weight:500;cursor:pointer}
 .btn:disabled{opacity:.4;cursor:not-allowed}
 .btn-export{background:var(--teal);color:#fff;margin-top:8px;display:none}
-.hint{font-size:9px;color:var(--muted);margin-top:6px;line-height:1.5;text-align:center}
-.xlsx-status{font-size:9px;margin-top:6px;text-align:center}
-.ready{color:var(--green-d)}
-.loading{color:var(--amber-d)}
+.xlsx-st{font-size:9px;margin-top:6px;text-align:center;color:var(--amber-d)}
+.hint{font-size:10px;color:var(--muted);margin-top:6px;text-align:center}
 </style>
 </head>
 <body>
 <div class="wrap">
-
   <div class="hdr">
     <div class="hdr-pre">KKP Financial Group · Sales Development</div>
     <div class="hdr-ttl">OL Pipeline — อัปโหลดข้อมูล</div>
-    <div class="hdr-sub">อัปโหลด Excel → Export เป็น Dashboard HTML</div>
+    <div class="hdr-sub">อัปโหลด Excel → Export Dashboard HTML พร้อมแชร์</div>
   </div>
-
   <div class="card">
-
-    <!-- Step 1: Upload -->
     <div class="step">
       <div class="step-n">1</div>
       <div class="step-body">
         <div class="step-title">อัปโหลดไฟล์ Excel</div>
-        <div class="step-desc">รองรับ OL_Pipeline_Template.xlsx · อ่าน Sheet 📊 Pipeline Overview และ ✅ Action Tracker อัตโนมัติ</div>
-        <div class="uz" id="uz"
-          ondragover="event.preventDefault();this.classList.add('drag')"
-          ondragleave="this.classList.remove('drag')"
-          ondrop="onDrop(event)">
-          <input type="file" accept=".xlsx,.xls" id="fileInput">
+        <div class="step-desc">รองรับ OL_Pipeline.xlsx · อ่าน Pipeline Overview และ Action Tracker อัตโนมัติ</div>
+        <div class="uz" id="uz">
+          <input type="file" accept=".xlsx,.xls" id="fi">
           <div class="uz-icon">📊</div>
           <div class="uz-t">วาง หรือ คลิกเพื่อเลือกไฟล์</div>
           <div class="uz-s">รองรับ .xlsx และ .xls</div>
         </div>
-        <div class="status" id="status"></div>
-        <div class="preview" id="preview"></div>
-        <div class="xlsx-status loading" id="xlsxStatus">⏳ กำลังโหลด SheetJS...</div>
+        <div class="status" id="st"></div>
+        <div class="prev" id="pv"></div>
+        <div class="xlsx-st" id="xst">⏳ กำลังโหลด SheetJS...</div>
       </div>
     </div>
-
-    <!-- Step 2: Export -->
     <div class="step">
       <div class="step-n">2</div>
       <div class="step-body">
         <div class="step-title">Export Dashboard</div>
-        <div class="step-desc">กดปุ่มด้านล่างเพื่อสร้างไฟล์ Dashboard HTML — เปิดได้ทันที กด "ดูรายละเอียด" ได้ครบ ไม่มีช่อง Upload</div>
-        <button class="btn btn-export" id="exportBtn" onclick="exportDashboard()">💾 Export Dashboard HTML</button>
-        <div class="hint" id="exportHint">อัปโหลด Excel ก่อนค่ะ</div>
+        <div class="step-desc">กดปุ่มเพื่อสร้างไฟล์ Dashboard HTML — เปิดได้ทันที กด "ดูรายละเอียด" ได้ครบ</div>
+        <button class="btn btn-export" id="expBtn" onclick="exportDB()">💾 Export Dashboard HTML</button>
+        <div class="hint" id="hint">อัปโหลด Excel ก่อนค่ะ</div>
       </div>
     </div>
-
   </div>
 </div>
-
 <script>
-// ── GLOBALS ─────────────────────────────────────────────────────────────────
-var _data=null; // {teams,actions,riskPeople,meta,prodC,objC}
-
-// ── SHEETJS LOADER ───────────────────────────────────────────────────────────
-(function loadXLSX(){
-  var cdns=[
-    'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js',
+var _D=null;
+// Load SheetJS
+(function(){
+  var cdns=['https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js',
     'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js',
-    'https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js'
-  ];
-  var idx=0;
-  function tryNext(){
-    if(idx>=cdns.length){
-      setXlsxStatus('❌ โหลด SheetJS ไม่ได้','color:var(--red-d)');return;
-    }
-    var s=document.createElement('script');
-    s.src=cdns[idx++];
-    s.onload=function(){setXlsxStatus('✅ พร้อมอัปโหลด','color:var(--green-d)');};
-    s.onerror=function(){tryNext();};
-    document.head.appendChild(s);
-  }
-  tryNext();
+    'https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js'];
+  var i=0;
+  function next(){
+    if(i>=cdns.length){xst('❌ โหลดไม่ได้','color:var(--red-d)');return;}
+    var s=document.createElement('script');s.src=cdns[i++];
+    s.onload=function(){xst('✅ พร้อมอัปโหลด','color:var(--green-d)');};
+    s.onerror=next;document.head.appendChild(s);
+  }next();
 })();
+function xst(m,s){var e=document.getElementById('xst');if(e){e.textContent=m;e.style.cssText=s||'';}}
+function st(t,m){var e=document.getElementById('st');e.className='status '+t;e.textContent=m;}
 
-function setXlsxStatus(msg,style){
-  var el=document.getElementById('xlsxStatus');
-  if(el){el.textContent=msg;el.style=style||'';}
-}
-
-// ── FILE HANDLERS ────────────────────────────────────────────────────────────
-window.addEventListener('DOMContentLoaded',function(){
-  var inp=document.getElementById('fileInput');
-  if(inp) inp.addEventListener('change',function(e){
-    if(e.target.files[0]) onFile(e.target.files[0]);
+// File handlers
+document.addEventListener('DOMContentLoaded',function(){
+  var fi=document.getElementById('fi');
+  fi.addEventListener('change',function(e){if(e.target.files[0])onFile(e.target.files[0]);});
+  var uz=document.getElementById('uz');
+  uz.addEventListener('dragover',function(e){e.preventDefault();uz.classList.add('drag');});
+  uz.addEventListener('dragleave',function(){uz.classList.remove('drag');});
+  uz.addEventListener('drop',function(e){
+    e.preventDefault();uz.classList.remove('drag');
+    if(e.dataTransfer.files[0])onFile(e.dataTransfer.files[0]);
   });
 });
 
-function onDrop(e){
-  e.preventDefault();
-  document.getElementById('uz').classList.remove('drag');
-  if(e.dataTransfer.files[0]) onFile(e.dataTransfer.files[0]);
-}
-
 function onFile(f){
-  if(!f) return;
-  if(typeof XLSX==='undefined'){
-    showStatus('info','⏳ SheetJS กำลังโหลด รอสักครู่...'); return;
-  }
-  var ext=f.name.split('.').pop().toLowerCase();
-  if(!['xlsx','xls'].includes(ext)){showStatus('err','❌ รองรับเฉพาะ .xlsx/.xls'); return;}
-  showStatus('info','⏳ กำลังอ่านไฟล์ '+f.name+'...');
+  if(typeof XLSX==='undefined'){st('info','⏳ SheetJS กำลังโหลด รอสักครู่...');return;}
+  st('info','⏳ กำลังอ่าน '+f.name+'...');
   var r=new FileReader();
-  r.onload=function(e){parseXL(e.target.result,f.name);};
+  r.onload=function(e){parse(e.target.result,f.name);};
   r.readAsArrayBuffer(f);
 }
 
-// ── PARSE EXCEL ───────────────────────────────────────────────────────────────
-var TEAMS=[
-  'Home Loan Acquiring 1','Home Loan Acquiring 2','Home Loan Acquiring 3',
+var TEAMS=['Home Loan Acquiring 1','Home Loan Acquiring 2','Home Loan Acquiring 3',
   'Small Business Acquiring 1 ทีม 1','Small Business Acquiring 1 ทีม 2',
   'Small Business Acquiring 1 ทีม 3','Small Business Acquiring 1 ทีม 4',
-  'Small Business Acquiring 2 ทีม 1','Small Business Acquiring 2 ทีม 2'
-];
-var SHORT={
-  'Home Loan Acquiring 1':'Home Loan Acq. 1','Home Loan Acquiring 2':'Home Loan Acq. 2',
+  'Small Business Acquiring 2 ทีม 1','Small Business Acquiring 2 ทีม 2'];
+var SHORT={'Home Loan Acquiring 1':'Home Loan Acq. 1','Home Loan Acquiring 2':'Home Loan Acq. 2',
   'Home Loan Acquiring 3':'Home Loan Acq. 3',
   'Small Business Acquiring 1 ทีม 1':'SBA 1 ทีม 1','Small Business Acquiring 1 ทีม 2':'SBA 1 ทีม 2',
   'Small Business Acquiring 1 ทีม 3':'SBA 1 ทีม 3','Small Business Acquiring 1 ทีม 4':'SBA 1 ทีม 4',
-  'Small Business Acquiring 2 ทีม 1':'SBA 2 ทีม 1','Small Business Acquiring 2 ทีม 2':'SBA 2 ทีม 2'
-};
-function str(v){return String(v||'').trim();}
-function num(v){var n=parseFloat(v);return isNaN(n)?0:n;}
-function matchTeam(raw){
-  raw=str(raw);
-  return TEAMS.find(function(t){
-    return raw===t||t===raw||raw.includes(t)||t.includes(raw);
-  });
-}
+  'Small Business Acquiring 2 ทีม 1':'SBA 2 ทีม 1','Small Business Acquiring 2 ทีม 2':'SBA 2 ทีม 2'};
+function s(v){return String(v||'').trim();}
+function n(v){var x=parseFloat(v);return isNaN(x)?0:x;}
+function mTeam(r){r=s(r);return TEAMS.find(function(t){return r===t||t===r||r.includes(t)||t.includes(r);});}
 
-function parseXL(buf,fname){
+function parse(buf,fname){
   try{
     var wb=XLSX.read(buf,{type:'array'});
-    var pn=wb.SheetNames.find(function(s){return s.includes('Pipeline');});
-    if(!pn){showStatus('err','❌ ไม่พบ Sheet "Pipeline Overview"');return;}
+    var pn=wb.SheetNames.find(function(x){return x.includes('Pipeline');});
+    if(!pn){st('err','❌ ไม่พบ Sheet Pipeline Overview');return;}
     var rows=XLSX.utils.sheet_to_json(wb.Sheets[pn],{header:1,defval:''});
-    var hdr=rows.findIndex(function(r){
-      return r.some(function(c){return str(c).includes('Pipeline Status')||str(c).includes('ทีม');});
-    });
-    if(hdr<0) hdr=4;
-    var data=rows.slice(hdr+1).filter(function(r){
-      var n=str(r[0]),t=str(r[1]);
-      return n&&t&&n!=='สรุปรวม'&&!n.startsWith('#');
-    });
-    if(!data.length){showStatus('err','❌ ไม่พบข้อมูลใน Pipeline Overview');return;}
+    var hdr=rows.findIndex(function(r){return r.some(function(c){return s(c).includes('Pipeline Status');});});
+    if(hdr<0)hdr=4;
+    var data=rows.slice(hdr+1).filter(function(r){var a=s(r[0]),b=s(r[1]);return a&&b&&a!=='สรุปรวม'&&!a.startsWith('#');});
+    if(!data.length){st('err','❌ ไม่พบข้อมูล');return;}
 
     var td={};
     TEAMS.forEach(function(t){td[t]={n:0,ready:0,wip:0,wait:0,none:0,pkS:0,gwS:0,cfS:0,cnt:0,premSum:0,premCnt:0,members:[],prods:{}};});
     var prodC={},objC={};
 
     data.forEach(function(r){
-      var tk=matchTeam(r[1]);if(!tk)return;
+      var tk=mTeam(r[1]);if(!tk)return;
       var d=td[tk];d.n++;
-      var pk=num(r[12]),gw=num(r[13]),cf=num(r[14]);
+      var pk=n(r[12]),gw=n(r[13]),cf=n(r[14]);
       if(pk>0){d.pkS+=pk;d.gwS+=gw;d.cfS+=cf;d.cnt++;}
-      var pipe=str(r[15]);
+      var pipe=s(r[15]);
       if(pipe==='พร้อม Submit'||pipe==='พร้อม Submit เร็ว')d.ready++;
       else if(pipe==='กำลังดำเนินการ')d.wip++;
       else if(pipe==='รอ/ติดเงื่อนไข')d.wait++;
       else if(pipe==='ยังไม่มีลูกค้า')d.none++;
-      var prem=num(r[7]);if(prem>0){d.premSum+=prem;d.premCnt++;}
-      var prod=str(r[6]);
-      if(prod){var pk2=prod.replace('KKPGEN ','').replace('(Par)','').trim();prodC[pk2]=(prodC[pk2]||0)+1;d.prods[pk2]=(d.prods[pk2]||0)+1;}
-      var obj=str(r[5]);if(obj)objC[obj]=(objC[obj]||0)+1;
-      d.members.push({name:str(r[0]),pos:str(r[2]),prod:str(r[6]),prem:prem,
-        pk:pk,gw:gw,cf:cf,pipe:pipe,reason:str(r[16])});
+      var prem=n(r[7]);if(prem>0){d.premSum+=prem;d.premCnt++;}
+      var prod=s(r[6]);
+      if(prod){var p2=prod.replace('KKPGEN ','').replace('(Par)','').trim();prodC[p2]=(prodC[p2]||0)+1;d.prods[p2]=(d.prods[p2]||0)+1;}
+      var obj=s(r[5]);if(obj)objC[obj]=(objC[obj]||0)+1;
+      d.members.push({name:s(r[0]),pos:s(r[2]),prod:s(r[6]),prem:prem,pk:pk,gw:gw,cf:cf,pipe:pipe,reason:s(r[16])});
     });
 
     var teams=TEAMS.map(function(t){
@@ -231,12 +179,10 @@ function parseXL(buf,fname){
       var cf=d.cnt>0?Math.round(d.cfS/c*100)/100:0;
       var avg=(pk+gw+cf)/3;
       var avgPrem=d.premCnt>0?Math.round(d.premSum/d.premCnt):0;
-      var st='ติดตาม';
-      if(d.n===0||avg<3.5||d.ready===0)st='เร่งด่วน';
-      else if(d.n>0&&d.ready/d.n>=0.3)st='ปกติ';
+      var st2=avg<3.5||d.ready===0?'เร่งด่วน':d.n>0&&d.ready/d.n>=0.3?'ปกติ':'ติดตาม';
       return{name:SHORT[t]||t,n:d.n,ready:d.ready,wip:d.wip,wait:d.wait,none:d.none,
-        pk:pk,gw:gw,cf:cf,avg:avg,st:st,prods:d.prods,
-        premSum:d.premSum,premCnt:d.premCnt,avgPrem:avgPrem,members:d.members};
+        pk:pk,gw:gw,cf:cf,avg:avg,st:st2,prods:d.prods,
+        avgPrem:avgPrem,members:d.members};
     });
 
     var totN=teams.reduce(function(a,t){return a+t.n;},0)||1;
@@ -248,213 +194,148 @@ function parseXL(buf,fname){
     var wPK=actv.length?Math.round(actv.reduce(function(a,t){return a+t.pk*t.n;},0)/totN*100)/100:0;
     var wGW=actv.length?Math.round(actv.reduce(function(a,t){return a+t.gw*t.n;},0)/totN*100)/100:0;
     var wCF=actv.length?Math.round(actv.reduce(function(a,t){return a+t.cf*t.n;},0)/totN*100)/100:0;
-    var rate=Math.round(totR/totN*100);
 
-    // Action Tracker
-    var actions=[];
-    var an=wb.SheetNames.find(function(s){return s.includes('Action');});
+    var actions=[],an=wb.SheetNames.find(function(x){return x.includes('Action');});
     if(an){
       var ar=XLSX.utils.sheet_to_json(wb.Sheets[an],{header:1,defval:''});
-      var ah=ar.findIndex(function(r){
-        var j=r.map(function(c){return str(c);}).join('|');
-        return j.includes('#')&&j.includes('Action');
-      });
+      var ah=ar.findIndex(function(r){var j=r.map(function(c){return s(c);}).join('|');return j.includes('#')&&j.includes('Action');});
       if(ah<0)ah=4;
-      actions=ar.slice(ah+1).filter(function(r){
-        var n=str(r[1]),a=str(r[4]);
-        return n&&a&&n!=='ชื่อ-สกุล (ลูกค้า)'&&!n.startsWith('#');
-      }).slice(0,8).map(function(r){
-        return{no:r[0],name:str(r[1]),team:str(r[2]),pipe:str(r[3]),
-          action:str(r[4]),type:str(r[5]),owner:str(r[6]),due:str(r[7]),status:str(r[8])};
+      actions=ar.slice(ah+1).filter(function(r){return s(r[1])&&s(r[4])&&!s(r[1]).startsWith('#');}).slice(0,8).map(function(r){
+        return{no:r[0],name:s(r[1]),team:s(r[2]),pipe:s(r[3]),action:s(r[4]),type:s(r[5]),owner:s(r[6]),due:s(r[7]),status:s(r[8])};
       });
     }
 
-    // Risk people
-    var riskPeople=data.filter(function(r){
-      var pk=num(r[12]),gw=num(r[13]),cf=num(r[14]);
-      return(pk>0&&pk<=2)||(gw>0&&gw<=2)||(cf>0&&cf<=2);
-    }).map(function(r){
-      var tk=matchTeam(r[1]);
-      return{name:str(r[0]),team:SHORT[tk]||str(r[1]),
-        pk:num(r[12]),gw:num(r[13]),cf:num(r[14]),
-        pipe:str(r[15]),reason:str(r[16])};
-    });
+    var risk=data.filter(function(r){var pk=n(r[12]),gw=n(r[13]),cf=n(r[14]);return(pk>0&&pk<=2)||(gw>0&&gw<=2)||(cf>0&&cf<=2);})
+      .map(function(r){var tk=mTeam(r[1]);return{name:s(r[0]),team:SHORT[tk]||s(r[1]),pk:n(r[12]),gw:n(r[13]),cf:n(r[14]),pipe:s(r[15]),reason:s(r[16])};});
 
-    _data={teams:teams,actions:actions,riskPeople:riskPeople,fname:fname,
+    _D={teams:teams,actions:actions,risk:risk,fname:fname,
       totN:totN,totR:totR,totW:totW,totWt:totWt,totNn:totNn,
-      wPK:wPK,wGW:wGW,wCF:wCF,rate:rate,prodC:prodC,objC:objC};
+      wPK:wPK,wGW:wGW,wCF:wCF,rate:Math.round(totR/totN*100),prodC:prodC,objC:objC};
 
-    showStatus('ok','✅ อ่านสำเร็จ — '+data.length+' คน · '+actv.length+' ทีม · จาก '+fname);
-    showPreview(teams);
+    st('ok','✅ อ่านสำเร็จ — '+data.length+' คน · '+actv.length+' ทีม');
 
-    var eb=document.getElementById('exportBtn');
-    if(eb) eb.style.display='block';
-    var eh=document.getElementById('exportHint');
-    if(eh) eh.textContent='พร้อม Export แล้วค่ะ กดปุ่มด้านบน';
+    var pv=document.getElementById('pv');
+    pv.innerHTML=actv.map(function(t){
+      var col=t.st==='เร่งด่วน'?'background:var(--red-l);color:var(--red-d)':
+               t.st==='ปกติ'?'background:var(--green-l);color:var(--green-d)':'background:var(--amber-l);color:var(--amber-d)';
+      return '<div class="pr"><span class="pr-team">'+t.name+'</span>'+
+        '<span class="pr-n">'+t.n+' คน</span>'+
+        '<span class="pr-badge" style="'+col+'">'+t.st+'</span></div>';
+    }).join('');
+    pv.classList.add('show');
 
-  }catch(e){showStatus('err','❌ '+e.message);console.error(e);}
+    document.getElementById('expBtn').style.display='block';
+    document.getElementById('hint').textContent='พร้อม Export แล้วค่ะ';
+  }catch(e){st('err','❌ '+e.message);console.error(e);}
 }
 
-function showStatus(type,msg){
-  var el=document.getElementById('status');
-  el.className='status '+type; el.textContent=msg;
-}
-
-function showPreview(teams){
-  var el=document.getElementById('preview');
-  var active=teams.filter(function(t){return t.n>0;});
-  el.innerHTML=active.map(function(t){
-    var col=t.st==='เร่งด่วน'?'var(--red-l);color:var(--red-d)':
-             t.st==='ปกติ'?'var(--green-l);color:var(--green-d)':
-             'var(--amber-l);color:var(--amber-d)';
-    return '<div class="prev-row">'+
-      '<span class="prev-team">'+t.name+'</span>'+
-      '<span class="prev-n">'+t.n+' คน</span>'+
-      '<span class="prev-n" style="color:var(--green-d)">✓'+t.ready+'</span>'+
-      '<span class="prev-badge" style="background:'+col+'">'+t.st+'</span>'+
-    '</div>';
-  }).join('');
-  el.classList.add('show');
-}
-
-// ── EXPORT DASHBOARD ──────────────────────────────────────────────────────────
-function exportDashboard(){
-  if(!_data){alert('กรุณาอัปโหลดไฟล์ Excel ก่อนค่ะ');return;}
-
-  // Fetch the dashboard template then inject data
-  var btn=document.getElementById('exportBtn');
-  btn.disabled=true; btn.textContent='⏳ กำลังสร้าง Dashboard...';
-
-  // Load dashboard HTML via fetch (ต้องอยู่ folder เดียวกัน)
+function exportDB(){
+  if(!_D){alert('อัปโหลด Excel ก่อนค่ะ');return;}
+  var btn=document.getElementById('expBtn');
+  btn.disabled=true;btn.textContent='⏳ กำลังโหลด Dashboard...';
   fetch('ol_pipeline_dashboard.html')
-    .then(function(r){
-      if(!r.ok) throw new Error('โหลด ol_pipeline_dashboard.html ไม่ได้ ('+r.status+')');
-      return r.text();
-    })
-    .then(function(tmpl){
-      buildExport(tmpl);
-    })
+    .then(function(r){if(!r.ok)throw new Error('โหลด ol_pipeline_dashboard.html ไม่ได้');return r.text();})
+    .then(function(html){build(html);})
     .catch(function(e){
-      // fallback: ถ้า fetch ไม่ได้ ให้ user เลือกไฟล์ dashboard
-      btn.disabled=false; btn.textContent='💾 Export Dashboard HTML';
-      showStatus('err','❌ ไม่พบ ol_pipeline_dashboard.html — กรุณาวางไฟล์ทั้ง 2 ไว้ใน folder เดียวกัน');
+      btn.disabled=false;btn.textContent='💾 Export Dashboard HTML';
+      st('err','❌ '+e.message+' — วางไฟล์ทั้ง 2 ใน folder เดียวกันค่ะ');
     });
 }
 
-function buildExport(tmpl){
-  var d=_data;
+function build(html){
+  var d=_D;
 
-  // ── 1. ลบ upload zone ออก ──────────────────────────────────────────────
-  var ufS=tmpl.indexOf('<div class="uf" id="uf">');
-  if(ufS>=0){
-    // หา </div> ที่ปิด uf div
-    var depth2=0,i=ufS,ufE=-1;
-    while(i<tmpl.length){
-      if(tmpl.slice(i,i+4)==='<div') depth2++;
-      else if(tmpl.slice(i,i+6)==='</div>'){depth2--;if(depth2===0){ufE=i+6;break;}}
+  // ลบ upload zone
+  var us=html.indexOf('<div class="uf" id="uf">');
+  if(us>=0){
+    var dep=0,i=us,ue=-1;
+    while(i<html.length){
+      if(html.slice(i,i+4)==='<div')dep++;
+      else if(html.slice(i,i+6)==='</div>'){dep--;if(dep===0){ue=i+6;break;}}
       i++;
     }
-    if(ufE>0) tmpl=tmpl.slice(0,ufS)+tmpl.slice(ufE);
+    if(ue>0)html=html.slice(0,us)+html.slice(ue);
   }
 
-  // ── 2. ลบ exportBtn ออก ───────────────────────────────────────────────
-  tmpl=tmpl.replace(/<button[^>]*id="exportBtn"[^>]*>.*?<\/button>/g,'');
+  // ลบ exportBtn
+  html=html.replace(/<button[^>]*id="exportBtn"[^>]*>[^<]*<\/button>/g,'');
 
-  // ── 3. สร้าง modal HTML ────────────────────────────────────────────────
-  var modalHtml=[
-    '<div class="modal-overlay" id="detailModal">',
-    '<div class="modal">',
-    '<div class="modal-hd">',
-    '<div><div class="modal-hd-title" id="modalTitle"></div>',
-    '<div class="modal-hd-sub" id="modalSub"></div></div>',
-    '<button class="modal-close" id="modalCloseBtn">\u00d7</button>',
-    '</div>',
-    '<div class="modal-body">',
-    '<div class="modal-stat-row" id="modalStats"></div>',
-    '<div style="overflow-x:auto">',
-    '<table class="mtbl"><thead><tr>',
-    '<th>\u0e0a\u0e37\u0e48\u0e2d-\u0e2a\u0e01\u0e38\u0e25</th><th>\u0e15\u0e33\u0e41\u0e2b\u0e19\u0e48\u0e07</th><th>\u0e1c\u0e25\u0e34\u0e15\u0e20\u0e31\u0e13\u0e11\u0e4c</th>',
-    '<th>\u0e40\u0e1a\u0e35\u0e49\u0e22 (\u0e3f)</th><th>PK</th><th>GW</th><th>CF</th><th>Pipeline Status</th>',
-    '</tr></thead><tbody id="modalBody"></tbody></table>',
-    '</div></div></div></div>'
-  ].join('');
+  // สร้าง data JSON — escape </script ให้ปลอดภัย
+  var tj=JSON.stringify(d.teams).replace(/</g,'\\u003c');
+  var aj=JSON.stringify(d.actions).replace(/</g,'\\u003c');
+  var rj=JSON.stringify(d.risk).replace(/</g,'\\u003c');
+  var mj=JSON.stringify({totN:d.totN,totR:d.totR,totW:d.totW,totWt:d.totWt,totNn:d.totNn,
+    wPK:d.wPK,wGW:d.wGW,wCF:d.wCF,rate:d.rate,prodC:d.prodC,objC:d.objC,fname:d.fname}).replace(/</g,'\\u003c');
 
-  // ── 4. สร้าง data script — escape </script ──────────────────────────
-  var dataJson=JSON.stringify(d.teams).replace(/<\//g,'<\\/');
-  var dataScript=[
-    '<scr'+'ipt>',
-    '(function(){',
-    'var _T='+dataJson+';',
-    'function _sc(v){return v>=4?"var(--green-d)":v>=3?"var(--amber-d)":"var(--red-d)";}',
-    'function _ps(p){',
-    '  if(!p)return"";',
-    '  if(p.indexOf("\u0e1e\u0e23\u0e49\u0e2d\u0e21")>=0)return"background:var(--green-l);color:var(--green-d)";',
-    '  if(p.indexOf("\u0e01\u0e33\u0e25\u0e31\u0e07")>=0)return"background:var(--blue-l);color:var(--blue-d)";',
-    '  if(p.indexOf("\u0e23\u0e2d")>=0)return"background:var(--amber-l);color:var(--amber-d)";',
-    '  return"background:var(--red-l);color:var(--red-d)";',
-    '}',
-    'window.openModalByIdx=function(idx){',
-    '  var t=_T[idx];if(!t)return;',
-    '  var modal=document.getElementById("detailModal");if(!modal)return;',
-    '  document.getElementById("modalTitle").textContent=t.name;',
-    '  document.getElementById("modalSub").textContent=t.n+" \u0e04\u0e19 \u00b7 \u0e40\u0e1a\u0e35\u0e49\u0e22\u0e40\u0e09\u0e25\u0e35\u0e48\u0e22 "+(t.avgPrem>0?t.avgPrem.toLocaleString():"—")+" \u0e3f/\u0e1b\u0e35";',
-    '  var stDefs=[',
-    '    {n:t.ready,l:"\u0e1e\u0e23\u0e49\u0e2d\u0e21 Submit",bg:"var(--green-l)",fc:"var(--green-d)"},',
-    '    {n:t.wip,l:"\u0e01\u0e33\u0e25\u0e31\u0e07\u0e14\u0e33\u0e40\u0e19\u0e34\u0e19\u0e01\u0e32\u0e23",bg:"var(--blue-l)",fc:"var(--blue-d)"},',
-    '    {n:t.wait,l:"\u0e23\u0e2d/\u0e15\u0e34\u0e14\u0e40\u0e07\u0e37\u0e48\u0e2d\u0e19\u0e44\u0e02",bg:"var(--amber-l)",fc:"var(--amber-d)"},',
-    '    {n:t.none,l:"\u0e22\u0e31\u0e07\u0e44\u0e21\u0e48\u0e21\u0e35\u0e25\u0e39\u0e01\u0e04\u0e49\u0e32",bg:"var(--red-l)",fc:"var(--red-d)"}',
-    '  ];',
-    '  document.getElementById("modalStats").innerHTML=stDefs.map(function(s){',
-    '    return"<div class=\\"modal-stat\\" style=\\"background:"+s.bg+"\\">"+',
-    '      "<div class=\\"modal-stat-n\\" style=\\"color:"+s.fc+"\\">"+s.n+"</div>"+',
-    '      "<div class=\\"modal-stat-l\\" style=\\"color:"+s.fc+"\\">"+s.l+"</div></div>";',
-    '  }).join("");',
-    '  var ms=t.members||[];',
-    '  document.getElementById("modalBody").innerHTML=ms.length?ms.map(function(m){',
-    '    return"<tr>"+',
-    '      "<td style=\\"font-weight:500\\">"+m.name+"</td>"+',
-    '      "<td>"+m.pos+"</td>"+',
-    '      "<td>"+(m.prod||"").replace("KKPGEN ","").replace("(Par)","").trim()+"</td>"+',
-    '      "<td style=\\"text-align:right;color:var(--amber-d)\\">"+(m.prem>0?m.prem.toLocaleString():"—")+"</td>"+',
-    '      "<td style=\\"color:"+_sc(m.pk)+";font-weight:500\\">"+m.pk+"</td>"+',
-    '      "<td style=\\"color:"+_sc(m.gw)+";font-weight:500\\">"+m.gw+"</td>"+',
-    '      "<td style=\\"color:"+_sc(m.cf)+";font-weight:500\\">"+m.cf+"</td>"+',
-    '      "<td><span style=\\"font-size:9px;padding:2px 6px;border-radius:10px;"+_ps(m.pipe)+"\\">"+m.pipe+"</span></td>"+',
-    '    "</tr>";',
-    '  }).join(""):',
-    '    "<tr><td colspan=\\"8\\" style=\\"text-align:center;padding:16px\\">\u0e44\u0e21\u0e48\u0e21\u0e35\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25\u0e23\u0e32\u0e22\u0e04\u0e19</td></tr>";',
-    '  modal.classList.add("open");',
-    '  document.body.style.overflow="hidden";',
-    '};',
-    'document.addEventListener("click",function(e){',
-    '  var m=document.getElementById("detailModal");if(!m)return;',
-    '  if(e.target===m||e.target.id==="modalCloseBtn")m.classList.remove("open");',
-    '});',
-    '})();',
-    '</'+'script>'
-  ].join('\n');
+  // สร้าง modal HTML
+  var modal='<div class="modal-overlay" id="detailModal">'+
+    '<div class="modal">'+
+    '<div class="modal-hd"><div>'+
+    '<div class="modal-hd-title" id="modalTitle"></div>'+
+    '<div class="modal-hd-sub" id="modalSub"></div>'+
+    '</div><button class="modal-close" onclick="document.getElementById(\'detailModal\').classList.remove(\'open\')">&#215;</button></div>'+
+    '<div class="modal-body">'+
+    '<div class="modal-stat-row" id="modalStats"></div>'+
+    '<div style="overflow-x:auto"><table class="mtbl"><thead><tr>'+
+    '<th>ชื่อ-สกุล</th><th>ตำแหน่ง</th><th>ผลิตภัณฑ์</th>'+
+    '<th>เบี้ย (฿)</th><th>PK</th><th>GW</th><th>CF</th><th>Pipeline</th>'+
+    '</tr></thead><tbody id="modalBody"></tbody></table></div>'+
+    '</div></div></div>';
 
-  // ── 5. ฝัง modal + data script ก่อน </body> ──────────────────────────
-  tmpl=tmpl.replace('</body>',modalHtml+'\n'+dataScript+'\n</body>');
+  // สร้าง autorun script
+  var run='(function(){'+
+    'var _T='+tj+';'+
+    'var _A='+aj+';'+
+    'var _R='+rj+';'+
+    'var _M='+mj+';'+
+    'function gsc(v){return v>=4?"var(--green-d)":v>=3?"var(--amber-d)":"var(--red-d)";}'+
+    'function gps(p){if(!p)return"";'+
+    'if(p.indexOf("\\u0e1e\\u0e23\\u0e49\\u0e2d\\u0e21")>=0)return"background:var(--green-l);color:var(--green-d)";'+
+    'if(p.indexOf("\\u0e01\\u0e33\\u0e25\\u0e31\\u0e07")>=0)return"background:var(--blue-l);color:var(--blue-d)";'+
+    'if(p.indexOf("\\u0e23\\u0e2d")>=0)return"background:var(--amber-l);color:var(--amber-d)";'+
+    'return"background:var(--red-l);color:var(--red-d)";}'+
+    'window.openModalByIdx=function(idx){'+
+    'var t=_T[idx];if(!t)return;'+
+    'var mo=document.getElementById("detailModal");if(!mo)return;'+
+    'document.getElementById("modalTitle").textContent=t.name;'+
+    'document.getElementById("modalSub").textContent=t.n+" คน · เบี้ยเฉลี่ย "+(t.avgPrem>0?t.avgPrem.toLocaleString():"—")+" ฿/ปี";'+
+    'document.getElementById("modalStats").innerHTML=[{n:t.ready,l:"พร้อม Submit",bg:"var(--green-l)",fc:"var(--green-d)"},{n:t.wip,l:"กำลังดำเนินการ",bg:"var(--blue-l)",fc:"var(--blue-d)"},{n:t.wait,l:"รอ/ติดเงื่อนไข",bg:"var(--amber-l)",fc:"var(--amber-d)"},{n:t.none,l:"ยังไม่มีลูกค้า",bg:"var(--red-l)",fc:"var(--red-d)"}].map(function(x){return"<div class=\'modal-stat\' style=\'background:"+x.bg+"\'><div class=\'modal-stat-n\' style=\'color:"+x.fc+"\'>"+ x.n+"</div><div class=\'modal-stat-l\' style=\'color:"+x.fc+"\'>"+ x.l+"</div></div>";}).join("");'+
+    'var ms=t.members||[];'+
+    'document.getElementById("modalBody").innerHTML=ms.length?ms.map(function(m){return"<tr><td style=\'font-weight:500\'>"+m.name+"</td><td>"+m.pos+"</td><td>"+(m.prod||"").replace("KKPGEN ","").replace("(Par)","").trim()+"</td><td style=\'text-align:right;color:var(--amber-d)\'>"+(m.prem>0?m.prem.toLocaleString():"—")+"</td><td style=\'color:"+gsc(m.pk)+";font-weight:500\'>"+m.pk+"</td><td style=\'color:"+gsc(m.gw)+";font-weight:500\'>"+m.gw+"</td><td style=\'color:"+gsc(m.cf)+";font-weight:500\'>"+m.cf+"</td><td><span style=\'font-size:9px;padding:2px 6px;border-radius:10px;"+gps(m.pipe)+"\'>"+ m.pipe+"</span></td></tr>";}).join(""):\'<tr><td colspan="8" style="text-align:center;padding:16px">ไม่มีข้อมูลรายคน</td></tr>\';'+
+    'mo.classList.add("open");document.body.style.overflow="hidden";'+
+    '};'+
+    'document.getElementById("detailModal").addEventListener("click",function(e){if(e.target===this)this.classList.remove("open");});'+
+    'function waitRender(){'+
+    'if(typeof clearAll!=="function"){setTimeout(waitRender,50);return;}'+
+    'clearAll();'+
+    'window._dashTeams=_T;'+
+    'window._exportMeta=_M;'+
+    'window._exportActions=_A;'+
+    'window._exportRisk=_R;'+
+    'renderAll(_T,_M.totN,_M.totR,_M.totW,_M.totWt,_M.totNn,_M.wPK,_M.wGW,_M.wCF,_M.rate,_M.prodC,_M.objC,_M.fname);'+
+    'renderActions(_A);renderRisk(_R);'+
+    '}'+
+    'if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",waitRender);}else{waitRender();}'+
+    '})();';
 
-  // ── 6. Download ────────────────────────────────────────────────────────
+  // Inject modal + script ก่อน </body>
+  var inject=modal+'\n<scr'+'ipt>\n'+run+'\n</'+'script>\n';
+  html=html.replace('</body>',inject+'</body>');
+
+  // Download
   var today=new Date();
-  var dd=String(today.getDate()).padStart(2,'0');
-  var mm2=String(today.getMonth()+1).padStart(2,'0');
-  var yy=today.getFullYear();
-  var safe=(d.fname||'dashboard').replace(/\.xlsx$/i,'').replace(/[\s\/\\:*?"<>|]/g,'_');
-  var filename='OL_Dashboard_'+safe+'_'+dd+mm2+yy+'.html';
-
-  var blob=new Blob([tmpl],{type:'text/html;charset=utf-8'});
+  var fname='OL_Dashboard_'+String(today.getDate()).padStart(2,'0')+
+    String(today.getMonth()+1).padStart(2,'0')+today.getFullYear()+'.html';
+  var blob=new Blob([html],{type:'text/html;charset=utf-8'});
   var url=URL.createObjectURL(blob);
   var a=document.createElement('a');
-  a.href=url; a.download=filename;
-  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  a.href=url;a.download=fname;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
   setTimeout(function(){URL.revokeObjectURL(url);},2000);
 
-  var eb2=document.getElementById('exportBtn');
-  if(eb2){eb2.disabled=false;eb2.textContent='\ud83d\udcbe Export Dashboard HTML';}
-  showStatus('ok','\u2705 Export \u0e2a\u0e33\u0e40\u0e23\u0e47\u0e08 \u2014 '+filename);
+  var btn=document.getElementById('expBtn');
+  btn.disabled=false;btn.textContent='💾 Export Dashboard HTML';
+  st('ok','✅ Export สำเร็จ — '+fname);
 }
 </script>
 </body>
