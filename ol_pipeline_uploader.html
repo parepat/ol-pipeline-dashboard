@@ -344,166 +344,117 @@ function exportDashboard(){
 function buildExport(tmpl){
   var d=_data;
 
-  // สร้าง dataScript ที่ embed ข้อมูลและ autorun
-  var dataObj=JSON.stringify({
-    teams:d.teams,actions:d.actions,riskPeople:d.riskPeople,
-    totN:d.totN,totR:d.totR,totW:d.totW,totWt:d.totWt,totNn:d.totNn,
-    wPK:d.wPK,wGW:d.wGW,wCF:d.wCF,rate:d.rate,
-    prodC:d.prodC,objC:d.objC,fname:d.fname
-  });
-
-  // ใช้ iframe เพื่อ build export (ไม่มี script tag string ใน JS)
-  var iframe=document.createElement('iframe');
-  iframe.style.display='none';
-  document.body.appendChild(iframe);
-  var idoc=iframe.contentDocument||iframe.contentWindow.document;
-  idoc.open(); idoc.write(tmpl); idoc.close();
-
-  // รอให้ iframe โหลดเสร็จแล้ว inject data
-  setTimeout(function(){
-    try{
-      var iwin=iframe.contentWindow;
-
-      // ลบ upload float
-      var uf=idoc.getElementById('uf');if(uf)uf.remove();
-      // ลบปุ่ม export ใน dashboard
-      var eb=idoc.getElementById('exportBtn');if(eb)eb.remove();
-      // ลบ modal เดิม (จะสร้างใหม่)
-      var mo=idoc.getElementById('detailModal');if(mo)mo.remove();
-
-      // Inject data + render
-      if(typeof iwin.clearAll==='function'){
-        iwin._dashTeams=d.teams;
-        iwin._exportMeta={totN:d.totN,totR:d.totR,totW:d.totW,totWt:d.totWt,totNn:d.totNn,
-          wPK:d.wPK,wGW:d.wGW,wCF:d.wCF,rate:d.rate,prodC:d.prodC,objC:d.objC,fname:d.fname};
-        iwin._exportActions=d.actions;
-        iwin._exportRisk=d.riskPeople;
-        iwin.clearAll();
-        iwin.renderAll(d.teams,d.totN,d.totR,d.totW,d.totWt,d.totNn,d.wPK,d.wGW,d.wCF,d.rate,d.prodC,d.objC,d.fname);
-        iwin.renderActions(d.actions);
-        iwin.renderRisk(d.riskPeople);
-      }
-
-      // Rebuild modal HTML in iframe
-      var modalDiv=idoc.createElement('div');
-      modalDiv.id='detailModal';
-      modalDiv.className='modal-overlay';
-      modalDiv.innerHTML='<div class="modal">'+
-        '<div class="modal-hd"><div>'+
-        '<div class="modal-hd-title" id="modalTitle"></div>'+
-        '<div class="modal-hd-sub" id="modalSub"></div>'+
-        '</div>'+
-        '<button class="modal-close" id="modalCloseBtn">×</button>'+
-        '</div>'+
-        '<div class="modal-body">'+
-        '<div class="modal-stat-row" id="modalStats"></div>'+
-        '<div style="overflow-x:auto">'+
-        '<table class="mtbl"><thead><tr>'+
-        '<th>ชื่อ-สกุล</th><th>ตำแหน่ง</th><th>ผลิตภัณฑ์</th>'+
-        '<th>เบี้ย (฿)</th><th>PK</th><th>GW</th><th>CF</th><th>Pipeline Status</th>'+
-        '</tr></thead><tbody id="modalBody"></tbody></table>'+
-        '</div></div></div>';
-      idoc.body.appendChild(modalDiv);
-
-      // Bind modal events in iframe
-      modalDiv.addEventListener('click',function(e){if(e.target===modalDiv)modalDiv.classList.remove('open');});
-      idoc.getElementById('modalCloseBtn').addEventListener('click',function(){modalDiv.classList.remove('open');});
-
-      // openModalByIdx for iframe
-      iwin.openModalByIdx=function(idx){
-        var t=d.teams[idx];if(!t)return;
-        idoc.getElementById('modalTitle').textContent=t.name;
-        idoc.getElementById('modalSub').textContent=t.n+' คน · เบี้ยเฉลี่ย '+(t.avgPrem>0?t.avgPrem.toLocaleString():'—')+' ฿/ปี';
-        var stDefs=[
-          {n:t.ready,l:'พร้อม Submit',bg:'var(--green-l)',fc:'var(--green-d)'},
-          {n:t.wip,l:'กำลังดำเนินการ',bg:'var(--blue-l)',fc:'var(--blue-d)'},
-          {n:t.wait,l:'รอ/ติดเงื่อนไข',bg:'var(--amber-l)',fc:'var(--amber-d)'},
-          {n:t.none,l:'ยังไม่มีลูกค้า',bg:'var(--red-l)',fc:'var(--red-d)'}
-        ];
-        idoc.getElementById('modalStats').innerHTML=stDefs.map(function(s){
-          return '<div class="modal-stat" style="background:'+s.bg+'">'+
-            '<div class="modal-stat-n" style="color:'+s.fc+'">'+s.n+'</div>'+
-            '<div class="modal-stat-l" style="color:'+s.fc+'">'+s.l+'</div></div>';
-        }).join('');
-        var ms=t.members||[];
-        function sc2(v){return v>=4?'var(--green-d)':v>=3?'var(--amber-d)':'var(--red-d)';}
-        function ps(p){
-          if(!p)return'';
-          if(p.indexOf('พร้อม')>=0)return'background:var(--green-l);color:var(--green-d)';
-          if(p.indexOf('กำลัง')>=0)return'background:var(--blue-l);color:var(--blue-d)';
-          if(p.indexOf('รอ')>=0)return'background:var(--amber-l);color:var(--amber-d)';
-          return'background:var(--red-l);color:var(--red-d)';
-        }
-        idoc.getElementById('modalBody').innerHTML=ms.length?ms.map(function(m){
-          return '<tr><td style="font-weight:500">'+m.name+'</td><td>'+m.pos+'</td>'+
-            '<td>'+(m.prod||'').replace('KKPGEN ','').replace('(Par)','').trim()+'</td>'+
-            '<td style="text-align:right;color:var(--amber-d)">'+(m.prem>0?m.prem.toLocaleString():'—')+'</td>'+
-            '<td style="color:'+sc2(m.pk)+';font-weight:500">'+m.pk+'</td>'+
-            '<td style="color:'+sc2(m.gw)+';font-weight:500">'+m.gw+'</td>'+
-            '<td style="color:'+sc2(m.cf)+';font-weight:500">'+m.cf+'</td>'+
-            '<td><span style="font-size:9px;padding:2px 6px;border-radius:10px;'+ps(m.pipe)+'">'+m.pipe+'</span></td></tr>';
-        }).join(''):'<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:16px">ไม่มีข้อมูลรายคน</td></tr>';
-        modalDiv.classList.add('open');
-      };
-
-      // Keep onclick as-is — openModalByIdx will be defined via inline script
-      // Instead: inject a global openModalByIdx function as inline script in the HTML
-      var inlineScript=idoc.createElement('script');
-      inlineScript.textContent=[
-        'window._expTeams='+JSON.stringify(d.teams)+';',
-        'function openModalByIdx(idx){',
-        '  var t=window._expTeams[idx];if(!t)return;',
-        '  var modal=document.getElementById("detailModal");if(!modal)return;',
-        '  document.getElementById("modalTitle").textContent=t.name;',
-        '  document.getElementById("modalSub").textContent=t.n+" คน · เบี้ยเฉลี่ย "+(t.avgPrem>0?t.avgPrem.toLocaleString():"—")+" ฿/ปี";',
-        '  var stDefs=[{n:t.ready,l:"พร้อม Submit",bg:"var(--green-l)",fc:"var(--green-d)"},{n:t.wip,l:"กำลังดำเนินการ",bg:"var(--blue-l)",fc:"var(--blue-d)"},{n:t.wait,l:"รอ/ติดเงื่อนไข",bg:"var(--amber-l)",fc:"var(--amber-d)"},{n:t.none,l:"ยังไม่มีลูกค้า",bg:"var(--red-l)",fc:"var(--red-d)"}];',
-        '  document.getElementById("modalStats").innerHTML=stDefs.map(function(s){return"<div class=\"modal-stat\" style=\"background:"+s.bg+"\"><div class=\"modal-stat-n\" style=\"color:"+s.fc+"\">"+s.n+"</div><div class=\"modal-stat-l\" style=\"color:"+s.fc+"\">"+s.l+"</div></div>";}).join("");',
-        '  var ms=t.members||[];',
-        '  function sc2(v){return v>=4?"var(--green-d)":v>=3?"var(--amber-d)":"var(--red-d)";}',
-        '  function ps(p){if(!p)return"";if(p.indexOf("พร้อม")>=0)return"background:var(--green-l);color:var(--green-d)";if(p.indexOf("กำลัง")>=0)return"background:var(--blue-l);color:var(--blue-d)";if(p.indexOf("รอ")>=0)return"background:var(--amber-l);color:var(--amber-d)";return"background:var(--red-l);color:var(--red-d)";}',
-        '  document.getElementById("modalBody").innerHTML=ms.length?ms.map(function(m){return"<tr><td style=\"font-weight:500\">"+m.name+"</td><td>"+m.pos+"</td><td>"+(m.prod||"").replace("KKPGEN ","").replace("(Par)","").trim()+"</td><td style=\"text-align:right;color:var(--amber-d)\">"+(m.prem>0?m.prem.toLocaleString():"—")+"</td><td style=\"color:"+sc2(m.pk)+";font-weight:500\">"+m.pk+"</td><td style=\"color:"+sc2(m.gw)+";font-weight:500\">"+m.gw+"</td><td style=\"color:"+sc2(m.cf)+";font-weight:500\">"+m.cf+"</td><td><span style=\"font-size:9px;padding:2px 6px;border-radius:10px;"+ps(m.pipe)+"\">"+m.pipe+"</span></td></tr>";}).join(""):"<tr><td colspan=\"8\" style=\"text-align:center;padding:16px\">ไม่มีข้อมูลรายคน</td></tr>";',
-        '  modal.classList.add("open");',
-        '  document.body.style.overflow="hidden";',
-        '}',
-        'document.addEventListener("click",function(e){',
-        '  var modal=document.getElementById("detailModal");',
-        '  if(modal&&e.target===modal)modal.classList.remove("open");',
-        '  if(e.target&&e.target.id==="modalCloseBtn")modal.classList.remove("open");',
-        '});'
-      ].join('\n');
-      idoc.body.appendChild(inlineScript);
-
-      // Serialize
-      var html=(new XMLSerializer()).serializeToString(idoc);
-      html='<!DOCTYPE html>\n'+html.replace(/^<html/,'<html lang="th"');
-      document.body.removeChild(iframe);
-
-      // Download
-      var today=new Date();
-      var dd=String(today.getDate()).padStart(2,'0');
-      var mm2=String(today.getMonth()+1).padStart(2,'0');
-      var yy=today.getFullYear();
-      var safe=(d.fname||'dashboard').replace(/\.xlsx$/i,'').replace(/[\s\/\\:*?"<>|]/g,'_');
-      var filename='OL_Dashboard_'+safe+'_'+dd+mm2+yy+'.html';
-
-      var blob=new Blob([html],{type:'text/html;charset=utf-8'});
-      var url=URL.createObjectURL(blob);
-      var a=document.createElement('a');
-      a.href=url; a.download=filename;
-      document.body.appendChild(a); a.click(); document.body.removeChild(a);
-      setTimeout(function(){URL.revokeObjectURL(url);},2000);
-
-      var eb2=document.getElementById('exportBtn');
-      if(eb2){eb2.disabled=false; eb2.textContent='💾 Export Dashboard HTML';}
-      showStatus('ok','✅ Export สำเร็จ — '+filename);
-    }catch(e){
-      console.error('buildExport error:',e);
-      document.body.removeChild(iframe);
-      var eb3=document.getElementById('exportBtn');
-      if(eb3){eb3.disabled=false; eb3.textContent='💾 Export Dashboard HTML';}
-      showStatus('err','❌ Export ไม่สำเร็จ: '+e.message);
+  // ── 1. ลบ upload zone ออก ──────────────────────────────────────────────
+  var ufS=tmpl.indexOf('<div class="uf" id="uf">');
+  if(ufS>=0){
+    // หา </div> ที่ปิด uf div
+    var depth2=0,i=ufS,ufE=-1;
+    while(i<tmpl.length){
+      if(tmpl.slice(i,i+4)==='<div') depth2++;
+      else if(tmpl.slice(i,i+6)==='</div>'){depth2--;if(depth2===0){ufE=i+6;break;}}
+      i++;
     }
-  },800);
+    if(ufE>0) tmpl=tmpl.slice(0,ufS)+tmpl.slice(ufE);
+  }
+
+  // ── 2. ลบ exportBtn ออก ───────────────────────────────────────────────
+  tmpl=tmpl.replace(/<button[^>]*id="exportBtn"[^>]*>.*?<\/button>/g,'');
+
+  // ── 3. สร้าง modal HTML ────────────────────────────────────────────────
+  var modalHtml=[
+    '<div class="modal-overlay" id="detailModal">',
+    '<div class="modal">',
+    '<div class="modal-hd">',
+    '<div><div class="modal-hd-title" id="modalTitle"></div>',
+    '<div class="modal-hd-sub" id="modalSub"></div></div>',
+    '<button class="modal-close" id="modalCloseBtn">\u00d7</button>',
+    '</div>',
+    '<div class="modal-body">',
+    '<div class="modal-stat-row" id="modalStats"></div>',
+    '<div style="overflow-x:auto">',
+    '<table class="mtbl"><thead><tr>',
+    '<th>\u0e0a\u0e37\u0e48\u0e2d-\u0e2a\u0e01\u0e38\u0e25</th><th>\u0e15\u0e33\u0e41\u0e2b\u0e19\u0e48\u0e07</th><th>\u0e1c\u0e25\u0e34\u0e15\u0e20\u0e31\u0e13\u0e11\u0e4c</th>',
+    '<th>\u0e40\u0e1a\u0e35\u0e49\u0e22 (\u0e3f)</th><th>PK</th><th>GW</th><th>CF</th><th>Pipeline Status</th>',
+    '</tr></thead><tbody id="modalBody"></tbody></table>',
+    '</div></div></div></div>'
+  ].join('');
+
+  // ── 4. สร้าง data script — escape </script ──────────────────────────
+  var dataJson=JSON.stringify(d.teams).replace(/<\//g,'<\\/');
+  var dataScript=[
+    '<scr'+'ipt>',
+    '(function(){',
+    'var _T='+dataJson+';',
+    'function _sc(v){return v>=4?"var(--green-d)":v>=3?"var(--amber-d)":"var(--red-d)";}',
+    'function _ps(p){',
+    '  if(!p)return"";',
+    '  if(p.indexOf("\u0e1e\u0e23\u0e49\u0e2d\u0e21")>=0)return"background:var(--green-l);color:var(--green-d)";',
+    '  if(p.indexOf("\u0e01\u0e33\u0e25\u0e31\u0e07")>=0)return"background:var(--blue-l);color:var(--blue-d)";',
+    '  if(p.indexOf("\u0e23\u0e2d")>=0)return"background:var(--amber-l);color:var(--amber-d)";',
+    '  return"background:var(--red-l);color:var(--red-d)";',
+    '}',
+    'window.openModalByIdx=function(idx){',
+    '  var t=_T[idx];if(!t)return;',
+    '  var modal=document.getElementById("detailModal");if(!modal)return;',
+    '  document.getElementById("modalTitle").textContent=t.name;',
+    '  document.getElementById("modalSub").textContent=t.n+" \u0e04\u0e19 \u00b7 \u0e40\u0e1a\u0e35\u0e49\u0e22\u0e40\u0e09\u0e25\u0e35\u0e48\u0e22 "+(t.avgPrem>0?t.avgPrem.toLocaleString():"—")+" \u0e3f/\u0e1b\u0e35";',
+    '  var stDefs=[',
+    '    {n:t.ready,l:"\u0e1e\u0e23\u0e49\u0e2d\u0e21 Submit",bg:"var(--green-l)",fc:"var(--green-d)"},',
+    '    {n:t.wip,l:"\u0e01\u0e33\u0e25\u0e31\u0e07\u0e14\u0e33\u0e40\u0e19\u0e34\u0e19\u0e01\u0e32\u0e23",bg:"var(--blue-l)",fc:"var(--blue-d)"},',
+    '    {n:t.wait,l:"\u0e23\u0e2d/\u0e15\u0e34\u0e14\u0e40\u0e07\u0e37\u0e48\u0e2d\u0e19\u0e44\u0e02",bg:"var(--amber-l)",fc:"var(--amber-d)"},',
+    '    {n:t.none,l:"\u0e22\u0e31\u0e07\u0e44\u0e21\u0e48\u0e21\u0e35\u0e25\u0e39\u0e01\u0e04\u0e49\u0e32",bg:"var(--red-l)",fc:"var(--red-d)"}',
+    '  ];',
+    '  document.getElementById("modalStats").innerHTML=stDefs.map(function(s){',
+    '    return"<div class=\\"modal-stat\\" style=\\"background:"+s.bg+"\\">"+',
+    '      "<div class=\\"modal-stat-n\\" style=\\"color:"+s.fc+"\\">"+s.n+"</div>"+',
+    '      "<div class=\\"modal-stat-l\\" style=\\"color:"+s.fc+"\\">"+s.l+"</div></div>";',
+    '  }).join("");',
+    '  var ms=t.members||[];',
+    '  document.getElementById("modalBody").innerHTML=ms.length?ms.map(function(m){',
+    '    return"<tr>"+',
+    '      "<td style=\\"font-weight:500\\">"+m.name+"</td>"+',
+    '      "<td>"+m.pos+"</td>"+',
+    '      "<td>"+(m.prod||"").replace("KKPGEN ","").replace("(Par)","").trim()+"</td>"+',
+    '      "<td style=\\"text-align:right;color:var(--amber-d)\\">"+(m.prem>0?m.prem.toLocaleString():"—")+"</td>"+',
+    '      "<td style=\\"color:"+_sc(m.pk)+";font-weight:500\\">"+m.pk+"</td>"+',
+    '      "<td style=\\"color:"+_sc(m.gw)+";font-weight:500\\">"+m.gw+"</td>"+',
+    '      "<td style=\\"color:"+_sc(m.cf)+";font-weight:500\\">"+m.cf+"</td>"+',
+    '      "<td><span style=\\"font-size:9px;padding:2px 6px;border-radius:10px;"+_ps(m.pipe)+"\\">"+m.pipe+"</span></td>"+',
+    '    "</tr>";',
+    '  }).join(""):',
+    '    "<tr><td colspan=\\"8\\" style=\\"text-align:center;padding:16px\\">\u0e44\u0e21\u0e48\u0e21\u0e35\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25\u0e23\u0e32\u0e22\u0e04\u0e19</td></tr>";',
+    '  modal.classList.add("open");',
+    '  document.body.style.overflow="hidden";',
+    '};',
+    'document.addEventListener("click",function(e){',
+    '  var m=document.getElementById("detailModal");if(!m)return;',
+    '  if(e.target===m||e.target.id==="modalCloseBtn")m.classList.remove("open");',
+    '});',
+    '})();',
+    '</'+'script>'
+  ].join('\n');
+
+  // ── 5. ฝัง modal + data script ก่อน </body> ──────────────────────────
+  tmpl=tmpl.replace('</body>',modalHtml+'\n'+dataScript+'\n</body>');
+
+  // ── 6. Download ────────────────────────────────────────────────────────
+  var today=new Date();
+  var dd=String(today.getDate()).padStart(2,'0');
+  var mm2=String(today.getMonth()+1).padStart(2,'0');
+  var yy=today.getFullYear();
+  var safe=(d.fname||'dashboard').replace(/\.xlsx$/i,'').replace(/[\s\/\\:*?"<>|]/g,'_');
+  var filename='OL_Dashboard_'+safe+'_'+dd+mm2+yy+'.html';
+
+  var blob=new Blob([tmpl],{type:'text/html;charset=utf-8'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url; a.download=filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(function(){URL.revokeObjectURL(url);},2000);
+
+  var eb2=document.getElementById('exportBtn');
+  if(eb2){eb2.disabled=false;eb2.textContent='\ud83d\udcbe Export Dashboard HTML';}
+  showStatus('ok','\u2705 Export \u0e2a\u0e33\u0e40\u0e23\u0e47\u0e08 \u2014 '+filename);
 }
 </script>
 </body>
