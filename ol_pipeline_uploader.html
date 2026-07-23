@@ -260,7 +260,7 @@ function build(html){
   // ลบ exportBtn
   html=html.replace(/<button[^>]*id="exportBtn"[^>]*>[^<]*<\/button>/g,'');
 
-  // สร้าง data JSON — escape </script ให้ปลอดภัย
+  // สร้าง data JSON — escape closing tags
   var tj=JSON.stringify(d.teams).replace(/</g,'\\u003c');
   var aj=JSON.stringify(d.actions).replace(/</g,'\\u003c');
   var rj=JSON.stringify(d.risk).replace(/</g,'\\u003c');
@@ -318,9 +318,9 @@ function build(html){
     'if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",waitRender);}else{waitRender();}'+
     '})();';
 
-  // Inject modal + script ก่อน </body>
+  // Inject modal + script before body end
   var inject=modal+'\n<scr'+'ipt>\n'+run+'\n</'+'script>\n';
-  html=html.replace('</body>',inject+'</body>');
+  html=html.replace('<'+'/body>',inject+'<'+'/body>');
 
   // Download
   var today=new Date();
