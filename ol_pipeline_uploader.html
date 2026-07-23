@@ -24,7 +24,7 @@ body{font-family:var(--f);background:var(--off);min-height:100vh;display:flex;fl
 .uz:hover,.uz.drag{background:#C7EFE4;border-style:solid}
 .uz input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;font-size:0}
 .ui{font-size:24px;margin-bottom:4px}.ut{font-size:12px;font-weight:500;color:var(--teal-d)}
-.us{font-size:10px;color:var(--teal-d);opacity:.75;margin-top:2px}
+.us2{font-size:10px;color:var(--teal-d);opacity:.75;margin-top:2px}
 .msg{margin-top:8px;font-size:11px;font-weight:500;padding:8px 10px;border-radius:var(--r);display:none}
 .msg.ok{display:block;background:var(--green-l);color:var(--green-d)}
 .msg.err{display:block;background:var(--red-l);color:var(--red-d)}
@@ -62,7 +62,7 @@ body{font-family:var(--f);background:var(--off);min-height:100vh;display:flex;fl
           <input type="file" accept=".xlsx,.xls" onchange="pickFile(this.files[0])">
           <div class="ui">📊</div>
           <div class="ut">วาง หรือ คลิกเพื่อเลือกไฟล์</div>
-          <div class="us">รองรับ .xlsx และ .xls</div>
+          <div class="us2">รองรับ .xlsx และ .xls</div>
         </div>
         <div class="msg" id="msg"></div>
         <div class="pv" id="pv"></div>
@@ -81,29 +81,25 @@ body{font-family:var(--f);background:var(--off);min-height:100vh;display:flex;fl
   </div>
 </div>
 <script>
-// ── Globals ───────────────────────────────────────────────────────────────────
 var _D = null;
-var RUNNER_B64 = "KGZ1bmN0aW9uKCl7CmZ1bmN0aW9uIGRlYygpewogIHZhciBlbD1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnX3hkJyk7CiAgaWYoIWVsKXJldHVybiBudWxsOwogIHRyeXtyZXR1cm4gSlNPTi5wYXJzZShkZWNvZGVVUklDb21wb25lbnQoZXNjYXBlKGF0b2IoZWwuZ2V0QXR0cmlidXRlKCdkYXRhLXYnKSkpKSk7fQogIGNhdGNoKGUpe2NvbnNvbGUuZXJyb3IoJ2RlYyBlcnJvcicsZSk7cmV0dXJuIG51bGw7fQp9CmZ1bmN0aW9uIHNjKHYpe3JldHVybiB2Pj00Pyd2YXIoLS1ncmVlbi1kKSc6dj49Mz8ndmFyKC0tYW1iZXItZCknOid2YXIoLS1yZWQtZCknO30KZnVuY3Rpb24gcHMocCl7CiAgaWYoIXApcmV0dXJuJyc7CiAgaWYocC5pbmRleE9mKCfguJ7guKPguYnguK3guKEnKT49MClyZXR1cm4nYmFja2dyb3VuZDp2YXIoLS1ncmVlbi1sKTtjb2xvcjp2YXIoLS1ncmVlbi1kKSc7CiAgaWYocC5pbmRleE9mKCfguIHguLPguKXguLHguIcnKT49MClyZXR1cm4nYmFja2dyb3VuZDp2YXIoLS1ibHVlLWwpO2NvbG9yOnZhcigtLWJsdWUtZCknOwogIGlmKHAuaW5kZXhPZign4Lij4LitJyk+PTApcmV0dXJuJ2JhY2tncm91bmQ6dmFyKC0tYW1iZXItbCk7Y29sb3I6dmFyKC0tYW1iZXItZCknOwogIHJldHVybidiYWNrZ3JvdW5kOnZhcigtLXJlZC1sKTtjb2xvcjp2YXIoLS1yZWQtZCknOwp9CndpbmRvdy5vcGVuTW9kYWxCeUlkeD1mdW5jdGlvbihpZHgpewogIHZhciBqPWRlYygpO2lmKCFqKXJldHVybjsKICB2YXIgdD1qLnRlYW1zW2lkeF07aWYoIXQpcmV0dXJuOwogIHZhciBtbz1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnZGV0YWlsTW9kYWwnKTtpZighbW8pcmV0dXJuOwogIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdtb2RhbFRpdGxlJykudGV4dENvbnRlbnQ9dC5uYW1lOwogIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdtb2RhbFN1YicpLnRleHRDb250ZW50PXQubisnIOC4hOC4mSDCtyDguYDguJrguLXguYnguKLguYDguInguKXguLXguYjguKIgJysodC5hdmdQcmVtPjA/dC5hdmdQcmVtLnRvTG9jYWxlU3RyaW5nKCk6Jy0nKSsnIOC4vy/guJvguLUnOwogIHZhciBzZD1bCiAgICB7bjp0LnJlYWR5LGw6J+C4nuC4o+C5ieC4reC4oSBTdWJtaXQnLGJnOid2YXIoLS1ncmVlbi1sKScsZmM6J3ZhcigtLWdyZWVuLWQpJ30sCiAgICB7bjp0LndpcCxsOifguIHguLPguKXguLHguIfguJTguLPguYDguJnguLTguJnguIHguLLguKMnLGJnOid2YXIoLS1ibHVlLWwpJyxmYzondmFyKC0tYmx1ZS1kKSd9LAogICAge246dC53YWl0LGw6J+C4o+C4rS/guJXguLTguJTguYDguIfguLfguYjguK3guJnguYTguIInLGJnOid2YXIoLS1hbWJlci1sKScsZmM6J3ZhcigtLWFtYmVyLWQpJ30sCiAgICB7bjp0Lm5vbmUsbDon4Lii4Lix4LiH4LmE4Lih4LmI4Lih4Li14Lil4Li54LiB4LiE4LmJ4LiyJyxiZzondmFyKC0tcmVkLWwpJyxmYzondmFyKC0tcmVkLWQpJ30KICBdOwogIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdtb2RhbFN0YXRzJykuaW5uZXJIVE1MPXNkLm1hcChmdW5jdGlvbih4KXsKICAgIHJldHVybic8ZGl2IGNsYXNzPSJtb2RhbC1zdGF0IiBzdHlsZT0iYmFja2dyb3VuZDonK3guYmcrJyI+PGRpdiBjbGFzcz0ibW9kYWwtc3RhdC1uIiBzdHlsZT0iY29sb3I6Jyt4LmZjKyciPicreC5uKyc8L2Rpdj48ZGl2IGNsYXNzPSJtb2RhbC1zdGF0LWwiIHN0eWxlPSJjb2xvcjonK3guZmMrJyI+Jyt4LmwrJzwvZGl2PjwvZGl2Pic7CiAgfSkuam9pbignJyk7CiAgdmFyIG1zPXQubWVtYmVyc3x8W107CiAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ21vZGFsQm9keScpLmlubmVySFRNTD1tcy5sZW5ndGg/bXMubWFwKGZ1bmN0aW9uKG0pewogICAgcmV0dXJuJzx0cj48dGQgc3R5bGU9ImZvbnQtd2VpZ2h0OjUwMCI+JyttLm5hbWUrJzwvdGQ+PHRkPicrbS5wb3MrJzwvdGQ+JysKICAgICc8dGQ+JysobS5wcm9kfHwnJykucmVwbGFjZSgnS0tQR0VOICcsJycpLnJlcGxhY2UoJyhQYXIpJywnJykudHJpbSgpKyc8L3RkPicrCiAgICAnPHRkIHN0eWxlPSJ0ZXh0LWFsaWduOnJpZ2h0O2NvbG9yOnZhcigtLWFtYmVyLWQpIj4nKyhtLnByZW0+MD9tLnByZW0udG9Mb2NhbGVTdHJpbmcoKTonLScpKyc8L3RkPicrCiAgICAnPHRkIHN0eWxlPSJjb2xvcjonK3NjKG0ucGspKyc7Zm9udC13ZWlnaHQ6NTAwIj4nK20ucGsrJzwvdGQ+JysKICAgICc8dGQgc3R5bGU9ImNvbG9yOicrc2MobS5ndykrJztmb250LXdlaWdodDo1MDAiPicrbS5ndysnPC90ZD4nKwogICAgJzx0ZCBzdHlsZT0iY29sb3I6JytzYyhtLmNmKSsnO2ZvbnQtd2VpZ2h0OjUwMCI+JyttLmNmKyc8L3RkPicrCiAgICAnPHRkPjxzcGFuIHN0eWxlPSJmb250LXNpemU6OXB4O3BhZGRpbmc6MnB4IDZweDtib3JkZXItcmFkaXVzOjEwcHg7JytwcyhtLnBpcGUpKyciPicrbS5waXBlKyc8L3NwYW4+PC90ZD48L3RyPic7CiAgfSkuam9pbignJyk6Jzx0cj48dGQgY29sc3Bhbj0iOCIgc3R5bGU9InRleHQtYWxpZ246Y2VudGVyO3BhZGRpbmc6MTZweCI+4LmE4Lih4LmI4Lih4Li14LiC4LmJ4Lit4Lih4Li54Lil4Lij4Liy4Lii4LiE4LiZPC90ZD48L3RyPic7CiAgbW8uY2xhc3NMaXN0LmFkZCgnb3BlbicpOwogIGRvY3VtZW50LmJvZHkuc3R5bGUub3ZlcmZsb3c9J2hpZGRlbic7Cn07CmRvY3VtZW50LmFkZEV2ZW50TGlzdGVuZXIoJ2NsaWNrJyxmdW5jdGlvbihlKXsKICB2YXIgbW89ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2RldGFpbE1vZGFsJyk7aWYoIW1vKXJldHVybjsKICBpZihlLnRhcmdldD09PW1vfHxlLnRhcmdldC5pZD09PSdtb2RhbENsb3NlQnRuJyltby5jbGFzc0xpc3QucmVtb3ZlKCdvcGVuJyk7Cn0pOwpmdW5jdGlvbiBydW4oKXsKICBpZih0eXBlb2YgcmVuZGVyQWxsIT09J2Z1bmN0aW9uJyl7c2V0VGltZW91dChydW4sMTAwKTtyZXR1cm47fQogIHZhciBqPWRlYygpO2lmKCFqKXtjb25zb2xlLmVycm9yKCdkZWMoKSByZXR1cm5lZCBudWxsJyk7cmV0dXJuO30KICB3aW5kb3cuX2Rhc2hUZWFtcz1qLnRlYW1zOwogIHdpbmRvdy5fZXhwb3J0TWV0YT1qOwogIHdpbmRvdy5fZXhwb3J0QWN0aW9ucz1qLmFjdGlvbnM7CiAgd2luZG93Ll9leHBvcnRSaXNrPWoucmlzazsKICByZW5kZXJBbGwoai50ZWFtcyxqLnRvdE4sai50b3RSLGoudG90VyxqLnRvdFd0LGoudG90Tm4sai53UEssai53R1csai53Q0Ysai5yYXRlLGoucHJvZEMsai5vYmpDLGouZm5hbWUpOwogIGlmKHR5cGVvZiByZW5kZXJBY3Rpb25zPT09J2Z1bmN0aW9uJylyZW5kZXJBY3Rpb25zKGouYWN0aW9ucyk7CiAgaWYodHlwZW9mIHJlbmRlclJpc2s9PT0nZnVuY3Rpb24nKXJlbmRlclJpc2soai5yaXNrKTsKfQp3aW5kb3cuYWRkRXZlbnRMaXN0ZW5lcignbG9hZCcsZnVuY3Rpb24oKXtzZXRUaW1lb3V0KHJ1biwzMDApO30pOwp9KSgpOw==";
+var _RB64 = "KGZ1bmN0aW9uKCl7CmZ1bmN0aW9uIGRlYygpewogIHRyeXsKICAgIHZhciBlbD1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnX3hkJyk7CiAgICBpZighZWwpcmV0dXJuIG51bGw7CiAgICB2YXIgYjY0PWVsLmdldEF0dHJpYnV0ZSgnZGF0YS12Jyk7CiAgICB2YXIgYmluPWF0b2IoYjY0KTsKICAgIHZhciBieXRlcz1uZXcgVWludDhBcnJheShiaW4ubGVuZ3RoKTsKICAgIGZvcih2YXIgaT0wO2k8YmluLmxlbmd0aDtpKyspYnl0ZXNbaV09YmluLmNoYXJDb2RlQXQoaSk7CiAgICByZXR1cm4gSlNPTi5wYXJzZShuZXcgVGV4dERlY29kZXIoJ3V0Zi04JykuZGVjb2RlKGJ5dGVzKSk7CiAgfWNhdGNoKGUpe2NvbnNvbGUuZXJyb3IoJ2RlYyBlcnJvcicsZSk7cmV0dXJuIG51bGw7fQp9CmZ1bmN0aW9uIHNjKHYpe3JldHVybiB2Pj00Pyd2YXIoLS1ncmVlbi1kKSc6dj49Mz8ndmFyKC0tYW1iZXItZCknOid2YXIoLS1yZWQtZCknO30KZnVuY3Rpb24gcHMocCl7CiAgaWYoIXApcmV0dXJuJyc7CiAgaWYocC5pbmRleE9mKCdcdTBlMWVcdTBlMjNcdTBlNDlcdTBlMmRcdTBlMjEnKT49MClyZXR1cm4nYmFja2dyb3VuZDp2YXIoLS1ncmVlbi1sKTtjb2xvcjp2YXIoLS1ncmVlbi1kKSc7CiAgaWYocC5pbmRleE9mKCdcdTBlMDFcdTBlMzNcdTBlMjVcdTBlMzFcdTBlMDcnKT49MClyZXR1cm4nYmFja2dyb3VuZDp2YXIoLS1ibHVlLWwpO2NvbG9yOnZhcigtLWJsdWUtZCknOwogIGlmKHAuaW5kZXhPZignXHUwZTIzXHUwZTJkJyk+PTApcmV0dXJuJ2JhY2tncm91bmQ6dmFyKC0tYW1iZXItbCk7Y29sb3I6dmFyKC0tYW1iZXItZCknOwogIHJldHVybidiYWNrZ3JvdW5kOnZhcigtLXJlZC1sKTtjb2xvcjp2YXIoLS1yZWQtZCknOwp9CndpbmRvdy5vcGVuTW9kYWxCeUlkeD1mdW5jdGlvbihpZHgpewogIHZhciBqPWRlYygpO2lmKCFqKXJldHVybjsKICB2YXIgdD1qLnRlYW1zW2lkeF07aWYoIXQpcmV0dXJuOwogIHZhciBtbz1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnZGV0YWlsTW9kYWwnKTtpZighbW8pcmV0dXJuOwogIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdtb2RhbFRpdGxlJykudGV4dENvbnRlbnQ9dC5uYW1lOwogIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdtb2RhbFN1YicpLnRleHRDb250ZW50PXQubisnIFx1MGUwNFx1MGUxOSBcdTAwYjcgXHUwZTQwXHUwZTFhXHUwZTM1XHUwZTQ5XHUwZTIyXHUwZTQwXHUwZTA5XHUwZTI1XHUwZTM1XHUwZTQ4XHUwZTIyICcrKHQuYXZnUHJlbT4wP3QuYXZnUHJlbS50b0xvY2FsZVN0cmluZygpOictJykrJyBcdTBlM2YvXHUwZTFiXHUwZTM1JzsKICB2YXIgc2Q9WwogICAge246dC5yZWFkeSxsOidcdTBlMWVcdTBlMjNcdTBlNDlcdTBlMmRcdTBlMjEgU3VibWl0JyxiZzondmFyKC0tZ3JlZW4tbCknLGZjOid2YXIoLS1ncmVlbi1kKSd9LAogICAge246dC53aXAsbDonXHUwZTAxXHUwZTMzXHUwZTI1XHUwZTMxXHUwZTA3XHUwZTE0XHUwZTMzXHUwZTQwXHUwZTE5XHUwZTM0XHUwZTE5XHUwZTAxXHUwZTMyXHUwZTIzJyxiZzondmFyKC0tYmx1ZS1sKScsZmM6J3ZhcigtLWJsdWUtZCknfSwKICAgIHtuOnQud2FpdCxsOidcdTBlMjNcdTBlMmQvXHUwZTE1XHUwZTM0XHUwZTE0XHUwZTQwXHUwZTA3XHUwZTM3XHUwZTQ4XHUwZTJkXHUwZTE5XHUwZTQ0XHUwZTAyJyxiZzondmFyKC0tYW1iZXItbCknLGZjOid2YXIoLS1hbWJlci1kKSd9LAogICAge246dC5ub25lLGw6J1x1MGUyMlx1MGUzMVx1MGUwN1x1MGU0NFx1MGUyMVx1MGU0OFx1MGUyMVx1MGUzNVx1MGUyNVx1MGUzOVx1MGUwMVx1MGUwNFx1MGU0OVx1MGUzMicsYmc6J3ZhcigtLXJlZC1sKScsZmM6J3ZhcigtLXJlZC1kKSd9CiAgXTsKICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnbW9kYWxTdGF0cycpLmlubmVySFRNTD1zZC5tYXAoZnVuY3Rpb24oeCl7CiAgICByZXR1cm4nPGRpdiBjbGFzcz0ibW9kYWwtc3RhdCIgc3R5bGU9ImJhY2tncm91bmQ6Jyt4LmJnKyciPjxkaXYgY2xhc3M9Im1vZGFsLXN0YXQtbiIgc3R5bGU9ImNvbG9yOicreC5mYysnIj4nK3gubisnPC9kaXY+PGRpdiBjbGFzcz0ibW9kYWwtc3RhdC1sIiBzdHlsZT0iY29sb3I6Jyt4LmZjKyciPicreC5sKyc8L2Rpdj48L2Rpdj4nOwogIH0pLmpvaW4oJycpOwogIHZhciBtcz10Lm1lbWJlcnN8fFtdOwogIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdtb2RhbEJvZHknKS5pbm5lckhUTUw9bXMubGVuZ3RoP21zLm1hcChmdW5jdGlvbihtKXsKICAgIHJldHVybic8dHI+PHRkIHN0eWxlPSJmb250LXdlaWdodDo1MDAiPicrbS5uYW1lKyc8L3RkPjx0ZD4nK20ucG9zKyc8L3RkPicrCiAgICAnPHRkPicrKG0ucHJvZHx8JycpLnJlcGxhY2UoJ0tLUEdFTiAnLCcnKS5yZXBsYWNlKCcoUGFyKScsJycpLnRyaW0oKSsnPC90ZD4nKwogICAgJzx0ZCBzdHlsZT0idGV4dC1hbGlnbjpyaWdodDtjb2xvcjp2YXIoLS1hbWJlci1kKSI+JysobS5wcmVtPjA/bS5wcmVtLnRvTG9jYWxlU3RyaW5nKCk6Jy0nKSsnPC90ZD4nKwogICAgJzx0ZCBzdHlsZT0iY29sb3I6JytzYyhtLnBrKSsnO2ZvbnQtd2VpZ2h0OjUwMCI+JyttLnBrKyc8L3RkPicrCiAgICAnPHRkIHN0eWxlPSJjb2xvcjonK3NjKG0uZ3cpKyc7Zm9udC13ZWlnaHQ6NTAwIj4nK20uZ3crJzwvdGQ+JysKICAgICc8dGQgc3R5bGU9ImNvbG9yOicrc2MobS5jZikrJztmb250LXdlaWdodDo1MDAiPicrbS5jZisnPC90ZD4nKwogICAgJzx0ZD48c3BhbiBzdHlsZT0iZm9udC1zaXplOjlweDtwYWRkaW5nOjJweCA2cHg7Ym9yZGVyLXJhZGl1czoxMHB4OycrcHMobS5waXBlKSsnIj4nK20ucGlwZSsnPC9zcGFuPjwvdGQ+PC90cj4nOwogIH0pLmpvaW4oJycpOic8dHI+PHRkIGNvbHNwYW49IjgiIHN0eWxlPSJ0ZXh0LWFsaWduOmNlbnRlcjtwYWRkaW5nOjE2cHgiPlx1MGU0NFx1MGUyMVx1MGU0OFx1MGUyMVx1MGUzNVx1MGUwMlx1MGU0OVx1MGUyZFx1MGUyMVx1MGUzOVx1MGUyNVx1MGUyM1x1MGUzMlx1MGUyMlx1MGUwNFx1MGUxOTwvdGQ+PC90cj4nOwogIG1vLmNsYXNzTGlzdC5hZGQoJ29wZW4nKTsKICBkb2N1bWVudC5ib2R5LnN0eWxlLm92ZXJmbG93PSdoaWRkZW4nOwp9Owpkb2N1bWVudC5hZGRFdmVudExpc3RlbmVyKCdjbGljaycsZnVuY3Rpb24oZSl7CiAgdmFyIG1vPWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdkZXRhaWxNb2RhbCcpO2lmKCFtbylyZXR1cm47CiAgaWYoZS50YXJnZXQ9PT1tb3x8ZS50YXJnZXQuaWQ9PT0nbW9kYWxDbG9zZUJ0bicpbW8uY2xhc3NMaXN0LnJlbW92ZSgnb3BlbicpOwp9KTsKZnVuY3Rpb24gcnVuKCl7CiAgaWYodHlwZW9mIHJlbmRlckFsbCE9PSdmdW5jdGlvbicpe3NldFRpbWVvdXQocnVuLDEwMCk7cmV0dXJuO30KICB2YXIgaj1kZWMoKTsKICBpZighail7Y29uc29sZS5lcnJvcigncnVubmVyOiBkZWMoKSByZXR1cm5lZCBudWxsJyk7cmV0dXJuO30KICB3aW5kb3cuX2Rhc2hUZWFtcz1qLnRlYW1zOwogIHdpbmRvdy5fZXhwb3J0TWV0YT1qOwogIHdpbmRvdy5fZXhwb3J0QWN0aW9ucz1qLmFjdGlvbnM7CiAgd2luZG93Ll9leHBvcnRSaXNrPWoucmlzazsKICByZW5kZXJBbGwoai50ZWFtcyxqLnRvdE4sai50b3RSLGoudG90VyxqLnRvdFd0LGoudG90Tm4sai53UEssai53R1csai53Q0Ysai5yYXRlLGoucHJvZEMsai5vYmpDLGouZm5hbWUpOwogIGlmKHR5cGVvZiByZW5kZXJBY3Rpb25zPT09J2Z1bmN0aW9uJylyZW5kZXJBY3Rpb25zKGouYWN0aW9ucyk7CiAgaWYodHlwZW9mIHJlbmRlclJpc2s9PT0nZnVuY3Rpb24nKXJlbmRlclJpc2soai5yaXNrKTsKfQp3aW5kb3cuYWRkRXZlbnRMaXN0ZW5lcignbG9hZCcsZnVuY3Rpb24oKXtzZXRUaW1lb3V0KHJ1biwzMDApO30pOwp9KSgpOw==";
 
-// ── SheetJS loader ────────────────────────────────────────────────────────────
+// SheetJS loader
 (function(){
-  var cdns = [
+  var cdns=[
     'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js',
     'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js'
   ];
-  var i = 0;
+  var i=0;
   function next(){
     if(i>=cdns.length){setXS('❌ โหลด SheetJS ไม่ได้','#DC2626');return;}
-    var s = document.createElement('script');
-    s.src = cdns[i++];
-    s.onload = function(){setXS('✅ พร้อมอัปโหลด','#065F46');};
-    s.onerror = next;
-    document.head.appendChild(s);
+    var s=document.createElement('script');s.src=cdns[i++];
+    s.onload=function(){setXS('✅ พร้อมอัปโหลด','#065F46');};
+    s.onerror=next;document.head.appendChild(s);
   }
   next();
 })();
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
 function setXS(m,c){var e=document.getElementById('xs');if(e){e.textContent=m;e.style.color=c||'';}}
 function setMsg(t,m){var e=document.getElementById('msg');e.className='msg '+t;e.textContent=m;}
 function dropFile(e){e.preventDefault();document.getElementById('uz').classList.remove('drag');var f=e.dataTransfer.files[0];if(f)pickFile(f);}
@@ -111,9 +107,7 @@ function pickFile(f){
   if(!f)return;
   if(typeof XLSX==='undefined'){setMsg('info','⏳ SheetJS กำลังโหลด รอสักครู่...');return;}
   setMsg('info','⏳ กำลังอ่าน '+f.name+'...');
-  var r=new FileReader();
-  r.onload=function(e){parseXL(e.target.result,f.name);};
-  r.readAsArrayBuffer(f);
+  var r=new FileReader();r.onload=function(e){parseXL(e.target.result,f.name);};r.readAsArrayBuffer(f);
 }
 
 
@@ -219,7 +213,7 @@ function showPreview(actv){
   pv.innerHTML=actv.map(function(t){
     var col=t.st==='เร่งด่วน'?'background:var(--red-l);color:var(--red-d)':
              t.st==='ปกติ'?'background:var(--green-l);color:var(--green-d)':'background:var(--amber-l);color:var(--amber-d)';
-    return '<div class="pr"><span class="pt">'+t.name+'</span>'+
+    return '<div class="pr"><span class="pr-team">'+t.name+'</span>'+
       '<span class="pr-n">'+t.n+' คน</span>'+
       '<span class="pr-badge" style="'+col+'">'+t.st+'</span></div>';
   }).join('');
@@ -234,7 +228,6 @@ function doExport(){
   fetch('ol_pipeline_dashboard.html')
     .then(function(r){if(!r.ok)throw new Error('โหลด ol_pipeline_dashboard.html ไม่ได้ — ต้องวาง 2 ไฟล์ใน folder เดียวกัน');return r.text();})
     .then(function(html){
-      console.log('[FETCH] got html size=',html.length,'_D=',_D?'OK':'NULL');
       try{build(html);}catch(e){
         btn.disabled=false;btn.textContent='💾 Export Dashboard HTML';
         setMsg('err','❌ '+e.message);console.error(e);
@@ -247,245 +240,46 @@ function doExport(){
 }
 
 // ── Build Export HTML ────────────────────────────────────────────────────────
+
+// Build exported HTML
 function build(html){
   var d=_D;
+  if(!d){setMsg('err','ไม่มีข้อมูล กรุณาอัปโหลด Excel ก่อน');return;}
+  console.log('[BUILD] teams=',d.teams.length,'html=',html.length);
 
-  // 1. ลบ upload zone
-  var us=html.indexOf('<div class="uf" id="uf">');
-  if(us>=0){
-    var dep=0,i=us,ue=-1;
-    while(i<html.length){
-      if(html.slice(i,i+4)==='<div')dep++;
-      else if(html.slice(i,i+6)==='</div>'){dep--;if(dep===0){ue=i+6;break;}}
-      i++;
-    }
-    if(ue>0)html=html.slice(0,us)+html.slice(ue);
-  }
+  // Remove exportBtn
   html=html.replace(/<button[^>]*id="exportBtn"[^>]*>[^<]*<\/button>/g,'');
 
-  // 2. Escape data JSON
-  var tj=JSON.stringify(d.teams).replace(/</g,'\\u003c');
-  var aj=JSON.stringify(d.actions).replace(/</g,'\\u003c');
-  var rj=JSON.stringify(d.risk).replace(/</g,'\\u003c');
-  var mj=JSON.stringify({totN:d.totN,totR:d.totR,totW:d.totW,totWt:d.totWt,totNn:d.totNn,
-    wPK:d.wPK,wGW:d.wGW,wCF:d.wCF,rate:d.rate,prodC:d.prodC,objC:d.objC,fname:d.fname}).replace(/</g,'\\u003c');
-
-  // 3. Modal HTML
-  var modal=[
-    '<div class="modal-overlay" id="detailModal">',
-    '<div class="modal">',
-    '<div class="modal-hd">',
-    '<div><div class="modal-hd-title" id="modalTitle"></div>',
-    '<div class="modal-hd-sub" id="modalSub"></div></div>',
-    '<button class="modal-close" id="modalCloseBtn">&#215;</button>',
-    '</div>',
-    '<div class="modal-body">',
-    '<div class="modal-stat-row" id="modalStats"></div>',
-    '<div style="overflow-x:auto">',
-    '<table class="mtbl"><thead><tr>',
-    '<th>ชื่อ-สกุล</th><th>ตำแหน่ง</th><th>ผลิตภัณฑ์</th>',
-    '<th>เบี้ย (฿)</th><th>PK</th><th>GW</th><th>CF</th><th>Pipeline</th>',
-    '</tr></thead><tbody id="modalBody"></tbody>',
-    '</table></div></div></div></div>'
-  ].join('');
-
-  // 4. Export render script — เขียนเป็น base64 แล้ว decode ใน browser
-  //    หลีกเลี่ยงปัญหา HTML tokenizer ทั้งหมด
-  var renderCode=[
-    '(function(){',
-    'var T='+tj+';',
-    'var A='+aj+';',
-    'var R='+rj+';',
-    'var M='+mj+';',
-    'function sc(v){return v>=4?"var(--green-d)":v>=3?"var(--amber-d)":"var(--red-d)";}',
-    'function ps(p){',
-    '  if(!p)return"";',
-    '  if(p.indexOf("\u0e1e\u0e23\u0e49\u0e2d\u0e21")>=0)return"background:var(--green-l);color:var(--green-d)";',
-    '  if(p.indexOf("\u0e01\u0e33\u0e25\u0e31\u0e07")>=0)return"background:var(--blue-l);color:var(--blue-d)";',
-    '  if(p.indexOf("\u0e23\u0e2d")>=0)return"background:var(--amber-l);color:var(--amber-d)";',
-    '  return"background:var(--red-l);color:var(--red-d)";',
-    '}',
-    'window.openModalByIdx=function(idx){',
-    '  var t=T[idx];if(!t)return;',
-    '  var mo=document.getElementById("detailModal");if(!mo)return;',
-    '  document.getElementById("modalTitle").textContent=t.name;',
-    '  document.getElementById("modalSub").textContent=t.n+"\u0020\u0e04\u0e19\u0020\u00b7\u0020\u0e40\u0e1a\u0e35\u0e49\u0e22\u0e40\u0e09\u0e25\u0e35\u0e48\u0e22\u0020"+(t.avgPrem>0?t.avgPrem.toLocaleString():"-")+"\u0020\u0e3f/\u0e1b\u0e35";',
-    '  var sd=[{n:t.ready,l:"\u0e1e\u0e23\u0e49\u0e2d\u0e21 Submit",bg:"var(--green-l)",fc:"var(--green-d)"},',
-    '          {n:t.wip,l:"\u0e01\u0e33\u0e25\u0e31\u0e07\u0e14\u0e33\u0e40\u0e19\u0e34\u0e19\u0e01\u0e32\u0e23",bg:"var(--blue-l)",fc:"var(--blue-d)"},',
-    '          {n:t.wait,l:"\u0e23\u0e2d/\u0e15\u0e34\u0e14\u0e40\u0e07\u0e37\u0e48\u0e2d\u0e19\u0e44\u0e02",bg:"var(--amber-l)",fc:"var(--amber-d)"},',
-    '          {n:t.none,l:"\u0e22\u0e31\u0e07\u0e44\u0e21\u0e48\u0e21\u0e35\u0e25\u0e39\u0e01\u0e04\u0e49\u0e32",bg:"var(--red-l)",fc:"var(--red-d)"}];',
-    '  document.getElementById("modalStats").innerHTML=sd.map(function(x){',
-    '    return"<div class=\\"modal-stat\\" style=\\"background:"+x.bg+"\\">'+
-        '<div class=\\"modal-stat-n\\" style=\\"color:"+x.fc+"\\">"+x.n+'+
-        '"</div><div class=\\"modal-stat-l\\" style=\\"color:"+x.fc+"\\">"+x.l+"</div></div>";',
-    '  }).join("");',
-    '  var ms=t.members||[];',
-    '  document.getElementById("modalBody").innerHTML=ms.length?ms.map(function(m){',
-    '    return"<tr><td style=\\"font-weight:500\\">"+m.name+"</td>"+',
-    '           "<td>"+m.pos+"</td>"+',
-    '           "<td>"+(m.prod||"").replace("KKPGEN ","").replace("(Par)","").trim()+"</td>"+',
-    '           "<td style=\\"text-align:right;color:var(--amber-d)\\">"+(m.prem>0?m.prem.toLocaleString():"-")+"</td>"+',
-    '           "<td style=\\"color:"+sc(m.pk)+";font-weight:500\\">"+m.pk+"</td>"+',
-    '           "<td style=\\"color:"+sc(m.gw)+";font-weight:500\\">"+m.gw+"</td>"+',
-    '           "<td style=\\"color:"+sc(m.cf)+";font-weight:500\\">"+m.cf+"</td>"+',
-    '           "<td><span style=\\"font-size:9px;padding:2px 6px;border-radius:10px;"+ps(m.pipe)+"\\">"+m.pipe+"</span></td>"+',
-    '    "</tr>";',
-    '  }).join(""):',
-    '  "<tr><td colspan=\\"8\\" style=\\"text-align:center;padding:16px\\">\u0e44\u0e21\u0e48\u0e21\u0e35\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25\u0e23\u0e32\u0e22\u0e04\u0e19</td></tr>";',
-    '  mo.classList.add("open");',
-    '  document.body.style.overflow="hidden";',
-    '};',
-    'document.addEventListener("click",function(e){',
-    '  var mo=document.getElementById("detailModal");if(!mo)return;',
-    '  if(e.target===mo||e.target.id==="modalCloseBtn")mo.classList.remove("open");',
-    '});',
-    'function run(){',
-    '  if(typeof clearAll!="function"){setTimeout(run,50);return;}',
-    '  window._dashTeams=T;',
-    '  window._exportMeta=M;',
-    '  window._exportActions=A;',
-    '  window._exportRisk=R;',
-    '  clearAll();',
-    '  renderAll(T,M.totN,M.totR,M.totW,M.totWt,M.totNn,M.wPK,M.wGW,M.wCF,M.rate,M.prodC,M.objC,M.fname);',
-    '  if(typeof renderActions=="function")renderActions(A);',
-    '  if(typeof renderRisk=="function")renderRisk(R);',
-    '}',
-    'window.addEventListener("load",function(){run();});',
-    '})();'
-  ]
-
-// build complete
-
-  // Encode data as base64 via data attribute
-  var payload = JSON.stringify({
-    teams: d.teams, actions: d.actions, risk: d.risk,
-    totN: d.totN, totR: d.totR, totW: d.totW, totWt: d.totWt, totNn: d.totNn,
-    wPK: d.wPK, wGW: d.wGW, wCF: d.wCF, rate: d.rate, prodC: d.prodC, objC: d.objC, fname: d.fname
-  });
-  var b64 = btoa(unescape(encodeURIComponent(payload)));
-
-  var modal = '<div class="modal-overlay" id="detailModal">' +
-    '<div class="modal"><div class="modal-hd"><div>' +
-    '<div class="modal-hd-title" id="modalTitle"></div>' +
-    '<div class="modal-hd-sub" id="modalSub"></div>' +
-    '</div><button class="modal-close" id="modalCloseBtn">&#215;</button></div>' +
-    '<div class="modal-body"><div class="modal-stat-row" id="modalStats"></div>' +
-    '<div style="overflow-x:auto"><table class="mtbl"><thead><tr>' +
-    '<th>ชื่อ-สกุล</th><th>ตำแหน่ง</th><th>ผลิตภัณฑ์</th>' +
-    '<th>เบี้ย (฿)</th><th>PK</th><th>GW</th><th>CF</th><th>Pipeline</th>' +
-    '</tr></thead><tbody id="modalBody"></tbody></table></div>' +
-    '</div></div></div>';
-
-  var runner = '<div id="_xd" style="display:none" data-v="' + b64 + '"></div>\n' +
-    '<scr' + 'ipt>\n' +
-    '(function(){\n' +
-    'function dec(){try{return JSON.parse(decodeURIComponent(escape(atob(document.getElementById("_xd").getAttribute("data-v")))));}catch(e){return null;}}\n' +
-    'function _sc(v){return v>=4?"var(--green-d)":v>=3?"var(--amber-d)":"var(--red-d)";}\n' +
-    'function _ps(p){\n' +
-    '  if(!p)return"";\n' +
-    '  if(p.indexOf("\\u0e1e\\u0e23\\u0e49\\u0e2d\\u0e21")>=0)return"background:var(--green-l);color:var(--green-d)";\n' +
-    '  if(p.indexOf("\\u0e01\\u0e33\\u0e25\\u0e31\\u0e07")>=0)return"background:var(--blue-l);color:var(--blue-d)";\n' +
-    '  if(p.indexOf("\\u0e23\\u0e2d")>=0)return"background:var(--amber-l);color:var(--amber-d)";\n' +
-    '  return"background:var(--red-l);color:var(--red-d)";\n' +
-    '}\n' +
-    'window.openModalByIdx=function(idx){\n' +
-    '  var _j=dec();if(!_j)return;\n' +
-    '  var t=_j.teams[idx];if(!t)return;\n' +
-    '  var mo=document.getElementById("detailModal");if(!mo)return;\n' +
-    '  document.getElementById("modalTitle").textContent=t.name;\n' +
-    '  document.getElementById("modalSub").textContent=t.n+" \\u0e04\\u0e19 \\u00b7 \\u0e40\\u0e1a\\u0e35\\u0e49\\u0e22\\u0e40\\u0e09\\u0e25\\u0e35\\u0e48\\u0e22 "+(t.avgPrem>0?t.avgPrem.toLocaleString():"-")+" \\u0e3f/\\u0e1b\\u0e35";\n' +
-    '  var sd=[{n:t.ready,l:"\\u0e1e\\u0e23\\u0e49\\u0e2d\\u0e21 Submit",bg:"var(--green-l)",fc:"var(--green-d)"},{n:t.wip,l:"\\u0e01\\u0e33\\u0e25\\u0e31\\u0e07\\u0e14\\u0e33\\u0e40\\u0e19\\u0e34\\u0e19\\u0e01\\u0e32\\u0e23",bg:"var(--blue-l)",fc:"var(--blue-d)"},{n:t.wait,l:"\\u0e23\\u0e2d/\\u0e15\\u0e34\\u0e14\\u0e40\\u0e07\\u0e37\\u0e48\\u0e2d\\u0e19\\u0e44\\u0e02",bg:"var(--amber-l)",fc:"var(--amber-d)"},{n:t.none,l:"\\u0e22\\u0e31\\u0e07\\u0e44\\u0e21\\u0e48\\u0e21\\u0e35\\u0e25\\u0e39\\u0e01\\u0e04\\u0e49\\u0e32",bg:"var(--red-l)",fc:"var(--red-d)"}];\n' +
-    '  document.getElementById("modalStats").innerHTML=sd.map(function(x){return"<div class=\\"modal-stat\\" style=\\"background:"+x.bg+"\\"><div class=\\"modal-stat-n\\" style=\\"color:"+x.fc+"\\">"+x.n+"</div><div class=\\"modal-stat-l\\" style=\\"color:"+x.fc+"\\">"+x.l+"</div></div>";}).join("");\n' +
-    '  var ms=t.members||[];\n' +
-    '  document.getElementById("modalBody").innerHTML=ms.length?ms.map(function(m){return"<tr><td style=\\"font-weight:500\\">"+m.name+"</td><td>"+m.pos+"</td><td>"+(m.prod||"").replace("KKPGEN ","").replace("(Par)","").trim()+"</td><td style=\\"text-align:right;color:var(--amber-d)\\">"+(m.prem>0?m.prem.toLocaleString():"-")+"</td><td style=\\"color:"+_sc(m.pk)+";font-weight:500\\">"+m.pk+"</td><td style=\\"color:"+_sc(m.gw)+";font-weight:500\\">"+m.gw+"</td><td style=\\"color:"+_sc(m.cf)+";font-weight:500\\">"+m.cf+"</td><td><span style=\\"font-size:9px;padding:2px 6px;border-radius:10px;"+_ps(m.pipe)+"\\">"+m.pipe+"</span></td></tr>";}).join(""):"<tr><td colspan=\\"8\\" style=\\"text-align:center;padding:16px\\">\\u0e44\\u0e21\\u0e48\\u0e21\\u0e35\\u0e02\\u0e49\\u0e2d\\u0e21\\u0e39\\u0e25\\u0e23\\u0e32\\u0e22\\u0e04\\u0e19</td></tr>";\n' +
-    '  mo.classList.add("open");document.body.style.overflow="hidden";\n' +
-    '};\n' +
-    'document.addEventListener("click",function(e){var mo=document.getElementById("detailModal");if(!mo)return;if(e.target===mo||e.target.id==="modalCloseBtn")mo.classList.remove("open");});\n' +
-    'function run(){\n' +
-    '  if(typeof clearAll!="function"){setTimeout(run,50);return;}\n' +
-    '  var _j=dec();if(!_j)return;\n' +
-    '  window._dashTeams=_j.teams;window._exportMeta=_j;window._exportActions=_j.actions;window._exportRisk=_j.risk;\n' +
-    '  renderAll(_j.teams,_j.totN,_j.totR,_j.totW,_j.totWt,_j.totNn,_j.wPK,_j.wGW,_j.wCF,_j.rate,_j.prodC,_j.objC,_j.fname);\n' +
-    '  if(typeof renderActions=="function")renderActions(_j.actions);\n' +
-    '  if(typeof renderRisk=="function")renderRisk(_j.risk);\n' +
-    '}\n' +
-    'window.addEventListener("load",function(){setTimeout(run,500);});\n' +
-    '})();\n' +
-    '<' + '/scri' + 'pt>';
-
-  var inject = modal + '\n' + runner + '\n';
-  var bodyEnd = html.lastIndexOf('<' + '/body>');
-  if (bodyEnd >= 0) html = html.slice(0, bodyEnd) + inject + html.slice(bodyEnd);
-  else html += inject;
-
-  var today = new Date();
-  var fname = 'OL_Dashboard_' + String(today.getDate()).padStart(2,'0') +
-    String(today.getMonth()+1).padStart(2,'0') + today.getFullYear() + '.html';
-  var blob = new Blob([html], { type: 'text/html;charset=utf-8' });
-  var url = URL.createObjectURL(blob);
-  var a = document.createElement('a');
-  a.href = url; a.download = fname;
-  document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
-  setMsg('ok', 'Export สำเร็จ — ' + fname);
-}
-
-
-// ── Override build() to use RUNNER_B64 ───────────────────────────────────────
-function build(html){
-  var d=_D;
-  console.log('[BUILD] called, _D=', d ? 'has data, teams='+d.teams.length : 'NULL');
-  console.log('[BUILD] html size=', html.length);
-  if(!d){setMsg('err','ไม่มีข้อมูล _D');return;}
-
-  // Remove upload zone
-  var us=html.indexOf('<div class="uf" id="uf">');
-  if(us>=0){
-    var dep=0,j=us,ue=-1;
-    while(j<html.length){
-      if(html.slice(j,j+4)==='<div')dep++;
-      else if(html.slice(j,j+6)==='</div>'){dep--;if(dep===0){ue=j+6;break;}}
-      j++;
-    }
-    if(ue>0)html=html.slice(0,us)+html.slice(ue);
-  }
-  html=html.replace(/<button[^>]*id="exportBtn"[^>]*>[^<]*<\/button>/g,'');
-
-  // Encode data as base64
+  // Encode data with TextEncoder
   var payload=JSON.stringify({
     teams:d.teams,actions:d.actions,risk:d.risk,
     totN:d.totN,totR:d.totR,totW:d.totW,totWt:d.totWt,totNn:d.totNn,
     wPK:d.wPK,wGW:d.wGW,wCF:d.wCF,rate:d.rate,prodC:d.prodC,objC:d.objC,fname:d.fname
   });
-  var dataB64=btoa(unescape(encodeURIComponent(payload)));
+  var bytes=new TextEncoder().encode(payload);
+  var bin='';for(var i=0;i<bytes.length;i++)bin+=String.fromCharCode(bytes[i]);
+  var dataB64=btoa(bin);
 
-  // Modal HTML
-  var modal='<div class="modal-overlay" id="detailModal">'+
-    '<div class="modal"><div class="modal-hd"><div>'+
-    '<div class="modal-hd-title" id="modalTitle"></div>'+
-    '<div class="modal-hd-sub" id="modalSub"></div>'+
-    '</div><button class="modal-close" id="modalCloseBtn">&#215;</button></div>'+
-    '<div class="modal-body"><div class="modal-stat-row" id="modalStats"></div>'+
-    '<div style="overflow-x:auto"><table class="mtbl"><thead><tr>'+
-    '<th>\u0e0a\u0e37\u0e48\u0e2d-\u0e2a\u0e01\u0e38\u0e25</th><th>\u0e15\u0e33\u0e41\u0e2b\u0e19\u0e48\u0e07</th><th>\u0e1c\u0e25\u0e34\u0e15\u0e20\u0e31\u0e13\u0e11\u0e4c</th>'+
-    '<th>\u0e40\u0e1a\u0e35\u0e49\u0e22 (\u0e3f)</th><th>PK</th><th>GW</th><th>CF</th><th>Pipeline</th>'+
-    '</tr></thead><tbody id="modalBody"></tbody></table></div>'+
-    '</div></div></div>';
+  // Modal
+  var modal='<div class="modal-overlay" id="detailModal"><div class="modal"><div class="modal-hd"><div><div class="modal-hd-title" id="modalTitle"></div><div class="modal-hd-sub" id="modalSub"></div></div><button class="modal-close" id="modalCloseBtn">&#215;</button></div><div class="modal-body"><div class="modal-stat-row" id="modalStats"></div><div style="overflow-x:auto"><table class="mtbl"><thead><tr><th>ชื่อ-สกุล</th><th>ตำแหน่ง</th><th>ผลิตภัณฑ์</th><th>เบี้ย (฿)</th><th>PK</th><th>GW</th><th>CF</th><th>Pipeline</th></tr></thead><tbody id="modalBody"></tbody></table></div></div></div></div>';
 
-  // Data div + runner loader
-  // Runner is base64 encoded — decoded and executed via createElement
-  var inject=modal+
-    '<div id="_xd" style="display:none" data-v="'+dataB64+'" data-r="'+RUNNER_B64+'"></div>'+
+  // Loader: decode runner b64 and execute
+  var loader='<div id="_xd" style="display:none" data-v="'+dataB64+'" data-r="'+_RB64+'"></div>'+
     '<scr'+'ipt>'+
     '(function(){'+
-    'var el=document.getElementById("_xd");'+
-    'var code=decodeURIComponent(escape(atob(el.getAttribute("data-r"))));'+
-    'var s=document.createElement("scr"+"ipt");'+
-    's.textContent=code;'+
-    'document.head.appendChild(s);'+
+      'var el=document.getElementById("_xd");'+
+      'var rb=el.getAttribute("data-r");'+
+      'var bin=atob(rb);'+
+      'var bytes=new Uint8Array(bin.length);'+
+      'for(var i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);'+
+      'var code=new TextDecoder("utf-8").decode(bytes);'+
+      'var s=document.createElement("scr"+"ipt");'+
+      's.textContent=code;'+
+      'document.head.appendChild(s);'+
     '})();'+
     '<'+'/script>';
 
+  var inject=modal+'\n'+loader+'\n';
   var bodyEnd=html.lastIndexOf('<'+'/body>');
   if(bodyEnd>=0)html=html.slice(0,bodyEnd)+inject+html.slice(bodyEnd);
   else html+=inject;
@@ -495,11 +289,10 @@ function build(html){
     String(today.getMonth()+1).padStart(2,'0')+today.getFullYear()+'.html';
   var blob=new Blob([html],{type:'text/html;charset=utf-8'});
   var url=URL.createObjectURL(blob);
-  var a=document.createElement('a');
-  a.href=url;a.download=fname;
+  var a=document.createElement('a');a.href=url;a.download=fname;
   document.body.appendChild(a);a.click();document.body.removeChild(a);
   setTimeout(function(){URL.revokeObjectURL(url);},2000);
-  setMsg('ok','\u2705 Export \u0e2a\u0e33\u0e40\u0e23\u0e47\u0e08 \u2014 '+fname);
+  setMsg('ok','✅ Export สำเร็จ — '+fname);
 }
 </script>
 </body>
