@@ -446,15 +446,32 @@ function buildExport(tmpl){
         modalDiv.classList.add('open');
       };
 
-      // Rebind detail-link buttons
-      idoc.querySelectorAll('.detail-link[onclick]').forEach(function(btn){
-        var m=(btn.getAttribute('onclick')||'').match(/openModalByIdx\((\d+)\)/);
-        if(m){
-          var idx=parseInt(m[1]);
-          btn.removeAttribute('onclick');
-          btn.addEventListener('click',function(){iwin.openModalByIdx(idx);});
-        }
-      });
+      // Keep onclick as-is — openModalByIdx will be defined via inline script
+      // Instead: inject a global openModalByIdx function as inline script in the HTML
+      var inlineScript=idoc.createElement('script');
+      inlineScript.textContent=[
+        'window._expTeams='+JSON.stringify(d.teams)+';',
+        'function openModalByIdx(idx){',
+        '  var t=window._expTeams[idx];if(!t)return;',
+        '  var modal=document.getElementById("detailModal");if(!modal)return;',
+        '  document.getElementById("modalTitle").textContent=t.name;',
+        '  document.getElementById("modalSub").textContent=t.n+" คน · เบี้ยเฉลี่ย "+(t.avgPrem>0?t.avgPrem.toLocaleString():"—")+" ฿/ปี";',
+        '  var stDefs=[{n:t.ready,l:"พร้อม Submit",bg:"var(--green-l)",fc:"var(--green-d)"},{n:t.wip,l:"กำลังดำเนินการ",bg:"var(--blue-l)",fc:"var(--blue-d)"},{n:t.wait,l:"รอ/ติดเงื่อนไข",bg:"var(--amber-l)",fc:"var(--amber-d)"},{n:t.none,l:"ยังไม่มีลูกค้า",bg:"var(--red-l)",fc:"var(--red-d)"}];',
+        '  document.getElementById("modalStats").innerHTML=stDefs.map(function(s){return"<div class=\"modal-stat\" style=\"background:"+s.bg+"\"><div class=\"modal-stat-n\" style=\"color:"+s.fc+"\">"+s.n+"</div><div class=\"modal-stat-l\" style=\"color:"+s.fc+"\">"+s.l+"</div></div>";}).join("");',
+        '  var ms=t.members||[];',
+        '  function sc2(v){return v>=4?"var(--green-d)":v>=3?"var(--amber-d)":"var(--red-d)";}',
+        '  function ps(p){if(!p)return"";if(p.indexOf("พร้อม")>=0)return"background:var(--green-l);color:var(--green-d)";if(p.indexOf("กำลัง")>=0)return"background:var(--blue-l);color:var(--blue-d)";if(p.indexOf("รอ")>=0)return"background:var(--amber-l);color:var(--amber-d)";return"background:var(--red-l);color:var(--red-d)";}',
+        '  document.getElementById("modalBody").innerHTML=ms.length?ms.map(function(m){return"<tr><td style=\"font-weight:500\">"+m.name+"</td><td>"+m.pos+"</td><td>"+(m.prod||"").replace("KKPGEN ","").replace("(Par)","").trim()+"</td><td style=\"text-align:right;color:var(--amber-d)\">"+(m.prem>0?m.prem.toLocaleString():"—")+"</td><td style=\"color:"+sc2(m.pk)+";font-weight:500\">"+m.pk+"</td><td style=\"color:"+sc2(m.gw)+";font-weight:500\">"+m.gw+"</td><td style=\"color:"+sc2(m.cf)+";font-weight:500\">"+m.cf+"</td><td><span style=\"font-size:9px;padding:2px 6px;border-radius:10px;"+ps(m.pipe)+"\">"+m.pipe+"</span></td></tr>";}).join(""):"<tr><td colspan=\"8\" style=\"text-align:center;padding:16px\">ไม่มีข้อมูลรายคน</td></tr>";',
+        '  modal.classList.add("open");',
+        '  document.body.style.overflow="hidden";',
+        '}',
+        'document.addEventListener("click",function(e){',
+        '  var modal=document.getElementById("detailModal");',
+        '  if(modal&&e.target===modal)modal.classList.remove("open");',
+        '  if(e.target&&e.target.id==="modalCloseBtn")modal.classList.remove("open");',
+        '});'
+      ].join('\n');
+      idoc.body.appendChild(inlineScript);
 
       // Serialize
       var html=(new XMLSerializer()).serializeToString(idoc);
